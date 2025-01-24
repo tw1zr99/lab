@@ -1,0 +1,15 @@
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: hoarder-meilisearch-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  nfs:
+    path: /mnt/tank/appdata/hoarder/meilisearch
+    server: 192.168.5.3
+  persistentVolumeReclaimPolicy: Retain

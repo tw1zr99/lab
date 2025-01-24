@@ -30,16 +30,23 @@ spec:
           value: "/data"
         - name: NEXTAUTH_URL
           value: "https://hoarder.efym.net"
-        - name: OPENAI_API_KEY
+        - name: MEILI_ADDR
+          value: "http://meilisearch:7700"
+        - name: MEILI_MASTER_KEY
           valueFrom:
             secretKeyRef:
               name: hoarder-secret
-              key: OPENAI_API_KEY
+              key: MEILI_MASTER_KEY
         - name: NEXTAUTH_SECRET
           valueFrom:
             secretKeyRef:
               name: hoarder-secret
               key: NEXTAUTH_SECRET
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: hoarder-secret
+              key: OPENAI_API_KEY
         volumeMounts:
         - name: hoarder-data
           mountPath: /data
