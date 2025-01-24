@@ -1,0 +1,30 @@
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: qbittorrent-data-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  nfs:
+    path: /mnt/tank/appdata/qbittorrent/data
+    server: 192.168.5.3
+  persistentVolumeReclaimPolicy: Retain
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: qbittorrent-downloads-pv
+spec:
+  capacity:
+    storage: 8Ti
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  nfs:
+    path: /mnt/tank/media/downloads
+    server: 192.168.5.3
+  persistentVolumeReclaimPolicy: Retain

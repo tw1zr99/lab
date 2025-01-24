@@ -1,0 +1,45 @@
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: radarr-data-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  nfs:
+    path: /mnt/tank/appdata/radarr/data
+    server: 192.168.5.3
+  persistentVolumeReclaimPolicy: Retain
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: radarr-movies-pv
+spec:
+  capacity:
+    storage: 4Ti
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  nfs:
+    path: /mnt/tank/media/movies
+    server: 192.168.5.3
+  persistentVolumeReclaimPolicy: Retain
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: radarr-downloads-pv
+spec:
+  capacity:
+    storage: 8Ti
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  nfs:
+    path: /mnt/tank/media/downloads
+    server: 192.168.5.3
+  persistentVolumeReclaimPolicy: Retain

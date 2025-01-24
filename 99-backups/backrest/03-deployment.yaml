@@ -1,0 +1,51 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: backrest
+  namespace: backups
+  labels:
+    app: backrest
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backrest
+  template:
+    metadata:
+      labels:
+        app: backrest
+    spec:
+      enableServiceLinks: true
+      containers:
+      - name: backrest
+        image: garethgeorge/backrest:latest
+        ports:
+        - containerPort: 9898
+          name: http
+        env:
+        - name: TZ
+          value: "Europe/London"
+        - name: BACKREST_DATA
+          value: "/data"
+        - name: BACKREST_CONFIG
+          value: "/config/config.json"
+        - name: XDG_CACHE_HOME
+          value: "/cache"
+        volumeMounts:
+        - name: backrest-data
+          mountPath: /data
+        - name: backrest-config
+          mountPath: /config
+        - name: backrest-userdata
+          mountPath: /userdata
+      volumes:
+      - name: backrest-data
+        persistentVolumeClaim:
+          claimName: backrest-data-pvc
+      - name: backrest-config
+        persistentVolumeClaim:
+          claimName: backrest-config-pvc
+      - name: backrest-userdata
+        persistentVolumeClaim:
+          claimName: backrest-userdata-pvc

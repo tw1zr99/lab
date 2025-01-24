@@ -1,0 +1,14 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: backrest
+  namespace: backups
+spec:
+  selector:
+    app: backrest
+  ports:
+  - name: http
+    port: 9898
+    targetPort: 9898
+    protocol: TCP

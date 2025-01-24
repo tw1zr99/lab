@@ -1,0 +1,60 @@
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: jellyfin-data-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  nfs:
+    path: /mnt/tank/appdata/jellyfin/data
+    server: 192.168.5.3
+  persistentVolumeReclaimPolicy: Retain
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: jellyfin-movies-pv
+spec:
+  capacity:
+    storage: 1Ti
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  nfs:
+    path: /mnt/tank/media/movies
+    server: 192.168.5.3
+  persistentVolumeReclaimPolicy: Retain
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: jellyfin-tv-pv
+spec:
+  capacity:
+    storage: 4Ti
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  nfs:
+    path: /mnt/tank/media/tv
+    server: 192.168.5.3
+  persistentVolumeReclaimPolicy: Retain
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: jellyfin-channels-pv
+spec:
+  capacity:
+    storage: 1Ti
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  nfs:
+    path: /mnt/tank/media/channels
+    server: 192.168.5.3
+  persistentVolumeReclaimPolicy: Retain

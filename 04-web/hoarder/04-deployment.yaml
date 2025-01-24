@@ -1,0 +1,49 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: hoarder
+  namespace: web
+  labels:
+    app: hoarder
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hoarder
+  template:
+    metadata:
+      labels:
+        app: hoarder
+    spec:
+      enableServiceLinks: true
+      containers:
+      - name: hoarder
+        image: ghcr.io/hoarder-app/hoarder:release
+        ports:
+        - containerPort: 3000
+          name: http
+        env:
+        - name: TZ
+          value: "Europe/London"
+        - name: DATA_DIR
+          value: "/data"
+        - name: NEXTAUTH_URL
+          value: "https://hoarder.efym.net"
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: hoarder-secret
+              key: OPENAI_API_KEY
+        - name: NEXTAUTH_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: hoarder-secret
+              key: NEXTAUTH_SECRET
+        volumeMounts:
+        - name: hoarder-data
+          mountPath: /data
+      volumes:
+      - name: hoarder-data
+        persistentVolumeClaim:
+          claimName: hoarder-data-pvc

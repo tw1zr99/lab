@@ -1,0 +1,26 @@
+---
+kind: IngressRoute
+apiVersion: traefik.io/v1alpha1
+metadata:
+  name: gatus
+  namespace: monitoring
+  annotations:
+    kubernetes.io/ingress.class: traefik-external
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`status.efym.net`)
+      kind: Rule
+      middlewares:
+        - name: authelia
+      services:
+        - name: gatus
+          port: 8080
+          sticky:
+            cookie:
+              httpOnly: true
+              secure: true
+              sameSite: none
+  tls:
+    secretName: efym-net-tls

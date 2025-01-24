@@ -1,0 +1,14 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: gatus
+  namespace: monitoring
+spec:
+  selector:
+    app: gatus
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+    protocol: TCP

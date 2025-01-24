@@ -1,0 +1,51 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: qbittorrent
+  namespace: arr
+  labels:
+    app: qbittorrent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qbittorrent
+  template:
+    metadata:
+      labels:
+        app: qbittorrent
+    spec:
+      enableServiceLinks: true
+      containers:
+      - name: qbittorrent
+        image: ghcr.io/hotio/qbittorrent:latest
+        securityContext:
+          capabilities:
+            add: ["NET_ADMIN"]
+        ports:
+        - containerPort: 8080
+          name: http
+        env:
+        - name: TZ
+          value: "Europe/London"
+        - name: VPN_ENABLED
+          value: "true"
+        - name: VPN_LAN_NETWORK
+          value: "192.168.0.0/16"
+        - name: VPN_CONF
+          value: "gb-lon-wg-005"
+        - name: PRIVOXY_ENABLED
+          value: "false"
+        volumeMounts:
+        - name: qbittorrent-data
+          mountPath: /config
+        - name: qbittorrent-downloads
+          mountPath: /downloads
+      volumes:
+      - name: qbittorrent-data
+        persistentVolumeClaim:
+          claimName: qbittorrent-data-pvc
+      - name: qbittorrent-downloads
+        persistentVolumeClaim:
+          claimName: qbittorrent-downloads-pvc

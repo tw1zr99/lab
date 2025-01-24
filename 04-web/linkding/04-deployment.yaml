@@ -1,0 +1,53 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: linkding
+  namespace: web
+  labels:
+    app: linkding
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: linkding
+  template:
+    metadata:
+      labels:
+        app: linkding
+    spec:
+      enableServiceLinks: true
+      containers:
+      - name: linkding
+        image: sissbruecker/linkding:latest
+        ports:
+        - containerPort: 3000
+          name: http
+        env:
+        - name: TZ
+          value: "Europe/London"
+        - name: LD_ENABLE_OIDC
+          value: "True"
+        - name: OIDC_OP_AUTHORIZATION_ENDPOINT
+          value: "https://login.efym.net/api/oidc/authorization"
+        - name: OIDC_OP_TOKEN_ENDPOINT
+          value: "https://login.efym.net/api/oidc/token"
+        - name: OIDC_OP_USER_ENDPOINT
+          value: "https://login.efym.net/api/oidc/userinfo"
+        - name: OIDC_OP_JWKS_ENDPOINT
+          value: "https://login.efym.net/api/oidc/jwks"
+        - name: OIDC_RP_CLIENT_ID
+          value: "linkding"
+        - name: OIDC_RP_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: linkding-secret
+              key: OIDC_RP_CLIENT_SECRET
+
+        volumeMounts:
+        - name: linkding-data
+          mountPath: /etc/linkding/data
+      volumes:
+      - name: linkding-data
+        persistentVolumeClaim:
+          claimName: linkding-pvc

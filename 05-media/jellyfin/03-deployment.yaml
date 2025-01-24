@@ -1,0 +1,65 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: jellyfin
+  namespace: media
+  labels:
+    app: jellyfin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jellyfin
+  template:
+    metadata:
+      labels:
+        app: jellyfin
+    spec:
+      enableServiceLinks: true
+      securityContext:
+        # runAsUser: 1000
+        # runAsGroup: 0
+        supplementalGroups:
+          - 105
+      containers:
+      - name: jellyfin
+        image: linuxserver/jellyfin:latest
+        ports:
+        - containerPort: 8096
+          name: http
+        env:
+        - name: TZ
+          value: "Europe/London"
+        - name: LIBVA_DRIVER_NAME
+          value: "iHD"
+        - name: VAAPI_DEVICE
+          value: "/dev/dri/renderD128"
+        # - name: PUID
+        #   value: "1000"
+        # - name: PGID
+        #   value: "0"
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: jellyfin-data
+          mountPath: /config
+        - name: jellyfin-movies
+          mountPath: /data/movies
+        - name: jellyfin-tv
+          mountPath: /data/tv
+        - name: jellyfin-channels
+          mountPath: /data/channels
+      volumes:
+      - name: jellyfin-data
+        persistentVolumeClaim:
+          claimName: jellyfin-data-pvc
+      - name: jellyfin-movies
+        persistentVolumeClaim:
+          claimName: jellyfin-movies-pvc
+      - name: jellyfin-tv
+        persistentVolumeClaim:
+          claimName: jellyfin-tv-pvc
+      - name: jellyfin-channels
+        persistentVolumeClaim:
+          claimName: jellyfin-channels-pvc

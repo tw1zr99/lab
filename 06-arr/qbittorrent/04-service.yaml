@@ -1,0 +1,14 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: qbittorrent
+  namespace: arr
+spec:
+  selector:
+    app: qbittorrent
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+    protocol: TCP

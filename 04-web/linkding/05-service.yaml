@@ -1,0 +1,14 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: linkding
+  namespace: web
+spec:
+  selector:
+    app: linkding
+  ports:
+  - name: http
+    port: 9090
+    targetPort: 9090
+    protocol: TCP

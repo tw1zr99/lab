@@ -1,0 +1,14 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: hoarder
+  namespace: web
+spec:
+  selector:
+    app: hoarder
+  ports:
+  - name: http
+    port: 3000
+    targetPort: 3000
+    protocol: TCP
