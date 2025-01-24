@@ -148,10 +148,17 @@ data:
     .container {
       background: #2f2f2f;
       font-size: larger;
+      max-width: 1000px;
     }
     .fixed.overflow-auto.w-full.h-full {
       background: #2f2f2f;
       font-size: larger;
+    }
+
+    @media (min-width: 1800px) {
+      .container {
+        max-width: 1000px;
+      }
     }
 
   settings.yaml: |
