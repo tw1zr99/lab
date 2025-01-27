@@ -2,8 +2,8 @@
 kind: Application
 apiVersion: argoproj.io/v1alpha1
 metadata:
-  name: argocd
-  namespace: actual-budget
+  name: actual-budget
+  namespace: argocd
 spec:
   destination:
     namespace: actual-budget
