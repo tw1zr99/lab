@@ -3,7 +3,6 @@ kind: PersistentVolume
 apiVersion: v1
 metadata:
   name: authelia-pv
-  namespace: authelia
 spec:
   capacity:
     storage: 1Gi
