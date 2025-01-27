@@ -1,0 +1,21 @@
+---
+kind: Kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+namespace: traefik
+
+resources:
+  - namespace.yaml
+  - middleware.yaml
+  - ingress.yaml
+  - hosts/adguard.efym.net.yaml
+  - hosts/openwrt.efym.net.yaml
+  - hosts/pve1.efym.net.yaml
+  - hosts/pve2.efym.net.yaml
+  - hosts/truenas.efym.net.yaml
+
+helmCharts:
+  - name: traefik
+    repo: https://helm.traefik.io/traefik
+    releaseName: traefik
+    namespace: traefik
+    valuesFile: values.yaml

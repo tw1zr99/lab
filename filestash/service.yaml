@@ -2,13 +2,13 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: filebrowser
-  namespace: filebrowser
+  name: filestash
+  namespace: filestash
 spec:
   selector:
-    app: filebrowser
+    app: filestash
   ports:
   - name: http
-    port: 80
-    targetPort: 80
+    port: 8334
+    targetPort: 8334
     protocol: TCP

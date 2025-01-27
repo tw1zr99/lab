@@ -2,8 +2,8 @@
 kind: IngressRoute
 apiVersion: traefik.io/v1alpha1
 metadata:
-  name: filebrowser
-  namespace: filebrowser
+  name: filestash
+  namespace: filestash
   annotations:
     kubernetes.io/ingress.class: traefik-external
 spec:
@@ -15,7 +15,7 @@ spec:
       middlewares:
         - name: authelia
       services:
-        - name: filebrowser
-          port: 80
+        - name: filestash
+          port: 8334
   tls:
     secretName: efym-net-tls

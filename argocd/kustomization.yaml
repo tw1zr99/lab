@@ -1,12 +1,10 @@
 ---
 kind: Kustomization
 apiVersion: kustomize.config.k8s.io/v1beta1
-namespace: filebrowser
+namespace: argocd
+
 resources:
   - namespace.yaml
-  - pv.yaml
-  - pvc.yaml
-  - deployment.yaml
+  - https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
   - middleware.yaml
-  - service.yaml
   - ingress.yaml

@@ -1,0 +1,10 @@
+---
+kind: Kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+namespace: monitoring
+
+helmCharts:
+  - name: reflector
+    repo: https://emberstack.github.io/helm-charts
+    releaseName: reflector
+    namespace: default

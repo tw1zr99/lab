@@ -84,12 +84,8 @@ data:
             icon: grafana.svg
             href: https://grafana.efym.net
             description: Display metrics on dashboards
-        - Gatus:
-            icon: gatus.svg
-            href: https://status.efym.net
-            description: Uptime monitoring
-        - Filebrowser:
-            icon: filebrowser.svg
+        - Filestash:
+            icon: filestash.svg
             href: https://files.efym.net
             description: Filesystem browser
         - Backrest:

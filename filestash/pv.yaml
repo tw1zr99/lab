@@ -1,0 +1,15 @@
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: filestash-data-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  nfs:
+    path: /mnt/tank/appdata/filestash/data
+    server: 192.168.5.3
+  persistentVolumeReclaimPolicy: Retain
