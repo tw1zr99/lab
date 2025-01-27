@@ -80,6 +80,10 @@ data:
             icon: proxmox.svg
             href: https://pve2.efym.net
             description: Hypervisor
+        - ArgoCD:
+            icon: argo-cd.svg
+            href: https://argocd.efym.net
+            description: GitOps for Kubernetes
         - Grafana:
             icon: grafana.svg
             href: https://grafana.efym.net
