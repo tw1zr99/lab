@@ -1,0 +1,19 @@
+---
+kind: Application
+apiVersion: argoproj.io/v1alpha1
+metadata:
+  name: actual-budget
+  namespace: actual-budget
+spec:
+  destination:
+    namespace: actual-budget
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    repoURL: https://codeberg.org/tw1zr/lab
+    path: apps/actual-budget
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
