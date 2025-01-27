@@ -1,0 +1,19 @@
+---
+kind: Application
+apiVersion: argoproj.io/v1alpha1
+metadata:
+  name: arr
+  namespace: argocd
+spec:
+  destination:
+    namespace: arr
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    repoURL: https://codeberg.org/tw1zr/lab
+    path: kubernetes/arr
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
