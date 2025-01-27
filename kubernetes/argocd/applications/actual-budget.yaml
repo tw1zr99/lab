@@ -2,7 +2,7 @@
 kind: Application
 apiVersion: argoproj.io/v1alpha1
 metadata:
-  name: actual-budget
+  name: argocd
   namespace: actual-budget
 spec:
   destination:
@@ -11,7 +11,7 @@ spec:
   project: default
   source:
     repoURL: https://codeberg.org/tw1zr/lab
-    path: apps/actual-budget
+    path: kubernetes/actual-budget
     targetRevision: HEAD
   syncPolicy:
     automated:
