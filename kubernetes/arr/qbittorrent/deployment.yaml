@@ -34,7 +34,7 @@ spec:
         - name: VPN_LAN_NETWORK
           value: "192.168.0.0/16"
         - name: VPN_CONF
-          value: "gb-lon-wg-005"
+          value: "wg0"
         - name: PRIVOXY_ENABLED
           value: "false"
         volumeMounts:
