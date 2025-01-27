@@ -3,7 +3,6 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: hoarder-meilisearch-pvc
-  namespace: web
 spec:
   accessModes:
     - ReadWriteMany

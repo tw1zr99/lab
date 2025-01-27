@@ -3,7 +3,6 @@ kind: Service
 apiVersion: v1
 metadata:
   name: linkding
-  namespace: web
 spec:
   selector:
     app: linkding

@@ -3,7 +3,6 @@ kind: Service
 apiVersion: v1
 metadata:
   name: hoarder
-  namespace: web
 spec:
   selector:
     app: hoarder

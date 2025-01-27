@@ -3,7 +3,6 @@ kind: PersistentVolume
 apiVersion: v1
 metadata:
   name: linkding-pv
-  namespace: web
 spec:
   capacity:
     storage: 1Gi
