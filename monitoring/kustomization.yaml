@@ -1,3 +1,4 @@
+---
 kind: Kustomization
 apiVersion: kustomize.config.k8s.io/v1beta1
 namespace: monitoring
@@ -5,17 +6,11 @@ namespace: monitoring
 resources:
   - namespace.yaml
   - middleware.yaml
-  - kube-prometheus-stack/ingress.yaml
-  - gatus/config.yaml
-  - gatus/pv.yaml
-  - gatus/pvc.yaml
-  - gatus/deployment.yaml
-  - gatus/service.yaml
-  - gatus/ingress.yaml
+  - ingress.yaml
 
 helmCharts:
-  - name: prometheus
+  - name: kube-prometheus-stack
     repo: https://prometheus-community.github.io/helm-charts
     releaseName: prometheus
     namespace: monitoring
-    valuesFile: kube-prometheus-stack/values.yaml
+    valuesFile: values.yaml
