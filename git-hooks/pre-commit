@@ -34,7 +34,7 @@ encrypt_file() {
 }
 
 # Main loop over files
-for file in $(git diff --cached --name-only | grep '\.yaml$' | grep -v '\.enc\.yaml$'); do
+for file in $(git diff --cached --name-only | grep 'secret\.yaml$' | grep -v '\.enc\.yaml$'); do
   current_hash=$(compute_hash "$file")
   enc_file="${file%.yaml}.enc.yaml"
 
