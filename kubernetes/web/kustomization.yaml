@@ -21,6 +21,7 @@ resources:
   - hoarder/ingress.yaml
   - hoarder/meilisearch/pv.yaml
   - hoarder/meilisearch/pvc.yaml
+  - hoarder/meilisearch/deployment.yaml
   - hoarder/meilisearch/service.yaml
 
   # homepage
