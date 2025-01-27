@@ -8,7 +8,7 @@ if [ ! -f "$AGE_KEY_FILE" ]; then
 fi
 
 # Define a pattern or specific encrypted files to decrypt
-ENCRYPTED_FILES_PATTERN="*.enc.yml"
+ENCRYPTED_FILES_PATTERN="*.enc.yaml"
 
 strip_hash_comment() {
   local file=$1
@@ -20,8 +20,9 @@ strip_hash_comment() {
 
 # Decrypt the files after checkout
 for file in $(find . -type f -name "$ENCRYPTED_FILES_PATTERN"); do
+    echo $file
   # Assuming the original file name is stored by simply removing the ".enc" extension
-  DECRYPTED_FILE_NAME="${file%.enc.yml}.yml"
+  DECRYPTED_FILE_NAME="${file%.enc.yaml}.yaml"
 
   # Check if the decrypted file name exists; if so, proceed to decrypt it
   if [ -f "$file" ]; then

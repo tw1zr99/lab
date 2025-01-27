@@ -21,7 +21,7 @@ compute_hash() {
 # Function to encrypt file with sops
 encrypt_file() {
   local file=$1
-  local enc_file="${file%.yml}.enc.yml"
+  local enc_file="${file%.yaml}.enc.yaml"
 
   # Encrypt and add a hash comment if possible
   if sops --encrypt --encrypted-regex '^(data|stringData)$' --age "$PUBLIC_KEY" "$file" > "$enc_file"; then
@@ -34,9 +34,9 @@ encrypt_file() {
 }
 
 # Main loop over files
-for file in $(git diff --cached --name-only | grep '\.yml$' | grep -v '\.enc\.yml$'); do
+for file in $(git diff --cached --name-only | grep '\.yaml$' | grep -v '\.enc\.yaml$'); do
   current_hash=$(compute_hash "$file")
-  enc_file="${file%.yml}.enc.yml"
+  enc_file="${file%.yaml}.enc.yaml"
 
   # Check if encrypted file exists and fetch the last hash
   if [ -f "$enc_file" ]; then
