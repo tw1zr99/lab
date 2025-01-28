@@ -15,7 +15,7 @@ spec:
             email: tw1zr@efym.net
             apiTokenSecretRef:
               name: cloudflare
-              key: cloudflare-token
+              key: token
         selector:
           dnsZones:
             - "efym.net"

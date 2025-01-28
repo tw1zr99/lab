@@ -1,0 +1,19 @@
+---
+kind: Application
+apiVersion: argoproj.io/v1alpha1
+metadata:
+  name: web
+  namespace: argocd
+spec:
+  destination:
+    namespace: web
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    repoURL: https://codeberg.org/tw1zr/lab
+    path: kubernetes/web
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

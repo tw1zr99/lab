@@ -14,7 +14,7 @@ resources:
   # hoarder
   - hoarder/pv.yaml
   - hoarder/pvc.yaml
-  - hoarder/secret.yaml
+  - hoarder/sealedsecret.yaml
   - hoarder/deployment.yaml
   - hoarder/service.yaml
   - hoarder/ingress.yaml
@@ -32,7 +32,7 @@ resources:
   # linkding
   - linkding/pv.yaml
   - linkding/pvc.yaml
-  - linkding/secret.yaml
+  - linkding/sealedsecret.yaml
   - linkding/deployment.yaml
   - linkding/service.yaml
   - linkding/ingress.yaml

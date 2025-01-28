@@ -3,7 +3,6 @@ kind: Certificate
 apiVersion: cert-manager.io/v1
 metadata:
   name: efym-net
-  namespace: default
 spec:
   secretName: efym-net-tls
   issuerRef:
