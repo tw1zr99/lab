@@ -13,6 +13,7 @@ spec:
       kind: Rule
       middlewares:
         - name: authelia
+          namespace: authelia
       services:
         - name: homepage
           port: 3000

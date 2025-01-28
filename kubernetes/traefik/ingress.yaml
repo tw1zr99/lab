@@ -14,7 +14,7 @@ spec:
       kind: Rule
       middlewares:
         - name: authelia
-          namespace: traefik
+          namespace: authelia
       services:
         - name: api@internal
           kind: TraefikService

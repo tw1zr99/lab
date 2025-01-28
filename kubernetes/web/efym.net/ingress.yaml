@@ -11,8 +11,9 @@ spec:
   routes:
     - match: Host(`efym.net`)
       kind: Rule
-      middlewares:
-        - name: authelia
+      # middlewares:
+      #   - name: authelia
+      #     namespace: authelia
       services:
         - name: efym-net
           port: 80

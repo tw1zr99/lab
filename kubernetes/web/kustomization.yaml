@@ -5,7 +5,6 @@ namespace: web
 
 resources:
   - namespace.yaml
-  - middleware.yaml
 
   # efym.net
   - efym.net/deployment.yaml

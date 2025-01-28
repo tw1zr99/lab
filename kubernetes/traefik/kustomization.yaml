@@ -5,7 +5,6 @@ namespace: traefik
 
 resources:
   - namespace.yaml
-  - middleware.yaml
   - ingress.yaml
   - hosts/adguard.efym.net.yaml
   - hosts/openwrt.efym.net.yaml
