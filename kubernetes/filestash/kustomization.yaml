@@ -7,6 +7,5 @@ resources:
   - pv.yaml
   - pvc.yaml
   - deployment.yaml
-  - middleware.yaml
   - service.yaml
   - ingress.yaml

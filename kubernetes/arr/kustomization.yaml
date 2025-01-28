@@ -5,7 +5,6 @@ namespace: arr
 
 resources:
   - namespace.yaml
-  - middleware.yaml
 
   # prowlarr
   - prowlarr/pv.yaml
