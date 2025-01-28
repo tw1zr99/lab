@@ -3,7 +3,6 @@ kind: Service
 apiVersion: v1
 metadata:
   name: backrest
-  namespace: backups
 spec:
   selector:
     app: backrest

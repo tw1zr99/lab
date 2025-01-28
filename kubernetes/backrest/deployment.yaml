@@ -3,7 +3,6 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: backrest
-  namespace: backups
   labels:
     app: backrest
 spec:
