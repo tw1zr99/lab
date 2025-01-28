@@ -3,7 +3,6 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: prowlarr
-  namespace: arr
   labels:
     app: prowlarr
 spec:
@@ -28,7 +27,7 @@ spec:
         - name: TZ
           value: "Europe/London"
         securityContext:
-          privileged: true
+          privileged: false
         volumeMounts:
         - name: prowlarr-data
           mountPath: /config

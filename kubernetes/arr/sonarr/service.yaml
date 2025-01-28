@@ -3,7 +3,6 @@ kind: Service
 apiVersion: v1
 metadata:
   name: sonarr
-  namespace: arr
 spec:
   selector:
     app: sonarr

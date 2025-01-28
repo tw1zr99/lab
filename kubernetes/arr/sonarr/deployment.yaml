@@ -3,7 +3,6 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: sonarr
-  namespace: arr
   labels:
     app: sonarr
 spec:
@@ -28,7 +27,7 @@ spec:
         - name: TZ
           value: "Europe/London"
         securityContext:
-          privileged: true
+          privileged: false
         volumeMounts:
         - name: sonarr-data
           mountPath: /config

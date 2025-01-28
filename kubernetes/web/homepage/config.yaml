@@ -163,10 +163,13 @@ data:
             href: http://laser.lan:8384
 
   bookmarks.yaml: |
-    - web:
+    - bookmarks:
       - efym.net:
         - abbr: ef
           href: https://efym.net
+      - codeberg.org:
+        - abbr: cb
+          href: https://codeberg.org/tw1zr
 
   custom.css: |
     body {
