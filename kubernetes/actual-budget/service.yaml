@@ -3,7 +3,6 @@ kind: Service
 apiVersion: v1
 metadata:
   name: actual-budget
-  namespace: actual-budget
 spec:
   selector:
     app: actual-budget

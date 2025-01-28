@@ -3,7 +3,6 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: actual-budget-data-pvc
-  namespace: actual-budget
 spec:
   accessModes:
     - ReadWriteMany
