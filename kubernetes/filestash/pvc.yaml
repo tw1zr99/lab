@@ -3,7 +3,6 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: filestash-data-pvc
-  namespace: filestash
 spec:
   accessModes:
     - ReadWriteMany
