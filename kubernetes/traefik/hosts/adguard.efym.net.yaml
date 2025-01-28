@@ -28,6 +28,7 @@ spec:
       kind: Rule
       middlewares:
         - name: authelia
+          namespace: authelia
       services:
         - name: adguard
           port: 8083
