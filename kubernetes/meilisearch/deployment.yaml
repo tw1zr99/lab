@@ -18,7 +18,7 @@ spec:
       enableServiceLinks: true
       containers:
       - name: meilisearch
-        image: getmeili/meilisearch:v1.11.1
+        image: getmeili/meilisearch:v1.12.7
         ports:
           - containerPort: 7700
             name: http
