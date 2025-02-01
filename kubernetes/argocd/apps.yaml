@@ -10,15 +10,17 @@ spec:
         revision: HEAD
         directories:
           - path: kubernetes/*
+          - exclude:
+            path: kubernetes/argocd
   template:
     metadata:
-      name: '{{ path | basename }}'
+      name: '{{ path.basename }}'
     spec:
       project: default
       source:
         repoURL: https://codeberg.org/tw1zr/lab
         targetRevision: HEAD
-        path: '{{ path }}'
+        path: '{{ path.basename }}'
       destination:
         server: https://kubernetes.default.svc
         namespace: argocd
