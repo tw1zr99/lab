@@ -20,7 +20,7 @@ spec:
       source:
         repoURL: https://codeberg.org/tw1zr/lab
         targetRevision: HEAD
-        path: '{{ path.basename }}'
+        path: 'kubernetes/{{ path.basename }}'
       destination:
         server: https://kubernetes.default.svc
         namespace: argocd
