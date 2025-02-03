@@ -4,6 +4,7 @@ apiVersion: v1
 metadata:
   name: prowlarr-data-pvc
 spec:
+  volumeName: prowlarr-data-pv
   accessModes:
     - ReadWriteMany
   storageClassName: ""

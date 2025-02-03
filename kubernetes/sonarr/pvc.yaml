@@ -4,6 +4,7 @@ apiVersion: v1
 metadata:
   name: sonarr-data-pvc
 spec:
+  volumeName: sonarr-data-pv
   accessModes:
     - ReadWriteMany
   storageClassName: ""
@@ -16,6 +17,7 @@ apiVersion: v1
 metadata:
   name: sonarr-tv-pvc
 spec:
+  volumeName: sonarr-tv-pv
   accessModes:
     - ReadWriteMany
   storageClassName: ""
@@ -28,6 +30,7 @@ apiVersion: v1
 metadata:
   name: sonarr-downloads-pvc
 spec:
+  volumeName: sonarr-downloads-pv
   accessModes:
     - ReadWriteMany
   storageClassName: ""

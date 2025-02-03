@@ -4,6 +4,20 @@ apiVersion: v1
 metadata:
   name: qbittorrent-data-pvc
 spec:
+  volumeName: qbittorrent-data-pv
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 1Gi
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: qbittorrent-config-pvc
+spec:
+  volumeName: qbittorrent-config-pv
   accessModes:
     - ReadWriteMany
   storageClassName: ""

@@ -4,6 +4,7 @@ apiVersion: v1
 metadata:
   name: radarr-data-pvc
 spec:
+  volumeName: radarr-data-pv
   accessModes:
     - ReadWriteMany
   storageClassName: ""
@@ -16,6 +17,7 @@ apiVersion: v1
 metadata:
   name: radarr-movies-pvc
 spec:
+  volumeName: radarr-movies-pv
   accessModes:
     - ReadWriteMany
   storageClassName: ""
@@ -28,6 +30,7 @@ apiVersion: v1
 metadata:
   name: radarr-downloads-pvc
 spec:
+  volumeName: radarr-downloads-pv
   accessModes:
     - ReadWriteMany
   storageClassName: ""
