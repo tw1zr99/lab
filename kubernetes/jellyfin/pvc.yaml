@@ -4,6 +4,7 @@ apiVersion: v1
 metadata:
   name: jellyfin-data-pvc
 spec:
+  volumeName: jellyfin-data-pv
   accessModes:
     - ReadWriteMany
   storageClassName: ""
@@ -16,6 +17,7 @@ apiVersion: v1
 metadata:
   name: jellyfin-movies-pvc
 spec:
+  volumeName: jellyfin-movies-pv
   accessModes:
     - ReadWriteMany
   storageClassName: ""
@@ -28,6 +30,7 @@ apiVersion: v1
 metadata:
   name: jellyfin-tv-pvc
 spec:
+  volumeName: jellyfin-tv-pv
   accessModes:
     - ReadWriteMany
   storageClassName: ""
@@ -40,6 +43,7 @@ apiVersion: v1
 metadata:
   name: jellyfin-channels-pvc
 spec:
+  volumeName: jellyfin-channels-pv
   accessModes:
     - ReadWriteMany
   storageClassName: ""
