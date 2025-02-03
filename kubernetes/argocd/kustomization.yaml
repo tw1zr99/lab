@@ -11,7 +11,3 @@ resources:
 
 patches:
   - path: patch.yaml
-    target:
-      kind: Deployment
-      name: argocd-server
-      namespace: argocd
