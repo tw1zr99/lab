@@ -10,8 +10,12 @@ spec:
         revision: HEAD
         directories:
           - path: kubernetes/*
-          - exclude:
-            path: kubernetes/argocd
+            exclude:
+              # - kubernetes/argocd
+              - kubernetes/prowlarr
+              - kubernetes/qbittorrent
+              - kubernetes/radarr
+              - kubernetes/sonarr
   template:
     metadata:
       name: '{{ path.basename }}'
