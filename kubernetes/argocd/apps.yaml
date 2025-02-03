@@ -10,6 +10,8 @@ spec:
         revision: HEAD
         directories:
           - path: kubernetes/*
+          - path: kubernetes/qbittorrent
+            exclude: true
   template:
     metadata:
       name: '{{ path.basename }}'
