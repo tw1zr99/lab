@@ -2,37 +2,7 @@
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: backrest-data-pv
-spec:
-  capacity:
-    storage: 1Gi
-  accessModes:
-    - ReadWriteMany
-  storageClassName: ""
-  nfs:
-    path: /mnt/tank/appdata/backrest/data
-    server: 192.168.5.3
-  persistentVolumeReclaimPolicy: Retain
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: backrest-config-pv
-spec:
-  capacity:
-    storage: 1Gi
-  accessModes:
-    - ReadWriteMany
-  storageClassName: ""
-  nfs:
-    path: /mnt/tank/appdata/backrest/config
-    server: 192.168.5.3
-  persistentVolumeReclaimPolicy: Retain
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: backrest-userdata-pv
+  name: backrest-userdata
 spec:
   capacity:
     storage: 20Gi
@@ -40,6 +10,6 @@ spec:
     - ReadWriteMany
   storageClassName: ""
   nfs:
-    path: /mnt/tank/appdata
+    path: /mnt/tank/backups
     server: 192.168.5.3
   persistentVolumeReclaimPolicy: Retain

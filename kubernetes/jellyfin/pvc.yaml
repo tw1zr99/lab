@@ -2,22 +2,21 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: jellyfin-data-pvc
+  name: jellyfin-data
 spec:
-  volumeName: jellyfin-data-pv
   accessModes:
     - ReadWriteMany
-  storageClassName: ""
+  storageClassName: longhorn
   resources:
     requests:
-      storage: 10Gi
+      storage: 15Gi
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: jellyfin-movies-pvc
+  name: jellyfin-movies
 spec:
-  volumeName: jellyfin-movies-pv
+  volumeName: jellyfin-movies
   accessModes:
     - ReadWriteMany
   storageClassName: ""
@@ -28,9 +27,9 @@ spec:
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: jellyfin-tv-pvc
+  name: jellyfin-tv
 spec:
-  volumeName: jellyfin-tv-pv
+  volumeName: jellyfin-tv
   accessModes:
     - ReadWriteMany
   storageClassName: ""
@@ -41,9 +40,9 @@ spec:
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: jellyfin-channels-pvc
+  name: jellyfin-channels
 spec:
-  volumeName: jellyfin-channels-pv
+  volumeName: jellyfin-channels
   accessModes:
     - ReadWriteMany
   storageClassName: ""

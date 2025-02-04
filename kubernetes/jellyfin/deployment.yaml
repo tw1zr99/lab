@@ -52,13 +52,13 @@ spec:
       volumes:
       - name: jellyfin-data
         persistentVolumeClaim:
-          claimName: jellyfin-data-pvc
+          claimName: jellyfin-data
       - name: jellyfin-movies
         persistentVolumeClaim:
-          claimName: jellyfin-movies-pvc
+          claimName: jellyfin-movies
       - name: jellyfin-tv
         persistentVolumeClaim:
-          claimName: jellyfin-tv-pvc
+          claimName: jellyfin-tv
       - name: jellyfin-channels
         persistentVolumeClaim:
-          claimName: jellyfin-channels-pvc
+          claimName: jellyfin-channels

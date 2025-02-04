@@ -5,7 +5,6 @@ namespace: filestash
 
 resources:
   - namespace.yaml
-  - pv.yaml
   - pvc.yaml
   - deployment.yaml
   - service.yaml

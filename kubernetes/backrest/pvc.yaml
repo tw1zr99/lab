@@ -2,11 +2,11 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: backrest-data-pvc
+  name: backrest-data
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: ""
+  storageClassName: longhorn
   resources:
     requests:
       storage: 1Gi
@@ -14,11 +14,11 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: backrest-config-pvc
+  name: backrest-config
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: ""
+  storageClassName: longhorn
   resources:
     requests:
       storage: 1Gi
@@ -26,8 +26,9 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: backrest-userdata-pvc
+  name: backrest-userdata
 spec:
+  volumeName: backrest-userdata
   accessModes:
     - ReadWriteMany
   storageClassName: ""

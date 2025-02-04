@@ -12,16 +12,6 @@ spec:
           - path: kubernetes/*
           - path: kubernetes/longhorn
             exclude: true
-          - path: kubernetes/jellyfin
-            exclude: true
-          - path: kubernetes/qbittorrent
-            exclude: true
-          - path: kubernetes/filestash
-            exclude: true
-          - path: kubernetes/pinchflat
-            exclude: true
-          - path: kubernetes/backrest
-            exclude: true
   template:
     metadata:
       name: '{{ path.basename }}'

@@ -34,4 +34,4 @@ spec:
       volumes:
       - name: filestash-data
         persistentVolumeClaim:
-          claimName: filestash-data-pvc
+          claimName: filestash-data

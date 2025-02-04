@@ -41,10 +41,10 @@ spec:
       volumes:
       - name: backrest-data
         persistentVolumeClaim:
-          claimName: backrest-data-pvc
+          claimName: backrest-data
       - name: backrest-config
         persistentVolumeClaim:
-          claimName: backrest-config-pvc
+          claimName: backrest-config
       - name: backrest-userdata
         persistentVolumeClaim:
-          claimName: backrest-userdata-pvc
+          claimName: backrest-userdata
