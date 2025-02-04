@@ -14,6 +14,10 @@ spec:
             exclude: true
           - path: kubernetes/radarr
             exclude: true
+          - path: kubernetes/sonarr
+            exclude: true
+          - path: kubernetes/prowlarr
+            exclude: true
   template:
     metadata:
       name: '{{ path.basename }}'
