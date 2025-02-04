@@ -10,21 +10,6 @@ spec:
     - ReadWriteMany
   storageClassName: ""
   nfs:
-    path: /mnt/tank/appdata/qbittorrent/data
-    server: 192.168.5.3
-  persistentVolumeReclaimPolicy: Retain
----
-kind: PersistentVolume
-apiVersion: v1
-metadata:
-  name: qbittorrent-config-pv
-spec:
-  capacity:
-    storage: 1Gi
-  accessModes:
-    - ReadWriteMany
-  storageClassName: ""
-  nfs:
     path: /mnt/tank/appdata/qbittorrent/config
     server: 192.168.5.3
   persistentVolumeReclaimPolicy: Retain

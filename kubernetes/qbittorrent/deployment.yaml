@@ -38,8 +38,6 @@ spec:
           value: "false"
         volumeMounts:
         - name: qbittorrent-data
-          mountPath: /data
-        - name: qbittorrent-config
           mountPath: /config
         - name: qbittorrent-downloads
           mountPath: /downloads
@@ -47,9 +45,6 @@ spec:
       - name: qbittorrent-data
         persistentVolumeClaim:
           claimName: qbittorrent-data-pvc
-      - name: qbittorrent-config
-        persistentVolumeClaim:
-          claimName: qbittorrent-config-pvc
       - name: qbittorrent-downloads
         persistentVolumeClaim:
           claimName: qbittorrent-downloads-pvc
