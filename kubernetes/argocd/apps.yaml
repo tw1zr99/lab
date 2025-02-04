@@ -12,11 +12,7 @@ spec:
           - path: kubernetes/*
           - path: kubernetes/longhorn
             exclude: true
-          - path: kubernetes/radarr
-            exclude: true
-          - path: kubernetes/prowlarr
-            exclude: true
-          - path: kubernetes/qbittorrent
+          - path: kubernetes/jellyfin
             exclude: true
   template:
     metadata:
