@@ -26,9 +26,9 @@ spec:
           - name: MEILI_NO_ANALYTICS
             value: "true"
         volumeMounts:
-          - name: hoarder-meilisearch
+          - name: meilisearch-data
             mountPath: /meili_data
       volumes:
-      - name: hoarder-meilisearch
+      - name: meilisearch-data
         persistentVolumeClaim:
-          claimName: hoarder-meilisearch-pvc
+          claimName: meilisearch-data

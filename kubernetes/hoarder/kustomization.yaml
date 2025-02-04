@@ -5,7 +5,6 @@ namespace: hoarder
 
 resources:
   - namespace.yaml
-  - pv.yaml
   - pvc.yaml
   - sealedsecret.yaml
   - deployment.yaml

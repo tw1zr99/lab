@@ -30,7 +30,7 @@ spec:
         - name: NEXTAUTH_URL
           value: "https://hoarder.efym.net"
         - name: MEILI_ADDR
-          value: "http://meilisearch:7700"
+          value: "http://meilisearch.meilisearch.svc.cluster.local:7700"
         - name: MEILI_MASTER_KEY
           valueFrom:
             secretKeyRef:
@@ -52,4 +52,4 @@ spec:
       volumes:
       - name: hoarder-data
         persistentVolumeClaim:
-          claimName: hoarder-data-pvc
+          claimName: hoarder-data

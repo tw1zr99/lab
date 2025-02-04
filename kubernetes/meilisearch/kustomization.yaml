@@ -1,10 +1,10 @@
 ---
 kind: Kustomization
 apiVersion: kustomize.config.k8s.io/v1beta1
-namespace: hoarder
+namespace: meilisearch
 
 resources:
-  - pv.yaml
+  - namespace.yaml
   - pvc.yaml
   - deployment.yaml
   - service.yaml

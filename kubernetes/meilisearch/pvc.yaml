@@ -2,11 +2,11 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: hoarder-meilisearch-pvc
+  name: meilisearch-data
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: ""
+  storageClassName: longhorn
   resources:
     requests:
       storage: 1Gi

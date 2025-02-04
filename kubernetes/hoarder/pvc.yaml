@@ -2,11 +2,11 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: hoarder-data-pvc
+  name: hoarder-data
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: ""
+  storageClassName: longhorn
   resources:
     requests:
       storage: 5Gi
