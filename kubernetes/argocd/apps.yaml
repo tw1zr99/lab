@@ -14,10 +14,10 @@ spec:
             exclude: true
           - path: kubernetes/jellyfin
             exclude: true
-          - path: kubernetes/qbittorrent
-            exclude: true
-          - path: kubernetes/radarr
-            exclude: true
+          # - path: kubernetes/qbittorrent
+          #   exclude: true
+          # - path: kubernetes/radarr
+          #   exclude: true
   template:
     metadata:
       name: '{{ path.basename }}'
