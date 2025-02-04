@@ -38,10 +38,10 @@ spec:
       volumes:
       - name: radarr-data
         persistentVolumeClaim:
-          claimName: radarr-data-pvc
+          claimName: radarr-data
       - name: radarr-movies
         persistentVolumeClaim:
-          claimName: radarr-movies-pvc
+          claimName: radarr-movies
       - name: radarr-downloads
         persistentVolumeClaim:
-          claimName: radarr-downloads-pvc
+          claimName: radarr-downloads

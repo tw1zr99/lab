@@ -2,22 +2,7 @@
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: sonarr-data-pv
-spec:
-  capacity:
-    storage: 1Gi
-  accessModes:
-    - ReadWriteMany
-  storageClassName: ""
-  nfs:
-    path: /mnt/tank/appdata/sonarr/data
-    server: 192.168.5.3
-  persistentVolumeReclaimPolicy: Retain
----
-kind: PersistentVolume
-apiVersion: v1
-metadata:
-  name: sonarr-tv-pv
+  name: sonarr-tv
 spec:
   capacity:
     storage: 4Ti
@@ -32,7 +17,7 @@ spec:
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: sonarr-downloads-pv
+  name: sonarr-downloads
 spec:
   capacity:
     storage: 8Ti

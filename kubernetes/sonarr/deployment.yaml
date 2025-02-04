@@ -38,10 +38,10 @@ spec:
       volumes:
       - name: sonarr-data
         persistentVolumeClaim:
-          claimName: sonarr-data-pvc
+          claimName: sonarr-data
       - name: sonarr-tv
         persistentVolumeClaim:
-          claimName: sonarr-tv-pvc
+          claimName: sonarr-tv
       - name: sonarr-downloads
         persistentVolumeClaim:
-          claimName: sonarr-downloads-pvc
+          claimName: sonarr-downloads

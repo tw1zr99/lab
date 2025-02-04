@@ -44,7 +44,7 @@ spec:
       volumes:
       - name: qbittorrent-data
         persistentVolumeClaim:
-          claimName: qbittorrent-data-pvc
+          claimName: qbittorrent-data
       - name: qbittorrent-downloads
         persistentVolumeClaim:
-          claimName: qbittorrent-downloads-pvc
+          claimName: qbittorrent-downloads
