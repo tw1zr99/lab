@@ -18,6 +18,8 @@ spec:
             exclude: true
           - path: kubernetes/filestash
             exclude: true
+          - path: kubernetes/pinchflat
+            exclude: true
   template:
     metadata:
       name: '{{ path.basename }}'
