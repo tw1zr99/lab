@@ -10,6 +10,8 @@ spec:
         revision: HEAD
         directories:
           - path: kubernetes/*
+          - path: kubernetes/longhorn
+            exclude: true
           - path: kubernetes/hoarder
             exclude: true
           - path: kubernetes/meilisearch
