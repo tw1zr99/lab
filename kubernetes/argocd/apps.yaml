@@ -13,6 +13,7 @@ spec:
           - path: kubernetes/hoarder
             exclude: true
           - path: kubernetes/meilisearch
+            exclude: true
   template:
     metadata:
       name: '{{ path.basename }}'
