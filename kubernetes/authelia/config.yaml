@@ -31,37 +31,37 @@ data:
       default_policy: one_factor
       rules:
         - domain:
-            - 'efym.net'
-            - 'hoarder.efym.net'
-            - 'links.efym.net'
-            - 'login.efym.net'
-            - 'tv.efym.net'
-            - 'vault.efym.net'
+            - "efym.net"
+            - "hoarder.efym.net"
+            - "links.efym.net"
+            - "login.efym.net"
+            - "tv.efym.net"
+            - "vault.efym.net"
           policy: bypass
         - domain:
-            - '*'
+            - "*"
           policy: one_factor
         - domain:
-            - 'actual.efym.net'
-            - 'adguard1.efym.net'
-            - 'adguard2.efym.net'
-            - 'backrest.efym.net'
-            - 'dl.efym.net'
-            - 'files.efym.net'
-            - 'grafana.efym.net'
-            - 'openwrt.efym.net'
-            - 'pinchflat.efym.net'
-            - 'prowlarr.efym.net'
-            - 'pve1.efym.net'
-            - 'pve2.efym.net'
-            - 'radarr.efym.net'
-            - 'shell.efym.net'
-            - 'sonarr.efym.net'
-            - 'traefik.efym.net'
-            - 'truenas.efym.net'
-            - 'wireguard.efym.net'
+            - "actual.efym.net"
+            - "adguard1.efym.net"
+            - "adguard2.efym.net"
+            - "backrest.efym.net"
+            - "dl.efym.net"
+            - "files.efym.net"
+            - "grafana.efym.net"
+            - "openwrt.efym.net"
+            - "pinchflat.efym.net"
+            - "prowlarr.efym.net"
+            - "pve1.efym.net"
+            - "pve2.efym.net"
+            - "radarr.efym.net"
+            - "shell.efym.net"
+            - "sonarr.efym.net"
+            - "traefik.efym.net"
+            - "truenas.efym.net"
+            - "wireguard.efym.net"
           subject:
-            - 'group:users'
+            - "group:users"
           policy: deny
 
     session:
@@ -71,9 +71,9 @@ data:
       expiration: 8h
       inactivity: 8h
       cookies:
-        - domain: 'efym.net'
-          authelia_url: 'https://login.efym.net'
-          default_redirection_url: 'https://efym.net'
+        - domain: "efym.net"
+          authelia_url: "https://login.efym.net"
+          default_redirection_url: "https://efym.net"
 
     regulation:
       max_retries: 5
