@@ -94,7 +94,8 @@ data:
     identity_providers:
       oidc:
         hmac_secret: ${HMAC_SECRET}
-        issuer_private_key: ${ISSUER_PRIVATE_KEY}
+        issuer_private_key: |
+          ${ISSUER_PRIVATE_KEY}
         clients:
           - client_id: portainer
             client_name: Portainer
