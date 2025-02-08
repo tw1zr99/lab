@@ -38,7 +38,10 @@ spec:
           - -c
           - |
               apt-get update && apt-get install -y gettext-base && \
-              envsubst < /config-template/configuration.tpl.yml > /config/configuration.yml
+              envsubst < /config-template/configuration.tpl.yml > /config/configuration.yml && \
+              echo $?
+              echo "Rendered configuration:" && cat /config/configuration.yml && \
+              sleep 5
         env:
           - name: JWT_SECRET
             valueFrom:
