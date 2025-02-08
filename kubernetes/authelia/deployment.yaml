@@ -22,12 +22,37 @@ spec:
         ports:
         - containerPort: 9091
         volumeMounts:
-        - name: config
-          mountPath: /config
+          - name: authelia-config
+            mountPath: /config
+          - name: secrets
+            mountPath: /app/secrets
+            readOnly: true
         env:
-        - name: TZ
-          value: "Europe/London"
+          - name: TZ
+            value: "Europe/London"
+          - name: AUTHELIA_JWT_SECRET_FILE
+            value: "/app/secrets/JWT_SECRET"
+          - name: AUTHELIA_SESSION_SECRET_FILE
+            value: "/app/secrets/SESSION_SECRET"
+          - name: AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE
+            value: "/app/secrets/ENCRYPTION_KEY"
+          - name: AUTHELIA_IDENTITY_PROVIDERS_OIDC_HMAC_SECRET_FILE
+            value: "/app/secrets/HMAC_SECRET"
+          - name: AUTHELIA_IDENTITY_PROVIDERS_OIDC_ISSUER_PRIVATE_KEY_FILE
+            value: "/app/secrets/ISSUER_PRIVATE_KEY"
+          # clients
+          - name: AUTHELIA_PORTAINER_CLIENT_SECRET_FILE
+            value: "/app/secrets/PORTAINER_CLIENT_SECRET"
+          - name: AUTHELIA_JELLYFIN_CLIENT_SECRET_FILE
+            value: "/app/secrets/JELLYFIN_CLIENT_SECRET"
+          - name: AUTHELIA_LINKDING_CLIENT_SECRET_FILE
+            value: "/app/secrets/LINKDING_CLIENT_SECRET"
+          - name: AUTHELIA_HOARDER_CLIENT_SECRET_FILE
+            value: "/app/secrets/HOARDER_CLIENT_SECRET"
       volumes:
-      - name: config
-        persistentVolumeClaim:
-          claimName: authelia-pvc
+      - name: authelia-config
+        configMap:
+          name: authelia-config
+      - name: secrets
+        secret:
+          secretName: authelia-secret

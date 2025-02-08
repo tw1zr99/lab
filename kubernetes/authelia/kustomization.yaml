@@ -5,8 +5,8 @@ namespace: authelia
 
 resources:
   - namespace.yaml
-  - pv.yaml
-  - pvc.yaml
+  - sealedsecret.yaml
+  - config.yaml
   - deployment.yaml
   - service.yaml
   - ingress.yaml
