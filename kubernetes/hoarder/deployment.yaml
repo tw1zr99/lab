@@ -27,6 +27,8 @@ spec:
           value: "Europe/London"
         - name: DATA_DIR
           value: "/data"
+        - name: DISABLE_SIGNUPS
+          value: "true"
         - name: NEXTAUTH_URL
           value: "https://hoarder.efym.net"
         - name: MEILI_ADDR
@@ -46,6 +48,22 @@ spec:
             secretKeyRef:
               name: hoarder-secret
               key: OPENAI_API_KEY
+        # oidc
+        - name: OAUTH_WELLKNOWN_URL
+          value: "https://login.efym.net/.well-known/openid-configuration"
+        - name: OAUTH_CLIENT_ID
+          value: "hoarder"
+        - name: OAUTH_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: hoarder-secret
+              key: HOARDER_CLIENT_SECRET
+        - name: OAUTH_SCOPE
+          value: "openid email profile"
+        - name: OAUTH_PROVIDER_NAME
+          value: "authelia"
+        - name: OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING
+          value: "false"
         volumeMounts:
         - name: hoarder-data
           mountPath: /data
