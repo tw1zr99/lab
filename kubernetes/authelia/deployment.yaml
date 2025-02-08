@@ -37,9 +37,7 @@ spec:
           - sh
           - -c
           - >
-            # Copy the template from the ConfigMap and perform substitution.
-            cp /config-template/configuration.tpl.yml /config/configuration.yml &&
-            envsubst < /config/configuration.tpl.yml > /config/configuration.yml
+            envsubst < /config-template/configuration.tpl.yml > /config/configuration.yml
         env:
           - name: JWT_SECRET
             valueFrom:
