@@ -19,7 +19,7 @@ data:
       password_reset:
         disable: true
       file:
-        path: /app/secrets/users.yml
+        path: /secrets/users.yml
         password:
           algorithm: argon2id
           iterations: 1
