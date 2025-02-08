@@ -32,7 +32,7 @@ spec:
             value: "Europe/London"
       initContainers:
       - name: init-config
-        image: busybox:1.36
+        image: alpine:latest
         command:
           - sh
           - -c
