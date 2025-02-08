@@ -56,3 +56,24 @@ spec:
       - name: secrets
         secret:
           secretName: authelia-secret
+          items:
+            - key: JWT_SECRET
+              path: JWT_SECRET
+            - key: SESSION_SECRET
+              path: SESSION_SECRET
+            - key: ENCRYPTION_KEY
+              path: ENCRYPTION_KEY
+            - key: HMAC_SECRET
+              path: HMAC_SECRET
+            - key: ISSUER_PRIVATE_KEY
+              path: ISSUER_PRIVATE_KEY
+            - key: PORTAINER_CLIENT_SECRET
+              path: PORTAINER_CLIENT_SECRET
+            - key: JELLYFIN_CLIENT_SECRET
+              path: JELLYFIN_CLIENT_SECRET
+            - key: LINKDING_CLIENT_SECRET
+              path: LINKDING_CLIENT_SECRET
+            - key: HOARDER_CLIENT_SECRET
+              path: HOARDER_CLIENT_SECRET
+            - key: users.yml
+              path: users.yml
