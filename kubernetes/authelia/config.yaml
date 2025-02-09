@@ -156,7 +156,6 @@ data:
             scopes:
               - openid
               - profile
-              - groups
               - email
             consent_mode: implicit
             userinfo_signed_response_alg: none
