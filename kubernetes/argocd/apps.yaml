@@ -12,6 +12,8 @@ spec:
           - path: kubernetes/*
           - path: kubernetes/longhorn
             exclude: true
+          - path: kubernetes/actual-budget
+            exclude: true
   template:
     metadata:
       name: '{{ path.basename }}'
