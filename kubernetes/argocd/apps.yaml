@@ -1,3 +1,4 @@
+---
 kind: ApplicationSet
 apiVersion: argoproj.io/v1alpha1
 metadata:

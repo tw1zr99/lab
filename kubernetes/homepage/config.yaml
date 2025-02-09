@@ -73,16 +73,16 @@ data:
     - Management:
         - Proxmox 1:
             icon: proxmox.svg
-            href: https://pve1.efym.net
-            description: Hypervisor
-        - Proxmox 2:
-            icon: proxmox.svg
-            href: https://pve2.efym.net
+            href: https://pve.efym.net
             description: Hypervisor
         - ArgoCD:
             icon: argo-cd.svg
             href: https://argocd.efym.net
             description: GitOps for Kubernetes
+        - Longhorn:
+            icon: longhorn.png
+            href: https://longhorn.efym.net
+            description: Storage management
         - Grafana:
             icon: grafana.svg
             href: https://grafana.efym.net
@@ -123,13 +123,9 @@ data:
             description: VPN and exit node
 
     - Local area network:
-        - Proxmox 1:
+        - Proxmox:
             icon: proxmox.svg
-            href: http://atlas.lan
-            description: Hypervisor
-        - Proxmox 2:
-            icon: proxmox.svg
-            href: http://salta.lan
+    href: http://atlas.lan:8006
             description: Hypervisor
         - OpenWrt:
             icon: openwrt.svg
