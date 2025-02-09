@@ -125,7 +125,7 @@ data:
     - Local area network:
         - Proxmox:
             icon: proxmox.svg
-    href: http://atlas.lan:8006
+            href: http://atlas.lan:8006
             description: Hypervisor
         - OpenWrt:
             icon: openwrt.svg
