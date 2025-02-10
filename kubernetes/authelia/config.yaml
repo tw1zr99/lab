@@ -32,6 +32,11 @@ data:
       rules:
         - domain:
             - "efym.net"
+          resources:
+            - "^/services"
+          policy: one_factor
+        - domain:
+            - "efym.net"
             - "hoarder.efym.net"
             - "links.efym.net"
             - "login.efym.net"
