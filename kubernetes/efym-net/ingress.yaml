@@ -2,7 +2,7 @@
 kind: IngressRoute
 apiVersion: traefik.io/v1alpha1
 metadata:
-  name: efym-net
+  name: efym-net-services
   annotations:
     kubernetes.io/ingress.class: traefik-external
 spec:
@@ -18,6 +18,20 @@ spec:
       services:
         - name: efym-net
           port: 80
+  tls:
+    secretName: efym-net-tls
+---
+kind: IngressRoute
+apiVersion: traefik.io/v1alpha1
+metadata:
+  name: efym-net
+  namespace: web
+  annotations:
+    kubernetes.io/ingress.class: traefik-external
+spec:
+  entryPoints:
+    - websecure
+  routes:
     - match: Host(`efym.net`)
       kind: Rule
       priority: 1
@@ -26,3 +40,4 @@ spec:
           port: 80
   tls:
     secretName: efym-net-tls
+
