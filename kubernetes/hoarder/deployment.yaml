@@ -63,7 +63,7 @@ spec:
         - name: OAUTH_PROVIDER_NAME
           value: "authelia"
         - name: OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING
-          value: "false"
+          value: "true"
         volumeMounts:
         - name: hoarder-data
           mountPath: /data
