@@ -9,11 +9,16 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`efym.net`)
+    - match: Host(`efym.net`) && PathPrefix(`/services`)
       kind: Rule
-      # middlewares:
-      #   - name: authelia
-      #     namespace: authelia
+      middlewares:
+        - name: authelia
+          namespace: authelia
+      services:
+        - name: efym-net
+          port: 80
+    - match: Host(`efym.net`) && !PathPrefix(`/services`)
+      kind: Rule
       services:
         - name: efym-net
           port: 80
