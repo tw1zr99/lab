@@ -11,14 +11,16 @@ spec:
   routes:
     - match: Host(`efym.net`) && PathPrefix(`/services`)
       kind: Rule
+      priority: 10
       middlewares:
         - name: authelia
           namespace: authelia
       services:
         - name: efym-net
           port: 80
-    - match: Host(`efym.net`) && !PathPrefix(`/services`)
+    - match: Host(`efym.net`)
       kind: Rule
+      priority: 1
       services:
         - name: efym-net
           port: 80
