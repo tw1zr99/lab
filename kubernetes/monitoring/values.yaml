@@ -48,10 +48,10 @@ grafana:
     existingSecret: grafana-secret
     userKey: USER
     passwordKey: PASS
-  persistence:
-    enabled: true
-    storageClassName: "longhorn"
-    size: 5Gi
+  # persistence:
+  #   enabled: true
+  #   storageClassName: "longhorn"
+  #   size: 5Gi
 
 kubeApiServer:
   enabled: true
@@ -174,15 +174,15 @@ prometheus:
     walCompression: true
     scrapeInterval: 30s
     evaluationInterval: 30s
-    storageSpec:
-      volumeClaimTemplate:
-        spec:
-          storageClassName: "longhorn"
-          accessModes:
-            - ReadWriteOnce
-          resources:
-            requests:
-              storage: 5Gi
+    # storageSpec:
+    #   volumeClaimTemplate:
+    #     spec:
+    #       storageClassName: "longhorn"
+    #       accessModes:
+    #         - ReadWriteOnce
+    #       resources:
+    #         requests:
+    #           storage: 5Gi
 
 thanosRuler:
   enabled: false
