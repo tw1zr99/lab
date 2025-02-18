@@ -15,8 +15,6 @@ spec:
             exclude: true
           - path: kubernetes/actual-budget
             exclude: true
-          - path: kubernetes/qbittorrent
-            exclude: true
   template:
     metadata:
       name: '{{ path.basename }}'
