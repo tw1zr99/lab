@@ -7,7 +7,7 @@ variable "proxmox_host" {
 }
 
 variable "template_name" {
-  default = "ubuntu-2404-template"
+  default = "VM 9000"
 }
 
 variable "nic_name" {
