@@ -1,30 +1,43 @@
+variable "ciuser" {
+}
+
+variable "cipassword" {
+}
+
 variable "ssh_key" {
-  default = "your_public_ssh_key_here"
+  default = <<EOF
+  ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII5cBlfBxMG/fUQJZzrgshvsR27KhqcUse3g+Wp2M9XJ
+  EOF
 }
 
-variable "proxmox_host" {
-  default = "hades"
+variable "k3s_masters" {
+  description = "List of Kubernetes master nodes"
+  type = list(object({
+    name = string
+    ip   = string
+  }))
+  default = [
+    {
+      name = "k3s-master-01"
+      ip   = "192.168.5.20/24"
+    },
+    {
+      name = "k3s-master-02"
+      ip   = "192.168.5.21/24"
+    }
+  ]
 }
 
-variable "template_name" {
-  default = "VM 9000"
+variable "k3s_workers" {
+  description = "List of Kubernetes worker nodes"
+  type = list(object({
+    name = string
+    ip   = string
+  }))
+  default = [
+    {
+      name = "k3s-worker-01"
+      ip   = "192.168.5.30/24"
+    }
+  ]
 }
-
-variable "nic_name" {
-  default = "vmbr0"
-}
-
-variable "vlan_num" {
-  default = ""
-}
-
-variable "api_url" {
-  default = "https://hades.lan:8006/api2/json"
-}
-
-# Blank vars for use by terraform.tfvars
-# variable "token_secret" {
-# }
-#
-# variable "token_id" {
-# }
