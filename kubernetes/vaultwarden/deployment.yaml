@@ -34,4 +34,4 @@ spec:
       volumes:
       - name: vaultwarden-data
         persistentVolumeClaim:
-          claimName: vaultwarden-data-pvc
+          claimName: vaultwarden-data

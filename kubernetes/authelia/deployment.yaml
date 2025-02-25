@@ -46,47 +46,47 @@ spec:
           - name: JWT_SECRET
             valueFrom:
               secretKeyRef:
-                name: authelia-secret
+                name: authelia
                 key: JWT_SECRET
           - name: SESSION_SECRET
             valueFrom:
               secretKeyRef:
-                name: authelia-secret
+                name: authelia
                 key: SESSION_SECRET
           - name: ENCRYPTION_KEY
             valueFrom:
               secretKeyRef:
-                name: authelia-secret
+                name: authelia
                 key: ENCRYPTION_KEY
           - name: HMAC_SECRET
             valueFrom:
               secretKeyRef:
-                name: authelia-secret
+                name: authelia
                 key: HMAC_SECRET
           - name: ISSUER_PRIVATE_KEY
             valueFrom:
               secretKeyRef:
-                name: authelia-secret
+                name: authelia
                 key: ISSUER_PRIVATE_KEY
           - name: PORTAINER_CLIENT_SECRET
             valueFrom:
               secretKeyRef:
-                name: authelia-secret
+                name: authelia
                 key: PORTAINER_CLIENT_SECRET
           - name: JELLYFIN_CLIENT_SECRET
             valueFrom:
               secretKeyRef:
-                name: authelia-secret
+                name: authelia
                 key: JELLYFIN_CLIENT_SECRET
           - name: LINKDING_CLIENT_SECRET
             valueFrom:
               secretKeyRef:
-                name: authelia-secret
+                name: authelia
                 key: LINKDING_CLIENT_SECRET
           - name: HOARDER_CLIENT_SECRET
             valueFrom:
               secretKeyRef:
-                name: authelia-secret
+                name: authelia
                 key: HOARDER_CLIENT_SECRET
         volumeMounts:
           - name: config-template
@@ -104,4 +104,4 @@ spec:
         emptyDir: {}
       - name: secret-volume
         secret:
-          secretName: authelia-secret
+          secretName: authelia

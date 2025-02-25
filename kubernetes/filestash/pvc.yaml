@@ -5,7 +5,8 @@ metadata:
   name: filestash-data
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
+  volumeName: pvc-dffb96f9-59d3-4c5b-885c-22c-b73d0ed7
   storageClassName: longhorn
   resources:
     requests:
