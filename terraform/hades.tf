@@ -9,7 +9,7 @@ resource "proxmox_vm_qemu" "k3s_master" {
   cores       = 2
   sockets     = 1
   cpu_type    = "host"
-  memory      = 3072
+  memory      = 4096
   scsihw      = "virtio-scsi-pci"
   bootdisk    = "scsi0"
 
@@ -24,7 +24,7 @@ resource "proxmox_vm_qemu" "k3s_master" {
     scsi {
       scsi0 {
         disk {
-          size    = 32
+          size    = 100
           cache   = "writeback"
           storage = "local-lvm"
         }
@@ -68,7 +68,7 @@ resource "proxmox_vm_qemu" "k3s_worker" {
   cores       = 2
   sockets     = 1
   cpu_type    = "host"
-  memory      = 3072
+  memory      = 4096
   scsihw      = "virtio-scsi-pci"
   bootdisk    = "scsi0"
 
@@ -83,7 +83,7 @@ resource "proxmox_vm_qemu" "k3s_worker" {
     scsi {
       scsi0 {
         disk {
-          size    = 32
+          size    = 100
           cache   = "writeback"
           storage = "local-lvm"
         }
