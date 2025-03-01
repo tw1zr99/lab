@@ -5,7 +5,8 @@ metadata:
   name: meilisearch-data
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
+  volumeName: pvc-d413eae0-7d99-4a2b-9dbd-a82898f22160
   storageClassName: longhorn
   resources:
     requests:

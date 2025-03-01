@@ -36,17 +36,17 @@ spec:
         - name: MEILI_MASTER_KEY
           valueFrom:
             secretKeyRef:
-              name: hoarder-secret
+              name: hoarder
               key: MEILI_MASTER_KEY
         - name: NEXTAUTH_SECRET
           valueFrom:
             secretKeyRef:
-              name: hoarder-secret
+              name: hoarder
               key: NEXTAUTH_SECRET
         - name: OPENAI_API_KEY
           valueFrom:
             secretKeyRef:
-              name: hoarder-secret
+              name: hoarder
               key: OPENAI_API_KEY
         # oidc
         - name: OAUTH_WELLKNOWN_URL
@@ -56,7 +56,7 @@ spec:
         - name: OAUTH_CLIENT_SECRET
           valueFrom:
             secretKeyRef:
-              name: hoarder-secret
+              name: hoarder
               key: HOARDER_CLIENT_SECRET
         - name: OAUTH_SCOPE
           value: "openid email profile"

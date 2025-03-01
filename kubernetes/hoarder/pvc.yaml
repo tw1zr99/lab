@@ -5,7 +5,8 @@ metadata:
   name: hoarder-data
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
+  volumeName: pvc-f1e645f7-68de-4a2a-83c2-f5a74ba48597
   storageClassName: longhorn
   resources:
     requests:
