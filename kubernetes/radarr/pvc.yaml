@@ -5,7 +5,8 @@ metadata:
   name: radarr-data
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
+  volumeName: pvc-56ccd364-c025-427b-99f5-ff10e91f44b9
   storageClassName: longhorn
   resources:
     requests:
@@ -16,9 +17,9 @@ apiVersion: v1
 metadata:
   name: radarr-movies
 spec:
-  volumeName: radarr-movies
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
+  volumeName: radarr-movies
   storageClassName: ""
   resources:
     requests:
@@ -29,9 +30,9 @@ apiVersion: v1
 metadata:
   name: radarr-downloads
 spec:
-  volumeName: radarr-downloads
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
+  volumeName: radarr-downloads
   storageClassName: ""
   resources:
     requests:

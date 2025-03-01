@@ -2,11 +2,12 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: linkding-pvc
+  name: linkding-data
 spec:
   accessModes:
-    - ReadWriteMany
-  storageClassName: ""
+    - ReadWriteOnce
+  # volumeName: xxxxxxxxxxx
+  storageClassName: longhorn
   resources:
     requests:
       storage: 1Gi

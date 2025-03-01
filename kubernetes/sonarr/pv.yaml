@@ -7,11 +7,11 @@ spec:
   capacity:
     storage: 4Ti
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   storageClassName: ""
   nfs:
     path: /mnt/tank/media/tv
-    server: 192.168.5.3
+    server: scale.lan
   persistentVolumeReclaimPolicy: Retain
 ---
 kind: PersistentVolume
@@ -22,9 +22,9 @@ spec:
   capacity:
     storage: 8Ti
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   storageClassName: ""
   nfs:
     path: /mnt/tank/media/downloads
-    server: 192.168.5.3
+    server: scale.lan
   persistentVolumeReclaimPolicy: Retain

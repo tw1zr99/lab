@@ -40,7 +40,7 @@ spec:
         - name: OIDC_RP_CLIENT_SECRET
           valueFrom:
             secretKeyRef:
-              name: linkding-secret
+              name: linkding
               key: OIDC_RP_CLIENT_SECRET
 
         volumeMounts:
@@ -49,4 +49,4 @@ spec:
       volumes:
       - name: linkding-data
         persistentVolumeClaim:
-          claimName: linkding-pvc
+          claimName: linkding-data

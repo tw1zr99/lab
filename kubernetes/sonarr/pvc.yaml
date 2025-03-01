@@ -5,7 +5,8 @@ metadata:
   name: sonarr-data
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
+  volumeName: pvc-f5195ed8-10ef-48dd-b18c-892c9583e40f
   storageClassName: longhorn
   resources:
     requests:
@@ -16,9 +17,9 @@ apiVersion: v1
 metadata:
   name: sonarr-tv
 spec:
-  volumeName: sonarr-tv
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
+  volumeName: sonarr-tv
   storageClassName: ""
   resources:
     requests:
@@ -29,9 +30,9 @@ apiVersion: v1
 metadata:
   name: sonarr-downloads
 spec:
-  volumeName: sonarr-downloads
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
+  volumeName: sonarr-downloads
   storageClassName: ""
   resources:
     requests:
