@@ -11,11 +11,3 @@ resources:
 
 patches:
   - path: patch.yaml
-
-patchesJson6902:
-- target:
-    group: apps
-    version: v1
-    kind: Deployment
-    name: argocd-repo-server
-  path: patch-repo-server.yaml
