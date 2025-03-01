@@ -7,12 +7,14 @@ spec:
   capacity:
     storage: 1Ti
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   storageClassName: ""
   nfs:
     path: /mnt/tank/media/movies
-    server: 192.168.5.3
+    server: scale.lan
   persistentVolumeReclaimPolicy: Retain
+  mountOptions:
+    - vers=4.1
 ---
 kind: PersistentVolume
 apiVersion: v1
@@ -22,12 +24,14 @@ spec:
   capacity:
     storage: 4Ti
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   storageClassName: ""
   nfs:
     path: /mnt/tank/media/tv
-    server: 192.168.5.3
+    server: scale.lan
   persistentVolumeReclaimPolicy: Retain
+  mountOptions:
+    - vers=4.1
 ---
 kind: PersistentVolume
 apiVersion: v1
@@ -37,9 +41,11 @@ spec:
   capacity:
     storage: 1Ti
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   storageClassName: ""
   nfs:
     path: /mnt/tank/media/channels
-    server: 192.168.5.3
+    server: scale.lan
   persistentVolumeReclaimPolicy: Retain
+  mountOptions:
+    - vers=4.1
