@@ -2,12 +2,12 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: pinchflat-data-pvc
-  namespace: pinchflat
+  name: pinchflat-data
 spec:
   accessModes:
-    - ReadWriteMany
-  storageClassName: ""
+    - ReadWriteOnce
+  volumeName: pvc-fb97f9d2-60c4-459d-9997-1763d5479454
+  storageClassName: longhorn
   resources:
     requests:
       storage: 1Gi
@@ -15,11 +15,11 @@ spec:
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: pinchflat-channels-pvc
-  namespace: pinchflat
+  name: pinchflat-channels
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
+  volumeName: pinchflat-channels
   storageClassName: ""
   resources:
     requests:

@@ -5,7 +5,8 @@ metadata:
   name: backrest-data
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
+  volumeName: pvc-a5b65cf7-cf0f-4068-b2ca-27dc7da335da
   storageClassName: longhorn
   resources:
     requests:
@@ -17,7 +18,8 @@ metadata:
   name: backrest-config
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
+  volumeName: pvc-b0b85ed7-1b45-4f3b-9571-17c3b866be4f
   storageClassName: longhorn
   resources:
     requests:
@@ -28,10 +30,10 @@ kind: PersistentVolumeClaim
 metadata:
   name: backrest-userdata
 spec:
-  volumeName: backrest-userdata
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
+  volumeName: backrest-userdata
   storageClassName: ""
   resources:
     requests:
-      storage: 20Gi
+      storage: 200Gi

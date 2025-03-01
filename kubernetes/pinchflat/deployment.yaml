@@ -36,7 +36,7 @@ spec:
       volumes:
       - name: pinchflat-data
         persistentVolumeClaim:
-          claimName: pinchflat-data-pvc
+          claimName: pinchflat-data
       - name: pinchflat-channels
         persistentVolumeClaim:
-          claimName: pinchflat-channels-pvc
+          claimName: pinchflat-channels

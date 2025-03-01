@@ -2,10 +2,11 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: actual-budget-data-pvc
+  name: actual-budget-data
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
+  volumeName: pvc-1d71f38e-5ac4-468f-bc64-e2173112d02e
   storageClassName: longhorn
   resources:
     requests:

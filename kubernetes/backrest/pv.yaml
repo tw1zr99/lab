@@ -5,11 +5,11 @@ metadata:
   name: backrest-userdata
 spec:
   capacity:
-    storage: 20Gi
+    storage: 200Gi
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   storageClassName: ""
   nfs:
     path: /mnt/tank/backups
-    server: 192.168.5.3
+    server: scale.lan
   persistentVolumeReclaimPolicy: Retain
