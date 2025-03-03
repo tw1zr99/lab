@@ -13,6 +13,14 @@ spec:
           - path: kubernetes/*
           - path: kubernetes/longhorn
             exclude: true
+          - path: kubernetes/cert-manager
+            exclude: true
+          - path: kubernetes/reflector
+            exclude: true
+          - path: kubernetes/traefik
+            exclude: true
+          - path: kubernetes/monitoring
+            exclude: true
   template:
     metadata:
       name: '{{ path.basename }}'
