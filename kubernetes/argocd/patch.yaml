@@ -5,3 +5,10 @@ metadata:
   name: argocd-cmd-params-cm
 data:
   server.insecure: "true"
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: argocd-cm
+data:
+  kustomize.buildOptions: --enable-helm
