@@ -3,6 +3,5 @@ kind: ConfigMap
 apiVersion: v1
 metadata:
   name: argocd-cm
-  namespace: argocd
 data:
   kustomize.buildOptions: --enable-helm
