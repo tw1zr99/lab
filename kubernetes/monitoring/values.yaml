@@ -44,10 +44,10 @@ grafana:
   defaultDashboardsTimezone: utc
   serviceMonitor:
     enabled: true
-  admin:
-    existingSecret: grafana-secret
-    userKey: USER
-    passwordKey: PASS
+  # admin:
+  #   existingSecret: grafana
+  #   userKey: USER
+  #   passwordKey: PASS
   # persistence:
   #   enabled: true
   #   storageClassName: "longhorn"

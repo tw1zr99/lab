@@ -8,8 +8,7 @@ resources:
   - ingress.yaml
   - hosts/adguard.efym.net.yaml
   - hosts/openwrt.efym.net.yaml
-  - hosts/pve1.efym.net.yaml
-  - hosts/pve2.efym.net.yaml
+  - hosts/pve.efym.net.yaml
   - hosts/truenas.efym.net.yaml
 
 helmCharts:

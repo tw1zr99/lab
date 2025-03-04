@@ -6,7 +6,7 @@ namespace: monitoring
 resources:
   - namespace.yaml
   - ingress.yaml
-  - sealedsecret.yaml
+  # - sealedsecret.yaml
 
 helmCharts:
   - name: kube-prometheus-stack
