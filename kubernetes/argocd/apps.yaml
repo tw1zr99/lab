@@ -19,8 +19,8 @@ spec:
           #   exclude: true
           # - path: kubernetes/traefik
           #   exclude: true
-          # - path: kubernetes/qbittorrent
-          #   exclude: true
+          - path: kubernetes/qbittorrent
+            exclude: true
           - path: kubernetes/monitoring
             exclude: true
   template:
