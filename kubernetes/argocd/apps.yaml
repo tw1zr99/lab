@@ -21,6 +21,8 @@ spec:
           #   exclude: true
           - path: kubernetes/monitoring
             exclude: true
+          - path: kubernetes/qbittorrent
+            exclude: true
   template:
     metadata:
       name: '{{ path.basename }}'
