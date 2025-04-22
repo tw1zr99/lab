@@ -23,6 +23,26 @@ spec:
             exclude: true
           - path: kubernetes/monitoring
             exclude: true
+          - path: kubernetes/hoarder
+            exclude: true
+          - path: kubernetes/meilisearch
+            exclude: true
+          - path: kubernetes/filestash
+            exclude: true
+          - path: kubernetes/vaultwarden
+            exclude: true
+          - path: kubernetes/linkding
+            exclude: true
+          - path: kubernetes/actual-budget
+            exclude: true
+          - path: kubernetes/sonarr
+            exclude: true
+          - path: kubernetes/radarr
+            exclude: true
+          - path: kubernetes/jellyfin
+            exclude: true
+          - path: kubernetes/pinchflat
+            exclude: true
   template:
     metadata:
       name: '{{ path.basename }}'
