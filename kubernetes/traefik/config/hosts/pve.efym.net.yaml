@@ -26,9 +26,9 @@ spec:
   routes:
     - match: Host(`pve.efym.net`)
       kind: Rule
-      middlewares:
-        - name: authelia
-          namespace: authelia
+      # middlewares:
+      #   - name: authelia
+      #     namespace: authelia
       services:
         - name: pve
           port: 8006

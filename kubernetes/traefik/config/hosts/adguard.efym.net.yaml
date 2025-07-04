@@ -26,9 +26,9 @@ spec:
   routes:
     - match: Host(`adguard.efym.net`)
       kind: Rule
-      middlewares:
-        - name: authelia
-          namespace: authelia
+      # middlewares:
+      #   - name: authelia
+      #     namespace: authelia
       services:
         - name: adguard
           port: 8083

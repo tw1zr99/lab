@@ -26,9 +26,9 @@ spec:
   routes:
     - match: Host(`truenas.efym.net`)
       kind: Rule
-      middlewares:
-        - name: authelia
-          namespace: authelia
+      # middlewares:
+      #   - name: authelia
+      #     namespace: authelia
       services:
         - name: truenas
           port: 80

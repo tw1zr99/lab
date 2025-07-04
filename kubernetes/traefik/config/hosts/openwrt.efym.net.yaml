@@ -26,9 +26,9 @@ spec:
   routes:
     - match: Host(`openwrt.efym.net`)
       kind: Rule
-      middlewares:
-        - name: authelia
-          namespace: authelia
+      # middlewares:
+      #   - name: authelia
+      #     namespace: authelia
       services:
         - name: openwrt
           port: 80
