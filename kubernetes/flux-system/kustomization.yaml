@@ -7,3 +7,5 @@ resources:
 - gotk-sync.yaml
 - cert-manager-chart.yaml
 - cert-manager-config.yaml
+- traefik-chart.yaml
+- traefik-config.yaml
