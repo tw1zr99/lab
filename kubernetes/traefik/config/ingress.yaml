@@ -19,4 +19,4 @@ spec:
         - name: api@internal
           kind: TraefikService
   tls:
-    secretName: efym-tls-6pwf2
+    secretName: efym-net-tls

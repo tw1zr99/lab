@@ -33,4 +33,4 @@ spec:
         - name: truenas
           port: 80
   tls:
-    secretName: efym-tls-6pwf2
+    secretName: efym-net-tls

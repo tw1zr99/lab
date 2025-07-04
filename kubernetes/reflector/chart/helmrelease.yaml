@@ -3,19 +3,18 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: cert-manager
-  namespace: cert-manager
+  name: reflector
+  namespace: reflector
 spec:
   interval: 10m0s
   install:
     createNamespace: true
   chart:
     spec:
-      chart: cert-manager
-      version: v1.18.2
+      chart: reflector
+      version: 9.1.17
       sourceRef:
         kind: HelmRepository
-        name: jetstack
+        name: emberstack
         namespace: flux-system
-  values:
-    installCRDs: true
+  values: {}

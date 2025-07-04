@@ -6,7 +6,9 @@ metadata:
   name: traefik
   namespace: traefik
 spec:
-  interval: 5m0s
+  interval: 10m0s
+  install:
+    createNamespace: true
   chart:
     spec:
       chart: traefik
