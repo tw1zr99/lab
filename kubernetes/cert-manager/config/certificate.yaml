@@ -1,0 +1,15 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: efym-tls
+  namespace: cert-manager
+spec:
+  secretName: efym-tls
+  renewBefore: 720h
+  commonName: efym.net
+  dnsNames:
+    - efym.net
+    - '*.efym.net'
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
