@@ -33,4 +33,4 @@ spec:
         - name: openwrt
           port: 80
   tls:
-    secretName: efym-tls
+    secretName: efym-tls-6pwf2

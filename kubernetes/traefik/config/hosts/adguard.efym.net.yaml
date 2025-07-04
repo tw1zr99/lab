@@ -33,4 +33,4 @@ spec:
         - name: adguard
           port: 8083
   tls:
-    secretName: efym-tls
+    secretName: efym-tls-6pwf2

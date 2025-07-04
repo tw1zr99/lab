@@ -33,4 +33,4 @@ spec:
         - name: pve
           port: 8006
   tls:
-    secretName: efym-tls
+    secretName: efym-tls-6pwf2
