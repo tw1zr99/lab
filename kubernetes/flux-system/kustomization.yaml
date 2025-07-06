@@ -10,3 +10,4 @@ resources:
 - reflector-chart.yaml
 - traefik-chart.yaml
 - traefik-config.yaml
+- efym-net.yaml
