@@ -5,6 +5,7 @@ kind: Kustomization
 resources:
 - gotk-components.yaml
 - gotk-sync.yaml
+- openebs.yaml
 - cert-manager-chart.yaml
 - cert-manager-config.yaml
 - reflector-chart.yaml
