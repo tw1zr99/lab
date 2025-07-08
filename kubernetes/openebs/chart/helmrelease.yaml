@@ -17,11 +17,23 @@ spec:
         name: openebs
         namespace: flux-system
   values:
-    localprovisioner:
+    openebs-crds:
+      csi:
+        volumeSnapshots:
+          enabled: false
+    engines:
+      jiva:
+        enabled: false
+      cstor:
+        enabled: false
+      replicated:
+        mayastor:
+          enabled: true
+    lvm-localpv:
       enabled: false
-    jiva:
+    zfs-localpv:
       enabled: false
-    cstor:
+    hostpath-localpv:
       enabled: false
-    mayastor:
-      enabled: true
+    localpv-provisioner:
+      enabled: false
