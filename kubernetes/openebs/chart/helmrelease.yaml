@@ -21,6 +21,28 @@ spec:
       csi:
         volumeSnapshots:
           enabled: false
+
+    localpv-provisioner:
+      enabled: false
+
+    lvm-localpv:
+      crds:
+        lvmLocalPv:
+          enabled: false
+        csi:
+          volumeSnapshots:
+            enabled: false
+      enabled: false
+
+    zfs-localpv:
+      crds:
+        zfsLocalPv:
+          enabled: false
+        csi:
+          volumeSnapshots:
+            enabled: false
+      enabled: false
+
     engines:
       jiva:
         enabled: false
@@ -29,11 +51,15 @@ spec:
       replicated:
         mayastor:
           enabled: true
-    lvm-localpv:
-      enabled: false
-    zfs-localpv:
-      enabled: false
-    hostpath-localpv:
-      enabled: false
-    localpv-provisioner:
-      enabled: false
+
+    mayastor:
+      csi:
+        node:
+          initContainers:
+            enabled: true
+      crds:
+        enabled: true
+      loki:
+        enabled: false
+      alloy:
+        enabled: false
