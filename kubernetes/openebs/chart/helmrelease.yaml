@@ -16,4 +16,12 @@ spec:
         kind: HelmRepository
         name: openebs
         namespace: flux-system
-  values: {}
+  values:
+    localprovisioner:
+      enabled: false
+    jiva:
+      enabled: false
+    cstor:
+      enabled: false
+    mayastor:
+      enabled: true
