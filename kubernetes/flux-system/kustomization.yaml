@@ -9,5 +9,7 @@ resources:
 - reflector-chart.yaml
 - traefik-chart.yaml
 - traefik-config.yaml
-- kanidm.yaml
+- longhorn-chart.yaml
+- longhorn-config.yaml
+# - kanidm.yaml
 - efym-net.yaml

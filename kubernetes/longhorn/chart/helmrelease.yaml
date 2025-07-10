@@ -1,0 +1,23 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: longhorn
+  namespace: longhorn-system
+spec:
+  chart:
+    spec:
+      chart: longhorn
+      version: v1.9.0
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: longhorn
+  interval: 10m0s
+  values:
+    defaultSettings:
+      default-replica-count: "3"
+      default-data-locality: "best-effort"
+      default-stale-replica-reclaim-policy: "delete"
+      auto-salvage: "true"
+    backupTarget: "nfs://scale.lan:/mnt/tank/backups/appdata"
