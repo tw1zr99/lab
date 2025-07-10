@@ -11,5 +11,5 @@ resources:
 - traefik-config.yaml
 - longhorn-chart.yaml
 - longhorn-config.yaml
-# - kanidm.yaml
+- kanidm.yaml
 - efym-net.yaml
