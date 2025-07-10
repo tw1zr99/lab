@@ -1,0 +1,21 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kanidm-config
+  namespace: kanidm
+data:
+  server.toml: |
+    version = "2"
+    bindaddress = "[::]:8443"
+    db_path = "/data/kanidm.db"
+    tls_chain = "/data/chain.pem"
+    tls_key = "/data/key.pem"
+    log_level = "info"
+    domain = "sso.efym.net"
+    origin = "https://sso.efym.net:8443"
+
+    [online_backup]
+    path = "/data/kanidm/backups/"
+    schedule = "00 22 * * *"
+    versions = 7

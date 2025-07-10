@@ -1,0 +1,43 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kanidm
+  namespace: kanidm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kanidm
+  template:
+    metadata:
+      labels:
+        app: kanidm
+    spec:
+      containers:
+        - name: kanidm
+          image: docker.io/kanidm/server:latest
+          imagePullPolicy: IfNotPresent
+          args:
+            - "--config"
+            - "/config/server.toml"
+          ports:
+            - containerPort: 8443
+              name: https
+            - containerPort: 3636
+              name: ldap
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: config
+              mountPath: /config
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: kanidm-data
+        - name: config
+          configMap:
+            name: kanidm-config
+            items:
+              - key: server.toml
+                path: server.toml

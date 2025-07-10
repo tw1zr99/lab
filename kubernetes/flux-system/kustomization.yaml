@@ -1,5 +1,4 @@
 ---
-# yaml-language-server: $schema=https://json.schemastore.org/kustomization
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -11,5 +10,5 @@ resources:
 - reflector-chart.yaml
 - traefik-chart.yaml
 - traefik-config.yaml
-- kanidm-chart.yaml
+- kanidm.yaml
 - efym-net.yaml

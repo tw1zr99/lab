@@ -10,8 +10,11 @@ spec:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  path: "./kubernetes/kanidm/chart"
+  path: "./kubernetes/kanidm"
   prune: true
   timeout: 2m0s
   dependsOn:
     - name: flux-system
+    - name: traefik-config
+    - name: cert-manager-config
+    - name: openebs
