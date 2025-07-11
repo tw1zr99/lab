@@ -23,7 +23,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: efym-net
-  namespace: default
+  namespace: cert-manager
 spec:
   secretName: efym-net-tls
   issuerRef:
