@@ -1,5 +1,25 @@
 ---
 apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt
+  namespace: cert-manager
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt
+    solvers:
+      - dns01:
+          cloudflare:
+            apiTokenSecretRef:
+              name: cloudflare
+              key: token
+        selector:
+          dnsZones:
+            - "efym.net"
+---
+apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: efym-net
