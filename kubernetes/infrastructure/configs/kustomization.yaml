@@ -5,4 +5,7 @@ resources:
   - certificate.yaml
   - middleware.yaml
   - ingress.yaml
-  - hosts/
+  - hosts/adguard.yaml
+  - hosts/openwrt.yaml
+  - hosts/pve.yaml
+  - hosts/truenas.yaml
