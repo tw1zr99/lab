@@ -5,6 +5,7 @@ metadata:
   name: infrastructure-controllers
   namespace: flux-system
 spec:
+  validation: client
   interval: 1h
   retryInterval: 1m
   timeout: 5m
