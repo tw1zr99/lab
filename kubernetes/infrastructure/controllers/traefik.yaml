@@ -11,7 +11,7 @@ metadata:
   namespace: flux-system
 spec:
   url: https://helm.traefik.io/traefik
-  interval: 1h
+  interval: 24h
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
@@ -19,9 +19,7 @@ metadata:
   name: traefik
   namespace: traefik
 spec:
-  interval: 10m0s
-  install:
-    createNamespace: true
+  interval: 1h
   chart:
     spec:
       chart: traefik
