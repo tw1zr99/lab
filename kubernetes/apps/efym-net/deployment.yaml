@@ -1,10 +1,10 @@
 ---
-kind: Deployment
 apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: efym-net
   labels:
-    app: nginx
+    app: efym-net
 spec:
   replicas: 2
   progressDeadlineSeconds: 600
