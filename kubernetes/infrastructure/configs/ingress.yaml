@@ -42,3 +42,22 @@ spec:
           port: 80
   tls:
     secretName: efym-net-tls
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: kanidm
+  namespace: kanidm
+  annotations:
+    kubernetes.io/ingress.class: traefik-external
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`sso.efym.net`)
+      kind: Rule
+      services:
+        - name: kanidm
+          port: 443
+  tls:
+    secretName: efym-net-tls

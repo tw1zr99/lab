@@ -1,0 +1,89 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kanidm
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kanidm-config
+  namespace: kanidm
+data:
+  server.toml: |
+    version = "2"
+    bindaddress = "[::]:8443"
+    db_path     = "/data/kanidm.db"
+    tls_chain   = "/tls/tls.crt"
+    tls_key     = "/tls/tls.key"
+    log_level   = "info"
+    domain      = "sso.efym.net"
+    origin      = "https://sso.efym.net:8443"
+
+    [online_backup]
+      path     = "/data/backups/"
+      schedule = "00 22 * * *"
+      versions = 7
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kanidm-data
+  namespace: kanidm
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: longhorn
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kanidm
+  namespace: kanidm
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: kanidm
+  template:
+    metadata:
+      labels:
+        app: kanidm
+    spec:
+      containers:
+        - name: kanidm
+          image: docker.io/kanidm/server:latest
+          command: ["kanidmd"]
+          args:
+            - --config
+            - /config/server.toml
+          ports:
+            - name: https
+              containerPort: 8443
+            - name: ldap
+              containerPort: 3636
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: config
+              mountPath: /config
+            - name: tls
+              mountPath: /tls
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: kanidm-data
+        - name: config
+          configMap:
+            name: kanidm-config
+            items:
+              - key: server.toml
+                path: server.toml
+        - name: tls
+          secret:
+            secretName: efym-net-tls
