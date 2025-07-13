@@ -12,9 +12,9 @@ spec:
   routes:
     - match: Host(`traefik.efym.net`)
       kind: Rule
-      # middlewares:
-      #   - name: authelia
-      #     namespace: authelia
+      middlewares:
+        - name: authelia
+          namespace: authelia
       services:
         - name: api@internal
           kind: TraefikService
@@ -34,9 +34,9 @@ spec:
   routes:
     - match: Host(`longhorn.efym.net`)
       kind: Rule
-      # middlewares:
-      #   - name: authelia
-      #     namespace: authelia
+      middlewares:
+        - name: authelia
+          namespace: authelia
       services:
         - name: longhorn-frontend
           port: 80
