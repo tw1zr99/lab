@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - certificate.yaml
   - service.yaml
+  - middleware.yaml
   - ingress.yaml
   - hosts/adguard.yaml
   - hosts/openwrt.yaml

@@ -14,3 +14,17 @@ spec:
     - name: ldap
       port: 636
       targetPort: 3636
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: authelia
+  namespace: authelia
+spec:
+  selector:
+    app: authelia
+  ports:
+  - name: http
+    port: 9091
+    targetPort: 9091
+    protocol: TCP
