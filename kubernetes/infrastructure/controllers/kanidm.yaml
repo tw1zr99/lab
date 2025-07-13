@@ -60,6 +60,7 @@ spec:
           image: docker.io/kanidm/server:latest
           command: ["kanidmd"]
           args:
+            - serve
             - --config
             - /config/server.toml
           ports:
