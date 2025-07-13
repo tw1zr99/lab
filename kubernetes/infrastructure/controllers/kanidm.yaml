@@ -58,11 +58,7 @@ spec:
       containers:
         - name: kanidm
           image: docker.io/kanidm/server:latest
-          command: ["kanidmd"]
-          args:
-            - serve
-            - --config
-            - /config/server.toml
+          command: ["kanidmd", "server"]
           ports:
             - name: https
               containerPort: 8443
@@ -72,7 +68,8 @@ spec:
             - name: data
               mountPath: /data
             - name: config
-              mountPath: /config
+              mountPath: /data/server.toml
+              subPath: server.toml
             - name: tls
               mountPath: /tls
       volumes:
