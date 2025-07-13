@@ -192,6 +192,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: authelia
+  namespace: authelia
   labels:
     app: authelia
 spec:
