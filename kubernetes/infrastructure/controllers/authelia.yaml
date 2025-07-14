@@ -129,10 +129,11 @@ data:
               - https://karakeep.efym.net/api/auth/callback/custom
             scopes:
               - openid
-              - profile
               - email
+              - profile
             consent_mode: implicit
             userinfo_signed_response_alg: none
+            token_endpoint_auth_method: client_secret_post
 
           - client_id: linkding
             client_name: Linkding
