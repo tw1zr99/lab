@@ -1,0 +1,26 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: meilisearch-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeName: pvc-6c97c357-68d5-4128-9c59-d2b91c8b8c61
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: karakeep-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeName: pvc-dd803b3a-aedc-46b2-a332-3fc0cc9bada1
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 5Gi
