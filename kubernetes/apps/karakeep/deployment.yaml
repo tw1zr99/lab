@@ -99,7 +99,7 @@ spec:
         - name: OAUTH_PROVIDER_NAME
           value: "authelia"
         - name: OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING
-          value: "true"
+          value: true
         volumeMounts:
         - name: karakeep-data
           mountPath: /data
