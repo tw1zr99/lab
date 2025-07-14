@@ -6,5 +6,4 @@ resources:
   - reflector.yaml
   - traefik.yaml
   - longhorn.yaml
-  - kanidm.yaml
   - authelia.yaml
