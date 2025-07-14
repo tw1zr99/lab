@@ -1,0 +1,107 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meilisearch
+  labels:
+    app: meilisearch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: meilisearch
+  template:
+    metadata:
+      labels:
+        app: meilisearch
+    spec:
+      enableServiceLinks: true
+      containers:
+      - name: meilisearch
+        image: getmeili/meilisearch:latest
+        ports:
+          - containerPort: 7700
+            name: http
+        env:
+          - name: MEILI_NO_ANALYTICS
+            value: "true"
+        volumeMounts:
+          - name: meilisearch-data
+            mountPath: /meili_data
+      volumes:
+      - name: meilisearch-data
+        persistentVolumeClaim:
+          claimName: meilisearch-data
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: karakeep
+  labels:
+    app: karakeep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: karakeep
+  template:
+    metadata:
+      labels:
+        app: karakeep
+    spec:
+      enableServiceLinks: true
+      containers:
+      - name: karakeep
+        image: ghcr.io/karakeep-app/karakeep:latest
+        ports:
+        - containerPort: 3000
+          name: http
+        env:
+        - name: TZ
+          value: "Europe/London"
+        - name: DATA_DIR
+          value: "/data"
+        - name: DISABLE_SIGNUPS
+          value: "true"
+        - name: NEXTAUTH_URL
+          value: "https://karakeep.efym.net"
+        - name: MEILI_ADDR
+          value: "http://meilisearch:7700"
+        - name: MEILI_MASTER_KEY
+          valueFrom:
+            secretKeyRef:
+              name: karakeep
+              key: MEILI_MASTER_KEY
+        - name: NEXTAUTH_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: karakeep
+              key: NEXTAUTH_SECRET
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: karakeep
+              key: OPENAI_API_KEY
+        # oidc
+        - name: OAUTH_WELLKNOWN_URL
+          value: "https://login.efym.net/.well-known/openid-configuration"
+        - name: OAUTH_CLIENT_ID
+          value: "karakeep"
+        - name: OAUTH_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: karakeep
+              key: KARAKEEP_CLIENT_SECRET
+        - name: OAUTH_SCOPE
+          value: "openid email profile"
+        - name: OAUTH_PROVIDER_NAME
+          value: "authelia"
+        - name: OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING
+          value: "true"
+        volumeMounts:
+        - name: karakeep-data
+          mountPath: /data
+      volumes:
+      - name: karakeep-data
+        persistentVolumeClaim:
+          claimName: karakeep-data
