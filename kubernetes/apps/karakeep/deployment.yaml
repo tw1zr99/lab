@@ -62,7 +62,7 @@ spec:
         - name: DATA_DIR
           value: "/data"
         - name: DISABLE_SIGNUPS
-          value: "true"
+          value: "false"
         - name: DISABLE_PASSWORD_AUTH
           value: "true"
         - name: NEXTAUTH_URL
