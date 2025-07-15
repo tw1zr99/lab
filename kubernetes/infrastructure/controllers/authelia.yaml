@@ -99,6 +99,9 @@ data:
 
     identity_providers:
       oidc:
+        claims_policies:
+          default:
+            id_token: ['openid', 'profile', 'groups', 'email']
         hmac_secret: ${HMAC_SECRET}
         issuer_private_key: |
           ${ISSUER_PRIVATE_KEY}
