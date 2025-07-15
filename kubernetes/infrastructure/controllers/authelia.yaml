@@ -100,8 +100,13 @@ data:
     identity_providers:
       oidc:
         claims_policies:
-          default:
-            id_token: ['email', 'email_verified', 'alt_emails']
+          legacy:
+            id_token:
+              - email
+              - email_verified
+              - name
+              - preferred_username
+              - groups
         hmac_secret: ${HMAC_SECRET}
         issuer_private_key: |
           ${ISSUER_PRIVATE_KEY}
@@ -119,6 +124,7 @@ data:
               - openid
               - profile
               - groups
+            claims_policy: legacy
             consent_mode: implicit
             userinfo_signed_response_alg: none
             token_endpoint_auth_method: client_secret_post
