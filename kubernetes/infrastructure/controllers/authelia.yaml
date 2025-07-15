@@ -125,15 +125,21 @@ data:
             client_secret: ${KARAKEEP_CLIENT_SECRET}
             public: false
             authorization_policy: one_factor
+            require_pkce: false
+            pkce_challenge_method: ''
             redirect_uris:
               - https://karakeep.efym.net/api/auth/callback/custom
             scopes:
-              - openid
-              - email
-              - profile
-            consent_mode: implicit
-            userinfo_signed_response_alg: none
-            token_endpoint_auth_method: client_secret_post
+              - 'openid'
+              - 'email'
+              - 'profile'
+            response_types:
+              - 'code'
+            grant_types:
+              - 'authorization_code'
+            access_token_signed_response_alg: 'none'
+            userinfo_signed_response_alg: 'none'
+            token_endpoint_auth_method: 'client_secret_basic'
 
           - client_id: linkding
             client_name: Linkding
