@@ -101,7 +101,7 @@ data:
       oidc:
         claims_policies:
           default:
-            id_token: ['openid', 'profile', 'groups', 'email']
+            id_token: ['email', 'email_verified', 'alt_emails']
         hmac_secret: ${HMAC_SECRET}
         issuer_private_key: |
           ${ISSUER_PRIVATE_KEY}
