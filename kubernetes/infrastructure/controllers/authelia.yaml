@@ -290,6 +290,11 @@ spec:
               secretKeyRef:
                 name: authelia
                 key: LINKDING_CLIENT_SECRET
+          - name: VAULTWARDEN_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: authelia
+                key: VAULTWARDEN_CLIENT_SECRET
         volumeMounts:
           - name: config-template
             mountPath: /config-template
