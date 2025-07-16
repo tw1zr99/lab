@@ -112,7 +112,6 @@ data:
               - name
               - preferred_username
               - groups
-          claims_policies:
             vaultwarden:
               id_token: ['vaultwarden_roles']
               custom_claims:
