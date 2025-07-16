@@ -188,7 +188,7 @@ data:
             pkce_challenge_method: 'S256'
             claims_policy: 'vaultwarden'
             redirect_uris:
-              - https://vault.efym.net/identity/connect/oidc-signin
+              - 'https://vault.efym.net/identity/connect/oidc-signin/'
             scopes:
               - 'openid'
               - 'offline_access'
