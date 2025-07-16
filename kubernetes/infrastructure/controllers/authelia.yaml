@@ -112,10 +112,13 @@ data:
               - name
               - preferred_username
               - groups
-            vaultwarden:
-              id_token: ['vaultwarden_roles']
-              custom_claims:
-                vaultwarden_roles: {}
+          vaultwarden:
+            id_token: ['vaultwarden_roles']
+            custom_claims:
+              vaultwarden_roles: {}
+        scopes:
+          vaultwarden:
+            claims: ['vaultwarden_roles']
         hmac_secret: ${HMAC_SECRET}
         issuer_private_key: |
           ${ISSUER_PRIVATE_KEY}
