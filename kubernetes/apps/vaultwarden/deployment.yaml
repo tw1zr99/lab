@@ -1,0 +1,60 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vaultwarden
+  labels:
+    app: vaultwarden
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vaultwarden
+  template:
+    metadata:
+      labels:
+        app: vaultwarden
+    spec:
+      enableServiceLinks: true
+      securityContext:
+      containers:
+      - name: vaultwarden
+        image: ghcr.io/timshel/oidcwarden:latest
+        ports:
+        - containerPort: 80
+          name: http
+        env:
+        - name: TZ
+          value: "Europe/London"
+        - name: SSO_ENABLED
+          value: "true"
+        - name: SSO_ONLY
+          value: "true"
+        - name: SSO_AUTHORITY
+          value: "https://login.efym.net"
+        - name: SSO_SCOPES
+          value: "profile email offline_access vaultwarden"
+        - name: SSO_PKCE
+          value: "true"
+        - name: SSO_CLIENT_ID
+          value: "vaultwarden"
+        - name: SSO_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: vaultwarden
+              key: VAULTWARDEN_CLIENT_SECRET
+        - name: SSO_ROLES_ENABLED
+          value: "true"
+        - name: SSO_ROLES_DEFAULT_TO_USER
+          value: "true"
+        - name: SSO_ROLES_TOKEN_PATH
+          value: "/vaultwarden_roles"
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: vaultwarden-data
+          mountPath: /data
+      volumes:
+      - name: vaultwarden-data
+        persistentVolumeClaim:
+          claimName: vaultwarden-data
