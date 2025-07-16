@@ -26,6 +26,8 @@ spec:
         env:
         - name: TZ
           value: "Europe/London"
+        - name: DOMAIN
+          value: "https://vault.efym.net"
         - name: SSO_ENABLED
           value: "true"
         - name: SSO_ONLY
