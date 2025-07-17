@@ -9,7 +9,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`karakeep.efym.net`)
+    - match: Host(`links.efym.net`)
       kind: Rule
       middlewares:
         - name: authelia

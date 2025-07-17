@@ -34,3 +34,39 @@ spec:
           port: 8083
   tls:
     secretName: efym-net-tls
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: adguard2
+  namespace: traefik
+spec:
+  type: ExternalName
+  externalName: isp.lan
+  ports:
+    - port: 8083
+      targetPort: 8083
+      protocol: TCP
+      name: http
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: adguard2
+  namespace: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik-external
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`adguard2.efym.net`)
+      kind: Rule
+      middlewares:
+        - name: authelia
+          namespace: authelia
+      services:
+        - name: adguard2
+          port: 8083
+  tls:
+    secretName: efym-net-tls

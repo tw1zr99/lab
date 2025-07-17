@@ -66,7 +66,7 @@ spec:
         - name: DISABLE_PASSWORD_AUTH
           value: "true"
         - name: NEXTAUTH_URL
-          value: "https://karakeep.efym.net"
+          value: "https://links.efym.net"
         - name: NEXTAUTH_URL_INTERNAL
           value: "http://localhost:3000"
         - name: MEILI_ADDR

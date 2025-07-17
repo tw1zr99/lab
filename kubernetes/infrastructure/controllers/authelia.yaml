@@ -38,7 +38,6 @@ data:
           policy: one_factor
         - domain:
             - "efym.net"
-            - "karakeep.efym.net"
             - "links.efym.net"
             - "login.efym.net"
             - "tv.efym.net"
@@ -48,24 +47,22 @@ data:
             - "*"
           policy: one_factor
         - domain:
-            - "actual.efym.net"
-            - "adguard1.efym.net"
+            - "adguard.efym.net"
             - "adguard2.efym.net"
-            - "backrest.efym.net"
             - "dl.efym.net"
             - "files.efym.net"
             - "grafana.efym.net"
             - "openwrt.efym.net"
             - "pinchflat.efym.net"
             - "prowlarr.efym.net"
-            - "pve1.efym.net"
+            - "pve.efym.net"
             - "pve2.efym.net"
             - "radarr.efym.net"
             - "shell.efym.net"
             - "sonarr.efym.net"
             - "traefik.efym.net"
             - "truenas.efym.net"
-            - "wireguard.efym.net"
+            - "vpn.efym.net"
           subject:
             - "group:users"
           policy: deny
@@ -148,7 +145,7 @@ data:
             require_pkce: false
             pkce_challenge_method: ''
             redirect_uris:
-              - 'https://karakeep.efym.net/api/auth/callback/custom'
+              - 'https://links.efym.net/api/auth/callback/custom'
             scopes:
               - 'openid'
               - 'email'

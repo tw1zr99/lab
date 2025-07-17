@@ -34,3 +34,39 @@ spec:
           port: 8006
   tls:
     secretName: efym-net-tls
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pve2
+  namespace: traefik
+spec:
+  type: ExternalName
+  externalName: atlas.lan
+  ports:
+    - port: 8006
+      targetPort: 8006
+      protocol: TCP
+      name: http
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: pve2
+  namespace: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik-external
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`pve2.efym.net`)
+      kind: Rule
+      middlewares:
+        - name: authelia
+          namespace: authelia
+      services:
+        - name: pve2
+          port: 8006
+  tls:
+    secretName: efym-net-tls
