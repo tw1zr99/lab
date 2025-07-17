@@ -21,4 +21,4 @@ spec:
     spec:
       containers:
       - name: efym-net
-        image: codeberg.org/tw1zr/efym.net
+        image: ghcr.io/tw1zr99/efym.net:latest
