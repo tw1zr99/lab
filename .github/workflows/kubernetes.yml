@@ -22,7 +22,7 @@ jobs:
 
       - name: Validate manifests
         run: |
-          find kubernetes -type f -name '*.yaml' -exec kubeval --kubernetes-version="1.33.2" {} \;
+          find kubernetes -type f -name '*.yaml' -exec kubeval --kubernetes-version="1.24.0" {} \;
 
   kubernetes-kustomize:
     name: Kustomize build check
