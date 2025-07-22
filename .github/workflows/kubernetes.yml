@@ -20,9 +20,13 @@ jobs:
           chmod +x kubeval
           sudo mv kubeval /usr/local/bin/
 
-      - name: Validate manifests
+      - name: Validate manifests (skip CRDs)
         run: |
-          find kubernetes -type f -name '*.yaml' -exec kubeval --kubernetes-version="1.24.0" {} \;
+          kubeval \
+            --kubernetes-version="1.24.0" \
+            --ignore-missing-schemas \
+            --strict \
+            --directories kubernetes
 
   kubernetes-kustomize:
     name: Kustomize build check
