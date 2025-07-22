@@ -21,4 +21,4 @@ spec:
     spec:
       containers:
       - name: efym-net
-        image: ghcr.io/tw1zr99/efym.net:sha-4d4e296dfdb714fefdf203b72745d6f91a634a35
+        image: ghcr.io/tw1zr99/efym.net:sha-075e9f5e83ed8e3949292fb4197da3f58555314d
