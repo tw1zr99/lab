@@ -23,11 +23,17 @@ jobs:
 
       - name: Validate manifests with kubeconform
         run: |
-          find kubernetes -name kustomization.yaml -execdir kustomize build . \; \
-            | kubeconform \
-                --strict \
-                --ignore-missing-schemas \
-                --schema-location default
+          # For each kustomization.yaml, build and append a document separator
+          for k in $(find kubernetes -type f -name kustomization.yaml); do
+            dir=$(dirname "$k")
+            echo "### Validating overlay $dir ###"
+            kustomize build "$dir"
+            echo "---"
+          done \
+          | kubeconform \
+              --strict \
+              --ignore-missing-schemas \
+              --schema-location default
 
   kubernetes-kustomize:
     name: Kustomize build check
