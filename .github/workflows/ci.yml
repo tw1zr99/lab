@@ -1,0 +1,75 @@
+name: ci
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  terraform-fmt:
+    name: Terraform fmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - name: Check formatting
+        working-directory: terraform
+        run: terraform fmt -check -recursive
+
+  terraform-validate:
+    name: Terraform validate
+    runs-on: ubuntu-latest
+    needs: terraform-fmt
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - name: Init (no backend)
+        working-directory: terraform
+        run: terraform init -backend=false
+
+      - name: Validate config
+        working-directory: terraform
+        run: terraform validate
+
+  kubernetes-kustomize-validate:
+    name: Build & Validate K8s Overlays
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install kubeconform
+        run: |
+          curl -sL https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz \
+            | tar xz
+          chmod +x kubeconform
+          sudo mv kubeconform /usr/local/bin/
+
+      - name: Install yq
+        run: |
+          wget -qO /usr/local/bin/yq \
+            https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          chmod +x /usr/local/bin/yq
+
+      - name: Build & validate overlays
+        run: |
+          # Build each overlay, separate documents with '---'
+          for k in $(find kubernetes -type f -name kustomization.yaml); do
+            dir=$(dirname "$k")
+            echo "### Overlay $dir ###"
+            kustomize build "$dir"
+            echo "---"
+          done \
+            | yq eval-all 'del(.sops)' - \
+            | kubeconform \
+                --strict \
+                --ignore-missing-schemas \
+                --schema-location default
