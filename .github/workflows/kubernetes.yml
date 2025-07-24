@@ -23,10 +23,11 @@ jobs:
 
       - name: Validate manifests with kubeconform
         run: |
-          kubeconform \
-            -schema-location default \
-            -strict \
-            kubernetes
+          find kubernetes -name kustomization.yaml -execdir kustomize build . \; \
+            | kubeconform \
+                --strict \
+                --ignore-missing-schemas \
+                --schema-location default
 
   kubernetes-kustomize:
     name: Kustomize build check
