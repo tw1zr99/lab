@@ -39,8 +39,18 @@ jobs:
         working-directory: terraform
         run: terraform validate
 
-  kubernetes-kustomize-kubeconform:
-    name: kubernetes-kustomize-kubeconform
+  terraform-tfsec:
+    name: Terraform security scan (tfsec)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run tfsec
+        uses: aquasecurity/tfsec-action@v1
+        with:
+          directory: terraform
+
+  kubernetes-kubeconform:
+    name: kubernetes-kubeconform
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -78,13 +88,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: install kube-linter
-        run: |
-          curl -sL https://github.com/stackrox/kube-linter/releases/latest/download/kube-linter-linux-amd64.tar.gz \
-            | tar xz
-          sudo mv kube-linter /usr/local/bin/
-      - name: run kube-linter
-        run: kube-linter lint kubernetes
+      - name: scan with kube-linter
+        uses: stackrox/kube-linter-action@v1.0.4
+        with:
+          directory: kubernetes
+          format: json
+          output-file: kube-linter.json
 
   kubernetes-kubescore:
     name: kubernetes-score
@@ -94,4 +103,4 @@ jobs:
       - name: kube-score check
         uses: piraces/kube-score-ga@v0.1.3
         with:
-          manifests-folders: './kubernetes/**/*.yml'
+          manifests-folders: './kubernetes/**/*.yaml'
