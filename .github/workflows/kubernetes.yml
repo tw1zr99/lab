@@ -7,26 +7,26 @@ permissions:
   contents: read
 
 jobs:
-  kubernetes-kubeval:
+  kubernetes-kubeconform:
     name: K8s schema validation
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install kubeval
+      - name: Install kubeconform
         run: |
-          curl -sL https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz \
+          curl -sL \
+            https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz \
             | tar xz
-          chmod +x kubeval
-          sudo mv kubeval /usr/local/bin/
+          chmod +x kubeconform
+          sudo mv kubeconform /usr/local/bin/
 
-      - name: Validate manifests (skip CRDs)
+      - name: Validate manifests with kubeconform
         run: |
-          kubeval \
-            --kubernetes-version="1.24.0" \
-            --ignore-missing-schemas \
-            --strict \
-            --directories kubernetes
+          kubeconform \
+            -schema-location default \
+            -strict \
+            kubernetes
 
   kubernetes-kustomize:
     name: Kustomize build check
