@@ -40,12 +40,12 @@ jobs:
         run: terraform validate
 
   terraform-tfsec:
-    name: Terraform security scan (tfsec)
+    name: terraform-tfsec
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Run tfsec
-        uses: aquasecurity/tfsec-action@v1
+        uses: aquasecurity/tfsec-action@v1.0.0
         with:
           directory: terraform
 
@@ -83,17 +83,17 @@ jobs:
                 --ignore-missing-schemas \
                 --schema-location default
 
-  kubernetes-kubelinter:
+  kubernetes-lint:
     name: kubernetes-lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: scan with kube-linter
-        uses: stackrox/kube-linter-action@v1.0.4
+        uses: stackrox/kube-linter-action@v1.0.7
         with:
           directory: kubernetes
-          format: json
-          output-file: kube-linter.json
+          format: plain
+          output-file: kube-linter.log
 
   kubernetes-kubescore:
     name: kubernetes-score
