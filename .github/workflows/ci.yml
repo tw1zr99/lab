@@ -47,7 +47,7 @@ jobs:
       - name: Run tfsec
         uses: aquasecurity/tfsec-action@v1.0.0
         with:
-          directory: terraform
+          working_directory: terraform
 
   kubernetes-kubeconform:
     name: kubernetes-kubeconform
