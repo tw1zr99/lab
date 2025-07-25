@@ -73,7 +73,6 @@ jobs:
           # Build each overlay, separate documents with '---'
           for k in $(find kubernetes -type f -name kustomization.yaml); do
             dir=$(dirname "$k")
-            echo "### Overlay $dir ###"
             kustomize build "$dir"
             echo "---"
           done \
@@ -101,7 +100,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
+      - uses: azure/setup-kubectl@v3
+        id: install
+
+      - uses: syntaqx/setup-kustomize@v1
+        id: install
+
+      - name: make temp output directory
+        run: mkdir -p out/kustomize
+
+      - name: kustomize build to standard template
+        run: |
+          for k in $(find kubernetes -type f -name kustomization.yaml); do
+            dir=$(dirname "$k")
+            kustomize build "$dir"
+          done > out/kustomize/built.yaml
+
+      - name: cat built.yaml
+        run: cat out/kustomize/built.yaml
+
       - name: kube-score check
         uses: piraces/kube-score-ga@v0.1.3
         with:
-          manifests-folders: './kubernetes/**/*.yaml'
+          manifests-folders: './out/kustomize/*.yaml'
