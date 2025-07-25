@@ -109,9 +109,6 @@ jobs:
             | yq eval-all 'del(.sops)' - \
             > out/kustomize/built.yaml
 
-      - name: cat built.yaml
-        run: cat out/kustomize/built.yaml
-
       - name: kube-score check
         uses: piraces/kube-score-ga@v0.1.3
         with:
