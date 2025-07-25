@@ -24,7 +24,6 @@ jobs:
   terraform-validate:
     name: terraform-validate
     runs-on: ubuntu-latest
-    needs: terraform-fmt
     steps:
       - uses: actions/checkout@v3
 
@@ -40,11 +39,22 @@ jobs:
         working-directory: terraform
         run: terraform validate
 
-  kubernetes-kustomize-kubeconform:
-    name: kubernetes-kustomize-kubeconform
+  terraform-tfsec:
+    name: terraform-tfsec
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Run tfsec
+        uses: aquasecurity/tfsec-action@v1.0.0
+        with:
+          working_directory: terraform
+
+  kubernetes-kubeconform:
+    name: kubernetes-kubeconform
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: mikefarah/yq@v4.47.1
 
       - name: install kubeconform
         run: |
@@ -53,18 +63,10 @@ jobs:
           chmod +x kubeconform
           sudo mv kubeconform /usr/local/bin/
 
-      - name: install yq
-        run: |
-          wget -qO /usr/local/bin/yq \
-            https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
-          chmod +x /usr/local/bin/yq
-
       - name: build and validate overlays
         run: |
-          # Build each overlay, separate documents with '---'
           for k in $(find kubernetes -type f -name kustomization.yaml); do
             dir=$(dirname "$k")
-            echo "### Overlay $dir ###"
             kustomize build "$dir"
             echo "---"
           done \
@@ -73,3 +75,41 @@ jobs:
                 --strict \
                 --ignore-missing-schemas \
                 --schema-location default
+
+  kubernetes-kube-linter:
+    name: kubernetes-kube-linter
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: stackrox/kube-linter-action@v1.0.7
+        with:
+          directory: kubernetes
+          config: .kube-linter.yaml
+          format: plain
+          output-file: kube-linter.log
+
+  kubernetes-kube-score:
+    name: kubernetes-kube-score
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: syntaqx/setup-kustomize@v1
+      - uses: mikefarah/yq@v4.47.1
+
+      - name: make temp output directory
+        run: mkdir -p out/kustomize
+
+      - name: kustomize build to standard template
+        run: |
+          for k in $(find kubernetes -type f -name kustomization.yaml); do
+            dir=$(dirname "$k")
+            kustomize build "$dir"
+            echo "---"
+          done \
+            | yq eval-all 'del(.sops)' - \
+            > out/kustomize/built.yaml
+
+      - name: kube-score check
+        uses: piraces/kube-score-ga@v0.1.3
+        with:
+          manifests-folders: './out/kustomize/*.yaml'
