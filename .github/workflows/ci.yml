@@ -83,8 +83,8 @@ jobs:
                 --ignore-missing-schemas \
                 --schema-location default
 
-  kubernetes-lint:
-    name: kubernetes-lint
+  kubernetes-kube-linter:
+    name: kubernetes-kube-linter
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -92,11 +92,12 @@ jobs:
         uses: stackrox/kube-linter-action@v1.0.7
         with:
           directory: kubernetes
+          config: .kube-linter.yaml
           format: plain
           output-file: kube-linter.log
 
   kubernetes-kubescore:
-    name: kubernetes-score
+    name: kubernetes-kube-score
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

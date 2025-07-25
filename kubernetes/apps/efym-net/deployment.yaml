@@ -19,6 +19,24 @@ spec:
       labels:
         app: efym-net
     spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app: efym-net
+              topologyKey: kubernetes.io/hostname
       containers:
       - name: efym-net
         image: ghcr.io/tw1zr99/efym.net:sha-075e9f5e83ed8e3949292fb4197da3f58555314d
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          readOnlyRootFilesystem: true
+        resources:
+          requests:
+            cpu:    "100m"
+            memory: "128Mi"
+          limits:
+            cpu:    "250m"
+            memory: "256Mi"
