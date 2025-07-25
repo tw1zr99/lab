@@ -54,6 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: mikefarah/yq@v4.47.1
 
       - name: install kubeconform
         run: |
@@ -61,12 +62,6 @@ jobs:
             | tar xz
           chmod +x kubeconform
           sudo mv kubeconform /usr/local/bin/
-
-      - name: install yq
-        run: |
-          wget -qO /usr/local/bin/yq \
-            https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
-          chmod +x /usr/local/bin/yq
 
       - name: build and validate overlays
         run: |
@@ -86,26 +81,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: scan with kube-linter
-        uses: stackrox/kube-linter-action@v1.0.7
+      - uses: stackrox/kube-linter-action@v1.0.7
         with:
           directory: kubernetes
           config: .kube-linter.yaml
           format: plain
           output-file: kube-linter.log
 
-  kubernetes-kubescore:
+  kubernetes-kube-score:
     name: kubernetes-kube-score
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: azure/setup-kubectl@v3
       - uses: syntaqx/setup-kustomize@v1
-      - name: install yq
-        run: |
-          wget -qO /usr/local/bin/yq \
-            https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
-          chmod +x /usr/local/bin/yq
+      - uses: mikefarah/yq@v4.47.1
 
       - name: make temp output directory
         run: mkdir -p out/kustomize
