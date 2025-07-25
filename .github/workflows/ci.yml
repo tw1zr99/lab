@@ -70,7 +70,6 @@ jobs:
 
       - name: build and validate overlays
         run: |
-          # Build each overlay, separate documents with '---'
           for k in $(find kubernetes -type f -name kustomization.yaml); do
             dir=$(dirname "$k")
             kustomize build "$dir"
@@ -102,6 +101,11 @@ jobs:
       - uses: actions/checkout@v3
       - uses: azure/setup-kubectl@v3
       - uses: syntaqx/setup-kustomize@v1
+      - name: install yq
+        run: |
+          wget -qO /usr/local/bin/yq \
+            https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          chmod +x /usr/local/bin/yq
 
       - name: make temp output directory
         run: mkdir -p out/kustomize
@@ -111,7 +115,10 @@ jobs:
           for k in $(find kubernetes -type f -name kustomization.yaml); do
             dir=$(dirname "$k")
             kustomize build "$dir"
-          done > out/kustomize/built.yaml
+            echo "---"
+          done \
+            | yq eval-all 'del(.sops)' - \
+            > out/kustomize/built.yaml
 
       - name: cat built.yaml
         run: cat out/kustomize/built.yaml
