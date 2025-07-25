@@ -100,12 +100,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
       - uses: azure/setup-kubectl@v3
-        id: install
-
       - uses: syntaqx/setup-kustomize@v1
-        id: install
 
       - name: make temp output directory
         run: mkdir -p out/kustomize
