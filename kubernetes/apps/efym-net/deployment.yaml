@@ -29,14 +29,14 @@ spec:
       containers:
       - name: efym-net
         image: ghcr.io/tw1zr99/efym.net:sha-075e9f5e83ed8e3949292fb4197da3f58555314d
-        securityContext:
-          runAsNonRoot: false
-          # runAsUser: 1000
-          readOnlyRootFilesystem: true
-        resources:
-          requests:
-            cpu:    "5m"
-            memory: "32Mi"
-          limits:
-            cpu:    "10m"
-            memory: "128Mi"
+        # securityContext:
+        #   runAsNonRoot: false
+        #   # runAsUser: 1000
+        #   readOnlyRootFilesystem: true
+        # resources:
+        #   requests:
+        #     cpu:    "5m"
+        #     memory: "32Mi"
+        #   limits:
+        #     cpu:    "10m"
+        #     memory: "128Mi"
