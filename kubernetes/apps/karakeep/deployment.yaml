@@ -20,9 +20,9 @@ spec:
       - name: meilisearch
         image: getmeili/meilisearch:v1.13.3
         securityContext:
-          runAsNonRoot: true
-          runAsUser: 1000
-          readOnlyRootFilesystem: true
+          runAsNonRoot: false
+          # runAsUser: 1000
+          readOnlyRootFilesystem: false
         resources:
           requests:
             cpu:    "1m"
@@ -65,9 +65,9 @@ spec:
       - name: karakeep
         image: ghcr.io/karakeep-app/karakeep:latest
         securityContext:
-          runAsNonRoot: true
-          runAsUser: 1000
-          readOnlyRootFilesystem: true
+          runAsNonRoot: false
+          # runAsUser: 1000
+          readOnlyRootFilesystem: false
         resources:
           requests:
             cpu:    "5m"

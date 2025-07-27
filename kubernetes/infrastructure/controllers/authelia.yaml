@@ -169,8 +169,8 @@ spec:
       - name: authelia
         image: authelia/authelia:latest
         securityContext:
-          runAsNonRoot: true
-          runAsUser: 1000
+          runAsNonRoot: false
+          # runAsUser: 1000
           readOnlyRootFilesystem: true
         resources:
           requests:
