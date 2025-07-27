@@ -19,17 +19,17 @@ spec:
       containers:
       - name: meilisearch
         image: getmeili/meilisearch:v1.13.3
-        securityContext:
-          runAsNonRoot: false
-          # runAsUser: 1000
-          readOnlyRootFilesystem: false
-        resources:
-          requests:
-            cpu:    "1m"
-            memory: "128Mi"
-          limits:
-            cpu:    "5m"
-            memory: "256Mi"
+        # securityContext:
+        #   runAsNonRoot: false
+        #   # runAsUser: 1000
+        #   readOnlyRootFilesystem: false
+        # resources:
+        #   requests:
+        #     cpu:    "1m"
+        #     memory: "128Mi"
+        #   limits:
+        #     cpu:    "5m"
+        #     memory: "256Mi"
         ports:
           - containerPort: 7700
             name: http
@@ -64,17 +64,17 @@ spec:
       containers:
       - name: karakeep
         image: ghcr.io/karakeep-app/karakeep:latest
-        securityContext:
-          runAsNonRoot: false
-          # runAsUser: 1000
-          readOnlyRootFilesystem: false
-        resources:
-          requests:
-            cpu:    "5m"
-            memory: "512Mi"
-          limits:
-            cpu:    "100m"
-            memory: "1024Mi"
+        # securityContext:
+        #   runAsNonRoot: false
+        #   # runAsUser: 1000
+        #   readOnlyRootFilesystem: false
+        # resources:
+        #   requests:
+        #     cpu:    "5m"
+        #     memory: "512Mi"
+        #   limits:
+        #     cpu:    "100m"
+        #     memory: "1024Mi"
         ports:
         - containerPort: 3000
           name: http
