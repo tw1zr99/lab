@@ -87,8 +87,12 @@ jobs:
         with:
           directory: kubernetes
           config: .kube-linter.yaml
-          format: plain
-          output-file: kube-linter.log
+          format: sarif
+          output-file: kube-linter.sarif
+      - uses: github/codeql-action/upload-sarif@v3
+        if: success() || failure()
+        with:
+          sarif_file: kube-linter.sarif
 
   kubernetes-checkov:
     runs-on: ubuntu-latest
