@@ -5,6 +5,8 @@ on:
 
 permissions:
   contents: read
+  security-events: write
+  actions: read
 
 jobs:
   terraform-fmt:
@@ -87,6 +89,21 @@ jobs:
           config: .kube-linter.yaml
           format: plain
           output-file: kube-linter.log
+
+  kubernetes-checkov:
+    name: "kubernetes-checkov"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: bridgecrewio/checkov-action@v12
+        with:
+          output_format: cli,sarif
+          output_file_path: console,results.sarif
+
+      - uses: github/codeql-action/upload-sarif@v2
+        if: success() || failure()
+        with:
+          sarif_file: results.sarif
 
   # kubernetes-kube-score:
   #   name: kubernetes-kube-score
