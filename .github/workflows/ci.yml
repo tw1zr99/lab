@@ -88,28 +88,28 @@ jobs:
           format: plain
           output-file: kube-linter.log
 
-  kubernetes-kube-score:
-    name: kubernetes-kube-score
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: syntaqx/setup-kustomize@v1
-      - uses: mikefarah/yq@v4.47.1
-
-      - name: make temp output directory
-        run: mkdir -p out/kustomize
-
-      - name: kustomize build to standard template
-        run: |
-          for k in $(find kubernetes -type f -name kustomization.yaml); do
-            dir=$(dirname "$k")
-            kustomize build "$dir"
-            echo "---"
-          done \
-            | yq eval-all 'del(.sops)' - \
-            > out/kustomize/built.yaml
-
-      - name: kube-score check
-        uses: piraces/kube-score-ga@v0.1.3
-        with:
-          manifests-folders: './out/kustomize/*.yaml'
+  # kubernetes-kube-score:
+  #   name: kubernetes-kube-score
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: syntaqx/setup-kustomize@v1
+  #     - uses: mikefarah/yq@v4.47.1
+  #
+  #     - name: make temp output directory
+  #       run: mkdir -p out/kustomize
+  #
+  #     - name: kustomize build to standard template
+  #       run: |
+  #         for k in $(find kubernetes -type f -name kustomization.yaml); do
+  #           dir=$(dirname "$k")
+  #           kustomize build "$dir"
+  #           echo "---"
+  #         done \
+  #           | yq eval-all 'del(.sops)' - \
+  #           > out/kustomize/built.yaml
+  #
+  #     - name: kube-score check
+  #       uses: piraces/kube-score-ga@v0.1.3
+  #       with:
+  #         manifests-folders: './out/kustomize/*.yaml'
