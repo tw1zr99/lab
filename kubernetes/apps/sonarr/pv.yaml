@@ -1,6 +1,6 @@
 ---
-kind: PersistentVolume
 apiVersion: v1
+kind: PersistentVolume
 metadata:
   name: sonarr-tv
 spec:
@@ -14,8 +14,8 @@ spec:
     server: scale.lan
   persistentVolumeReclaimPolicy: Retain
 ---
-kind: PersistentVolume
 apiVersion: v1
+kind: PersistentVolume
 metadata:
   name: sonarr-downloads
 spec:
