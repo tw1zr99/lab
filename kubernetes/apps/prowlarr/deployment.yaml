@@ -1,0 +1,37 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prowlarr
+  labels:
+    app: prowlarr
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prowlarr
+  template:
+    metadata:
+      labels:
+        app: prowlarr
+    spec:
+      enableServiceLinks: true
+      securityContext:
+      containers:
+      - name: prowlarr
+        image: linuxserver/prowlarr:develop
+        ports:
+        - containerPort: 9696
+          name: http
+        env:
+        - name: TZ
+          value: "Europe/London"
+        securityContext:
+          privileged: false
+        volumeMounts:
+        - name: prowlarr-data
+          mountPath: /config
+      volumes:
+      - name: prowlarr-data
+        persistentVolumeClaim:
+          claimName: prowlarr-data
