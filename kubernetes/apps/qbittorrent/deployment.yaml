@@ -18,11 +18,11 @@ spec:
         app: qbittorrent
     spec:
       securityContext:
-        # sysctls:
-        #   - name: net.ipv4.conf.all.src_valid_mark
-        #     value: "1"
-        #   - name: net.ipv6.conf.all.disable_ipv6
-        #     value: "1"
+        sysctls:
+          - name: net.ipv4.conf.all.src_valid_mark
+            value: "1"
+          - name: net.ipv6.conf.all.disable_ipv6
+            value: "1"
       enableServiceLinks: true
       initContainers:
       - name: init-config
@@ -32,8 +32,6 @@ spec:
           - -c
           - |
             set -eu
-            apk add --no-cache iproute2 >/dev/null
-            ip link del wg0 2>/dev/null || true
             mkdir -p /config/wireguard
             cp /wireguard/wg0.conf /config/wireguard/wg0.conf
             chmod 600 /config/wireguard/wg0.conf
@@ -60,7 +58,7 @@ spec:
         - name: VPN_ENABLED
           value: "true"
         - name: VPN_LAN_NETWORK
-          value: "0.0.0.0/0"
+          value: "192.168.0.0/16"
         - name: VPN_LAN_LEAK_ENABLED
           value: "true"
         - name: VPN_CONF
