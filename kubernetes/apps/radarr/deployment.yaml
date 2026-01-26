@@ -1,0 +1,47 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: radarr
+  labels:
+    app: radarr
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: radarr
+  template:
+    metadata:
+      labels:
+        app: radarr
+    spec:
+      enableServiceLinks: true
+      securityContext:
+      containers:
+      - name: radarr
+        image: linuxserver/radarr:latest
+        ports:
+        - containerPort: 7878
+          name: http
+        env:
+        - name: TZ
+          value: "Europe/London"
+        securityContext:
+          privileged: false
+        volumeMounts:
+        - name: radarr-data
+          mountPath: /config
+        - name: radarr-movies
+          mountPath: /movies
+        - name: radarr-downloads
+          mountPath: /downloads
+      volumes:
+      - name: radarr-data
+        persistentVolumeClaim:
+          claimName: radarr-data
+      - name: radarr-movies
+        persistentVolumeClaim:
+          claimName: radarr-movies
+      - name: radarr-downloads
+        persistentVolumeClaim:
+          claimName: radarr-downloads
