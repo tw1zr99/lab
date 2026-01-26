@@ -27,10 +27,15 @@ spec:
       initContainers:
       - name: init-config
         image: alpine:latest
+        securityContext:
+          capabilities:
+            add: ["NET_ADMIN"]
         command:
           - sh
           - -c
           - |
+            apk add --no-cache iproute2 >/dev/null
+            ip link del wg0 2>/dev/null || true
             mkdir -p /config/wireguard
             cp /wireguard/wg0.conf /config/wireguard/wg0.conf
         volumeMounts:
