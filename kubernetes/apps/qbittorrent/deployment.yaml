@@ -58,7 +58,7 @@ spec:
         - name: VPN_ENABLED
           value: "true"
         - name: VPN_LAN_NETWORK
-          value: "0.0.0.0/0"
+          value: "10.43.0.0/16"
         - name: VPN_CONF
           value: "wg0"
         - name: PRIVOXY_ENABLED
