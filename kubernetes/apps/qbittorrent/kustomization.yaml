@@ -5,6 +5,7 @@ namespace: default
 resources:
   - pv.yaml
   - pvc.yaml
+  - secret.yaml
   - deployment.yaml
   - service.yaml
   - ingress.yaml
