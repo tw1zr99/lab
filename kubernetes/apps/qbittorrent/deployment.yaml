@@ -24,17 +24,18 @@ spec:
       enableServiceLinks: true
       initContainers:
       - name: init-config
-        image: busybox:latest
+        image: alpine:latest
         command:
           - sh
           - -c
           - |
             set -eu
+            apk add --no-cache iproute2 >/dev/null
+            ip link del wg0 2>/dev/null || true
             mkdir -p /config/wireguard
             cp /wireguard/wg0.conf /config/wireguard/wg0.conf
             chmod 600 /config/wireguard/wg0.conf
             chown 1000:1000 /config/wireguard/wg0.conf || true
-
         volumeMounts:
           - name: qbittorrent-data
             mountPath: /config
