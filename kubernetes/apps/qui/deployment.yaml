@@ -1,0 +1,84 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qui
+  labels:
+    app: qui
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: qui
+  template:
+    metadata:
+      labels:
+        app: qui
+    spec:
+      securityContext:
+        sysctls:
+          # - name: net.ipv4.conf.all.src_valid_mark
+          #   value: "1"
+          - name: net.ipv6.conf.all.disable_ipv6
+            value: "1"
+      enableServiceLinks: true
+      initContainers:
+      - name: init-config
+        image: alpine:latest
+        command:
+          - sh
+          - -c
+          - |
+            mkdir -p /config/wireguard
+            cp /wireguard/wg0.conf /config/wireguard/wg0.conf
+        volumeMounts:
+          - name: qui-data
+            mountPath: /config
+          - name: qui-wg0
+            mountPath: /wireguard
+            readOnly: true
+      containers:
+      - name: qui
+        image: ghcr.io/hotio/qui:latest
+        securityContext:
+          privileged: false
+          capabilities:
+            add: ["NET_ADMIN"]
+        ports:
+        - containerPort: 7476
+          name: http
+        env:
+        - name: TZ
+          value: "Europe/London"
+        - name: VPN_ENABLED
+          value: "true"
+        - name: VPN_PROVIDER
+          value: "generic"
+        - name: VPN_LAN_NETWORK
+          value: "192.168.0.0/16"
+        - name: VPN_LAN_LEAK_ENABLED
+          value: "true"
+        - name: VPN_CONF
+          value: "wg0"
+        - name: PRIVOXY_ENABLED
+          value: "false"
+        volumeMounts:
+        - name: qui-data
+          mountPath: /config
+        - name: qui-downloads
+          mountPath: /downloads
+      volumes:
+      - name: qui-data
+        persistentVolumeClaim:
+          claimName: qui-data
+      - name: qui-downloads
+        persistentVolumeClaim:
+          claimName: qui-downloads
+      - name: qui-wg0
+        secret:
+          secretName: qui
+          items:
+            - key: wg0.conf
+              path: wg0.conf
