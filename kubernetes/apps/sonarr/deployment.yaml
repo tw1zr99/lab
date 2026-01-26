@@ -1,0 +1,47 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: sonarr
+  labels:
+    app: sonarr
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sonarr
+  template:
+    metadata:
+      labels:
+        app: sonarr
+    spec:
+      enableServiceLinks: true
+      securityContext:
+      containers:
+      - name: sonarr
+        image: linuxserver/sonarr:latest
+        ports:
+        - containerPort: 8989
+          name: http
+        env:
+        - name: TZ
+          value: "Europe/London"
+        securityContext:
+          privileged: false
+        volumeMounts:
+        - name: sonarr-data
+          mountPath: /config
+        - name: sonarr-tv
+          mountPath: /tv
+        - name: sonarr-downloads
+          mountPath: /downloads
+      volumes:
+      - name: sonarr-data
+        persistentVolumeClaim:
+          claimName: sonarr-data
+      - name: sonarr-tv
+        persistentVolumeClaim:
+          claimName: sonarr-tv
+      - name: sonarr-downloads
+        persistentVolumeClaim:
+          claimName: sonarr-downloads
