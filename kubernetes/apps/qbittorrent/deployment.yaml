@@ -51,6 +51,11 @@ spec:
           privileged: false
           capabilities:
             add: ["NET_ADMIN"]
+        command: ["/bin/sh","-c"]
+        args:
+          - |
+            ip link del wg0 2>/dev/null || true
+            exec /init
         ports:
         - containerPort: 8080
           name: http
