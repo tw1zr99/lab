@@ -1,6 +1,6 @@
 ---
-kind: PersistentVolumeClaim
 apiVersion: v1
+kind: PersistentVolumeClaim
 metadata:
   name: sonarr-data
 spec:
@@ -12,8 +12,8 @@ spec:
     requests:
       storage: 5Gi
 ---
-kind: PersistentVolumeClaim
 apiVersion: v1
+kind: PersistentVolumeClaim
 metadata:
   name: sonarr-tv
 spec:
@@ -25,8 +25,8 @@ spec:
     requests:
       storage: 4Ti
 ---
-kind: PersistentVolumeClaim
 apiVersion: v1
+kind: PersistentVolumeClaim
 metadata:
   name: sonarr-downloads
 spec:
