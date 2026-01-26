@@ -1,0 +1,39 @@
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: sonarr-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeName: pvc-f5195ed8-10ef-48dd-b18c-892c9583e40f
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 5Gi
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: sonarr-tv
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeName: sonarr-tv
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 4Ti
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: sonarr-downloads
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeName: sonarr-downloads
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 8Ti
