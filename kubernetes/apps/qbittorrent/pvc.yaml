@@ -2,11 +2,11 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: qui-data
+  name: qbittorrent-data
 spec:
   accessModes:
     - ReadWriteOnce
-  # volumeName: pvc-6d0b3e8d-d2d4-4800-a7ab-687757cd9bb5
+  volumeName: pvc-6d0b3e8d-d2d4-4800-a7ab-687757cd9bb5
   storageClassName: longhorn
   resources:
     requests:
@@ -15,11 +15,11 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: qui-downloads
+  name: qbittorrent-downloads
 spec:
   accessModes:
     - ReadWriteOnce
-  volumeName: qui-downloads
+  volumeName: qbittorrent-downloads
   storageClassName: ""
   resources:
     requests:

@@ -2,20 +2,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: qui
+  name: qbittorrent
   labels:
-    app: qui
+    app: qbittorrent
 spec:
   replicas: 1
   strategy:
     type: Recreate
   selector:
     matchLabels:
-      app: qui
+      app: qbittorrent
   template:
     metadata:
       labels:
-        app: qui
+        app: qbittorrent
     spec:
       securityContext:
         # sysctls:
@@ -34,30 +34,28 @@ spec:
             mkdir -p /config/wireguard
             cp /wireguard/wg0.conf /config/wireguard/wg0.conf
         volumeMounts:
-          - name: qui-data
+          - name: qbittorrent-data
             mountPath: /config
-          - name: qui-wg0
+          - name: qbittorrent-wg0
             mountPath: /wireguard
             readOnly: true
       containers:
-      - name: qui
-        image: ghcr.io/hotio/qui:latest
+      - name: qbittorrent
+        image: ghcr.io/hotio/qbittorrent:latest
         securityContext:
           privileged: false
           capabilities:
             add: ["NET_ADMIN"]
         ports:
-        - containerPort: 7476
+        - containerPort: 8080
           name: http
         env:
         - name: TZ
           value: "Europe/London"
         - name: VPN_ENABLED
           value: "true"
-        - name: VPN_PROVIDER
-          value: "generic"
         - name: VPN_LAN_NETWORK
-          value: "192.168.0.0/16"
+          value: "192.168.0.0/16,10.42.0.0/16,10.43.0.0/16"
         - name: VPN_LAN_LEAK_ENABLED
           value: "true"
         - name: VPN_CONF
@@ -65,20 +63,20 @@ spec:
         - name: PRIVOXY_ENABLED
           value: "false"
         volumeMounts:
-        - name: qui-data
+        - name: qbittorrent-data
           mountPath: /config
-        - name: qui-downloads
+        - name: qbittorrent-downloads
           mountPath: /downloads
       volumes:
-      - name: qui-data
+      - name: qbittorrent-data
         persistentVolumeClaim:
-          claimName: qui-data
-      - name: qui-downloads
+          claimName: qbittorrent-data
+      - name: qbittorrent-downloads
         persistentVolumeClaim:
-          claimName: qui-downloads
-      - name: qui-wg0
+          claimName: qbittorrent-downloads
+      - name: qbittorrent-wg0
         secret:
-          secretName: qui
+          secretName: qbittorrent
           items:
             - key: wg0.conf
               path: wg0.conf
