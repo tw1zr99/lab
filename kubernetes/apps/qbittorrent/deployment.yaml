@@ -22,6 +22,24 @@ spec:
         #   - name: net.ipv6.conf.all.disable_ipv6
         #     value: "1"
       enableServiceLinks: true
+      initContainers:
+      - name: seed-wireguard-conf
+        image: busybox:1.36
+        command:
+          - sh
+          - -c
+          - |
+            set -eu
+            mkdir -p /config/wireguard
+            cp /wireguard/wg0.conf /config/wireguard/wg0.conf
+            chmod 600 /config/wireguard/wg0.conf
+            chown 1000:1000 /config/wireguard/wg0.conf || true
+        volumeMounts:
+          - name: qbittorrent-data
+            mountPath: /config
+          - name: qbittorrent-wg0
+            mountPath: /wireguard
+            readOnly: true
       containers:
       - name: qbittorrent
         image: ghcr.io/hotio/qbittorrent:latest
@@ -55,3 +73,9 @@ spec:
       - name: qbittorrent-downloads
         persistentVolumeClaim:
           claimName: qbittorrent-downloads
+      - name: qbittorrent-wg0
+        secret:
+          secretName: qbittorrent
+          items:
+            - key: wg0.conf
+              path: wg0.conf
