@@ -23,8 +23,8 @@ spec:
         #     value: "1"
       enableServiceLinks: true
       initContainers:
-      - name: seed-wireguard-conf
-        image: busybox:1.36
+      - name: init-config
+        image: busybox:latest
         command:
           - sh
           - -c
@@ -34,6 +34,9 @@ spec:
             cp /wireguard/wg0.conf /config/wireguard/wg0.conf
             chmod 600 /config/wireguard/wg0.conf
             chown 1000:1000 /config/wireguard/wg0.conf || true
+            sed -i 's/^WebUI\\AlternativeUIEnabled=.*/WebUI\\AlternativeUIEnabled=false/' /config/config/qBittorrent.conf
+            sed -i 's/^WebUI\\RootFolder=.*/WebUI\\RootFolder=/' /config/config/qBittorrent.conf
+
         volumeMounts:
           - name: qbittorrent-data
             mountPath: /config
