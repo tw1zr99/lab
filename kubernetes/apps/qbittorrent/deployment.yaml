@@ -58,7 +58,7 @@ spec:
         - name: VPN_ENABLED
           value: "true"
         - name: VPN_LAN_NETWORK
-          value: "10.42.0.0/16"
+          value: "0.0.0.0/0"
         - name: VPN_LAN_LEAK_ENABLED
           value: "true"
         - name: VPN_CONF
