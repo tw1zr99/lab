@@ -2,12 +2,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: qui
+  name: qbittorrent
 spec:
   selector:
-    app: qui
+    app: qbittorrent
   ports:
   - name: http
-    port: 7476
-    targetPort: 7476
+    port: 8080
+    targetPort: 8080
     protocol: TCP
