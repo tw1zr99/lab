@@ -47,22 +47,9 @@ spec:
           capabilities:
             add: ["NET_ADMIN"]
         command: ["/bin/sh","-c"]
-        # args:
-        #   - |
-        #     ip link del wg0 2>/dev/null || true
-        #     exec /init
         args:
           - |
             ip link del wg0 2>/dev/null || true
-            CONF="/config/wireguard/wg0.conf"
-            if [ -f "$CONF" ]; then
-              ENDPOINT_IP="$(awk -F' *= *' '/^Endpoint *=/ {print $2}' "$CONF" | cut -d: -f1 || true)"
-              if [ -n "${ENDPOINT_IP:-}" ]; then
-                ip -4 route del "${ENDPOINT_IP}/32" 2>/dev/null || true
-              fi
-            fi
-            ip -4 route del 192.168.0.0/16 2>/dev/null || true
-            ip -4 route del 10.42.0.0/16   2>/dev/null || true
             exec /init
         ports:
         - containerPort: 8080
@@ -72,8 +59,8 @@ spec:
           value: "Europe/London"
         - name: VPN_ENABLED
           value: "true"
-        - name: VPN_LAN_NETWORK
-          value: "192.168.0.0/16,10.42.0.0/16"
+        # - name: VPN_LAN_NETWORK
+        #   value: "192.168.0.0/16"
         - name: VPN_LAN_LEAK_ENABLED
           value: "true"
         - name: VPN_CONF
