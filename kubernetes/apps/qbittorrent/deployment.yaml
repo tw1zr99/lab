@@ -53,7 +53,7 @@ spec:
         - name: TZ
           value: "Europe/London"
         - name: VPN_ENABLED
-          value: "true"
+          value: "false"
         - name: VPN_LAN_NETWORK
           value: "192.168.0.0/16"
         - name: VPN_LAN_LEAK_ENABLED
