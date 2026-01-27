@@ -56,8 +56,6 @@ spec:
           value: "true"
         - name: VPN_LAN_NETWORK
           value: "192.168.0.0/16"
-        - name: VPN_EXPOSE_PORTS_ON_LAN
-          value: "true"
         - name: VPN_LAN_LEAK_ENABLED
           value: "false"
         - name: VPN_CONF
