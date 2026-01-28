@@ -1,0 +1,21 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: backrest
+  annotations:
+    kubernetes.io/ingress.class: traefik-external
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`backrest.efym.net`)
+      kind: Rule
+      middlewares:
+        - name: authelia
+          namespace: authelia
+      services:
+        - name: backrest
+          port: 9898
+  tls:
+    secretName: efym-net-tls
