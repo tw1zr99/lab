@@ -29,6 +29,8 @@ spec:
           value: "/data"
         - name: BACKREST_CONFIG
           value: "/config/config.json"
+        - name: BACKREST_PORT
+          value: "9898"
         - name: XDG_CACHE_HOME
           value: "/cache"
         volumeMounts:
