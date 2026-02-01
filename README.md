@@ -1,4 +1,4 @@
-# Homelab Overview
+# Lab overview
 
 This repo describes my homelab Kubernetes platform:
 
