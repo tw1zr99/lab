@@ -45,7 +45,7 @@ spec:
           auto_assign_org_role: Editor
     prometheus:
       prometheusSpec:
-        retention: 7d
+        retention: 3d
         storageSpec:
           volumeClaimTemplate:
             spec:
@@ -54,7 +54,7 @@ spec:
                 - ReadWriteOnce
               resources:
                 requests:
-                  storage: 10Gi
+                  storage: 20Gi
     alertmanager:
       alertmanagerSpec:
         storage:
