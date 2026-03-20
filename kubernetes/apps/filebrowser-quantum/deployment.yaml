@@ -28,6 +28,9 @@ spec:
         volumeMounts:
         - name: filebrowser-quantum-config
           mountPath: /home/filebrowser/data
+        - name: filebrowser-quantum-config-file
+          mountPath: /home/filebrowser/data/config.yaml
+          subPath: config.yaml
         - name: filebrowser-quantum-data
           mountPath: /srv
       volumes:
@@ -37,3 +40,6 @@ spec:
       - name: filebrowser-quantum-data
         persistentVolumeClaim:
           claimName: filebrowser-quantum-data
+      - name: filebrowser-quantum-config-file
+        configMap:
+          name: filebrowser-quantum-config-file
