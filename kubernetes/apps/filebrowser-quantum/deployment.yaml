@@ -1,0 +1,39 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: filebrowser-quantum
+  labels:
+    app: filebrowser-quantum
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: filebrowser-quantum
+  template:
+    metadata:
+      labels:
+        app: filebrowser-quantum
+    spec:
+      enableServiceLinks: true
+      containers:
+      - name: filebrowser-quantum
+        image: gtstef/filebrowser:latest
+        ports:
+        - containerPort: 80
+          name: http
+        env:
+        - name: TZ
+          value: "Europe/London"
+        volumeMounts:
+        - name: filebrowser-quantum-config
+          mountPath: /home/filebrowser/data
+        - name: filebrowser-quantum-data
+          mountPath: /srv
+      volumes:
+      - name: filebrowser-quantum-config
+        persistentVolumeClaim:
+          claimName: filebrowser-quantum-config
+      - name: filebrowser-quantum-data
+        persistentVolumeClaim:
+          claimName: filebrowser-quantum-data
