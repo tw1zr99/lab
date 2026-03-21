@@ -41,6 +41,7 @@ data:
             - "links.efym.net"
             - "login.efym.net"
             - "tv.efym.net"
+            - "quantum.efym.net"
           policy: bypass
         - domain:
             - "*"
