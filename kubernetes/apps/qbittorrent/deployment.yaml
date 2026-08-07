@@ -65,7 +65,7 @@ spec:
         - name: VPN_ENABLED
           value: "false"
         - name: VPN_LAN_NETWORK
-          value: "192.168.0.0/16"
+          value: "${TRUSTED_LAN_CIDR}"
         - name: VPN_LAN_LEAK_ENABLED
           value: "false"
         - name: VPN_CONF

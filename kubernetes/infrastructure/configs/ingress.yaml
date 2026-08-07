@@ -10,7 +10,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`traefik.efym.net`)
+    - match: Host(`traefik.${CLUSTER_DOMAIN}`)
       kind: Rule
       middlewares:
         - name: authelia
@@ -32,7 +32,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`longhorn.efym.net`)
+    - match: Host(`longhorn.${CLUSTER_DOMAIN}`)
       kind: Rule
       middlewares:
         - name: authelia
@@ -54,7 +54,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`grafana.efym.net`)
+    - match: Host(`grafana.${CLUSTER_DOMAIN}`)
       kind: Rule
       middlewares:
         - name: authelia
@@ -76,7 +76,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`prometheus.efym.net`)
+    - match: Host(`prometheus.${CLUSTER_DOMAIN}`)
       kind: Rule
       middlewares:
         - name: authelia
@@ -98,7 +98,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`alertmanager.efym.net`)
+    - match: Host(`alertmanager.${CLUSTER_DOMAIN}`)
       kind: Rule
       middlewares:
         - name: authelia
@@ -120,7 +120,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`login.efym.net`)
+    - match: Host(`login.${CLUSTER_DOMAIN}`)
       kind: Rule
       services:
         - name: authelia

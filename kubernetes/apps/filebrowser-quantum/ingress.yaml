@@ -9,7 +9,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`quantum.efym.net`)
+    - match: Host(`quantum.${CLUSTER_DOMAIN}`)
       kind: Rule
       middlewares:
         - name: authelia

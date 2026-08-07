@@ -6,7 +6,7 @@ metadata:
   namespace: metallb-system
 spec:
   addresses:
-    - 192.168.5.50/32
+    - "${INGRESS_ADDRESS}/32"
   autoAssign: false
 ---
 apiVersion: metallb.io/v1beta1

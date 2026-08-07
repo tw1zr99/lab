@@ -13,7 +13,7 @@ spec:
   storageClassName: ""
   nfs:
     path: /mnt/tank/media/movies
-    server: scale.lan
+    server: "${STORAGE_HOST}"
   persistentVolumeReclaimPolicy: Retain
 ---
 apiVersion: v1
@@ -30,5 +30,5 @@ spec:
   storageClassName: ""
   nfs:
     path: /mnt/tank/media/downloads
-    server: scale.lan
+    server: "${STORAGE_HOST}"
   persistentVolumeReclaimPolicy: Retain

@@ -5,6 +5,8 @@
 - [Cluster bootstrap](bootstrap.md) - build the platform from empty Proxmox VMs.
 - [Architecture](architecture.md) - understand the cluster, networking, storage,
   ingress, authentication, and repository layout.
+- [Cluster configuration](configuration.md) - manage shared topology, generated
+  files, and local credentials.
 
 ## Platform Layers
 

@@ -9,7 +9,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`tv.efym.net`)
+    - match: Host(`tv.${CLUSTER_DOMAIN}`)
       kind: Rule
       middlewares:
         - name: authelia

@@ -6,7 +6,7 @@ metadata:
   namespace: traefik
 spec:
   type: ExternalName
-  externalName: quack.lan
+  externalName: "${ROUTER_HOST}"
   ports:
     - port: 80
       targetPort: 80
@@ -24,7 +24,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`openwrt.efym.net`)
+    - match: Host(`openwrt.${CLUSTER_DOMAIN}`)
       kind: Rule
       middlewares:
         - name: authelia

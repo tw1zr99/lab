@@ -5,11 +5,21 @@
 version: "3"
 
 vars:
+  CONFIG_FILE: "{{.ROOT_DIR}}/config/cluster.yaml"
+  CLUSTER_VARS_FILE: "{{.ROOT_DIR}}/kubernetes/clusters/production/cluster-vars.yaml"
   TERRAFORM_DIR: "{{.ROOT_DIR}}/terraform"
   TALOS_DIR: "{{.ROOT_DIR}}/talos"
-  FLUX_PATH: "kubernetes/clusters/production"
-  GIT_URL: "ssh://git@github.com/tw1zr99/lab"
-  GIT_BRANCH: "master"
+  TALHELPER_ENV_FILE: "{{.ROOT_DIR}}/config/cluster.yaml"
+  FLUX_PATH:
+    sh: yq -r '.GIT_PATH' {{.CONFIG_FILE}}
+  GIT_URL:
+    sh: yq -r '.GIT_URL' {{.CONFIG_FILE}}
+  GIT_BRANCH:
+    sh: yq -r '.GIT_BRANCH' {{.CONFIG_FILE}}
+  CLUSTER_DOMAIN:
+    sh: yq -r '.CLUSTER_DOMAIN' {{.CONFIG_FILE}}
+  INGRESS_ADDRESS:
+    sh: yq -r '.INGRESS_ADDRESS' {{.CONFIG_FILE}}
   BOOTSTRAP_TIMEOUT: '{{default "20m" .BOOTSTRAP_TIMEOUT}}'
 
 env:
@@ -40,14 +50,17 @@ tasks:
         msg: "FLUX_SSH_KEY_PATH must be set (configure it in .envrc)"
       - sh: test -f "$FLUX_SSH_KEY_PATH"
         msg: "FLUX_SSH_KEY_PATH does not reference a file"
+      - sh: case "$(yq --version 2>/dev/null)" in *mikefarah*yq*version*v4.*) exit 0 ;; *) exit 1 ;; esac
+        msg: "mikefarah/yq v4 must be installed"
     cmds:
       - |
-        for command in terraform talosctl talhelper sops age kubectl flux task git curl; do
+        for command in terraform talosctl talhelper sops age kubectl flux task git curl yq; do
           command -v "$command" >/dev/null || {
             echo "Missing required command: $command" >&2
             exit 1
           }
         done
+      - task: config:check
       - |
         if [ -f {{.TALOS_DIR}}/talsecret.sops.yaml ]; then
           sops --decrypt {{.TALOS_DIR}}/talsecret.sops.yaml >/dev/null
@@ -56,9 +69,39 @@ tasks:
   validate:
     desc: "Validate Terraform, Talos, and Kubernetes configuration"
     cmds:
+      - task: config:check
       - task: terraform:validate
       - task: talos:validate
       - task: kubernetes:validate
+
+  # --- Cluster configuration -------------------------------------------------
+  config:render:
+    desc: "Render the Flux ConfigMap from config/cluster.yaml"
+    cmds:
+      - |
+        yq eval '{
+          "apiVersion": "v1",
+          "kind": "ConfigMap",
+          "metadata": {
+            "name": "cluster-vars",
+            "namespace": "flux-system"
+          },
+          "data": .
+        }' {{.CONFIG_FILE}} > {{.CLUSTER_VARS_FILE}}
+
+  config:check:
+    desc: "Verify generated configuration matches config/cluster.yaml"
+    cmds:
+      - |
+        yq eval '{
+          "apiVersion": "v1",
+          "kind": "ConfigMap",
+          "metadata": {
+            "name": "cluster-vars",
+            "namespace": "flux-system"
+          },
+          "data": .
+        }' {{.CONFIG_FILE}} | diff -u {{.CLUSTER_VARS_FILE}} -
 
   # --- Terraform -------------------------------------------------------------
   terraform:init:
@@ -90,8 +133,9 @@ tasks:
   talos:validate:
     desc: "Validate the declarative Talhelper configuration"
     dir: "{{.TALOS_DIR}}"
+    deps: [config:check]
     cmds:
-      - talhelper validate talconfig
+      - talhelper validate talconfig --env-file {{.TALHELPER_ENV_FILE}}
 
   talos:secret:
     desc: "Generate Talos secrets once, SOPS-encrypted (run before first genconfig)"
@@ -117,28 +161,29 @@ tasks:
     dir: "{{.TALOS_DIR}}"
     deps: [talos:secret, talos:validate]
     cmds:
-      - talhelper genconfig
+      - talhelper genconfig --env-file {{.TALHELPER_ENV_FILE}}
 
   talos:disks:
     desc: "List disks on every maintenance-mode Talos VM before installation"
     cmds:
-      - talosctl --nodes 192.168.5.120 get disks --insecure
-      - talosctl --nodes 192.168.5.121 get disks --insecure
-      - talosctl --nodes 192.168.5.122 get disks --insecure
+      - |
+        for node in $(yq -r '.NODE_1_ADDRESS, .NODE_2_ADDRESS, .NODE_3_ADDRESS' {{.CONFIG_FILE}}); do
+          talosctl --nodes "$node" get disks --insecure
+        done
 
   talos:apply:
     desc: "Apply machine config to all nodes (INSECURE=--insecure on first boot)"
     dir: "{{.TALOS_DIR}}"
     deps: [talos:genconfig]
     cmds:
-      - talhelper gencommand apply --extra-flags "{{.INSECURE}}" | bash
+      - talhelper gencommand apply --env-file {{.TALHELPER_ENV_FILE}} --extra-flags "{{.INSECURE}}" | bash
 
   talos:kubeconfig:
     desc: "Refresh the repository-local kubeconfig from Talos configuration"
     dir: "{{.TALOS_DIR}}"
     deps: [talos:genconfig]
     cmds:
-      - talhelper gencommand kubeconfig --extra-flags "{{.ROOT_DIR}} --force" | bash
+      - talhelper gencommand kubeconfig --env-file {{.TALHELPER_ENV_FILE}} --extra-flags "{{.ROOT_DIR}} --force" | bash
 
   talos:bootstrap:
     desc: "First-time bring-up: apply configs, bootstrap etcd, fetch kubeconfig"
@@ -149,7 +194,7 @@ tasks:
       # Installation reboots each node before etcd becomes bootstrap-ready.
       - |
         for attempt in $(seq 1 30); do
-          if talhelper gencommand bootstrap | bash; then
+          if talhelper gencommand bootstrap --env-file {{.TALHELPER_ENV_FILE}} | bash; then
             break
           fi
           if [ "$attempt" -eq 30 ]; then
@@ -159,7 +204,7 @@ tasks:
           sleep 10
         done
       - task: talos:kubeconfig
-      - talhelper gencommand health | bash
+      - talhelper gencommand health --env-file {{.TALHELPER_ENV_FILE}} | bash
 
   # --- Flux ------------------------------------------------------------------
   flux:secret:
@@ -202,6 +247,7 @@ tasks:
   kubernetes:validate:
     desc: "Render every current Kubernetes Kustomize root"
     cmds:
+      - task: config:check
       - kubectl kustomize kubernetes/infrastructure/controllers >/dev/null
       - kubectl kustomize kubernetes/infrastructure/configs >/dev/null
       - kubectl kustomize kubernetes/apps >/dev/null
@@ -210,7 +256,7 @@ tasks:
     desc: "Verify Talos, Kubernetes, Flux, storage, MetalLB, and HTTPS"
     dir: "{{.TALOS_DIR}}"
     cmds:
-      - talhelper gencommand health | bash
+      - talhelper gencommand health --env-file {{.TALHELPER_ENV_FILE}} | bash
       - |
         for attempt in $(seq 1 60); do
           if kubectl get --raw=/readyz >/dev/null 2>&1; then
@@ -229,6 +275,9 @@ tasks:
       - kubectl wait helmreleases.helm.toolkit.fluxcd.io
           --all --all-namespaces
           --for=condition=ready --timeout={{.BOOTSTRAP_TIMEOUT}}
+      - kubectl wait certificates.cert-manager.io
+          --all --all-namespaces
+          --for=condition=ready --timeout={{.BOOTSTRAP_TIMEOUT}}
       - flux get kustomizations --all-namespaces
       - flux get helmreleases --all-namespaces
       - kubectl wait pvc --all --all-namespaces
@@ -240,5 +289,16 @@ tasks:
           exit 1
         fi
         kubectl get servicel2statuses.metallb.io --all-namespaces
-      - curl --fail --silent --show-error --head
-          --resolve efym.net:443:192.168.5.50 https://efym.net
+      - |
+        for attempt in $(seq 1 120); do
+          if curl --fail --silent --show-error --head \
+            --resolve {{.CLUSTER_DOMAIN}}:443:{{.INGRESS_ADDRESS}} \
+            https://{{.CLUSTER_DOMAIN}} >/dev/null; then
+            break
+          fi
+          if [ "$attempt" -eq 120 ]; then
+            echo "HTTPS ingress did not become ready within 10 minutes" >&2
+            exit 1
+          fi
+          sleep 5
+        done

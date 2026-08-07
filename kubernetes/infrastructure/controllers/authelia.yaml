@@ -14,7 +14,7 @@ data:
 
     identity_validation:
       reset_password:
-        jwt_secret: ${JWT_SECRET}
+        jwt_secret: $${JWT_SECRET}
 
     authentication_backend:
       password_reset:
@@ -32,37 +32,37 @@ data:
       default_policy: one_factor
       rules:
         - domain:
-            - "efym.net"
+            - "${CLUSTER_DOMAIN}"
           resources:
             - "^/services"
           policy: one_factor
         - domain:
-            - "efym.net"
-            - "links.efym.net"
-            - "login.efym.net"
-            - "tv.efym.net"
-            - "quantum.efym.net"
+            - "${CLUSTER_DOMAIN}"
+            - "links.${CLUSTER_DOMAIN}"
+            - "login.${CLUSTER_DOMAIN}"
+            - "tv.${CLUSTER_DOMAIN}"
+            - "quantum.${CLUSTER_DOMAIN}"
           policy: bypass
         - domain:
             - "*"
           policy: one_factor
         - domain:
-            - "adguard.efym.net"
-            - "adguard2.efym.net"
-            - "dl.efym.net"
-            - "files.efym.net"
-            - "grafana.efym.net"
-            - "openwrt.efym.net"
-            - "pinchflat.efym.net"
-            - "prowlarr.efym.net"
-            - "pve.efym.net"
-            - "pve2.efym.net"
-            - "radarr.efym.net"
-            - "shell.efym.net"
-            - "sonarr.efym.net"
-            - "traefik.efym.net"
-            - "truenas.efym.net"
-            - "vpn.efym.net"
+            - "adguard.${CLUSTER_DOMAIN}"
+            - "adguard2.${CLUSTER_DOMAIN}"
+            - "dl.${CLUSTER_DOMAIN}"
+            - "files.${CLUSTER_DOMAIN}"
+            - "grafana.${CLUSTER_DOMAIN}"
+            - "openwrt.${CLUSTER_DOMAIN}"
+            - "pinchflat.${CLUSTER_DOMAIN}"
+            - "prowlarr.${CLUSTER_DOMAIN}"
+            - "pve.${CLUSTER_DOMAIN}"
+            - "pve2.${CLUSTER_DOMAIN}"
+            - "radarr.${CLUSTER_DOMAIN}"
+            - "shell.${CLUSTER_DOMAIN}"
+            - "sonarr.${CLUSTER_DOMAIN}"
+            - "traefik.${CLUSTER_DOMAIN}"
+            - "truenas.${CLUSTER_DOMAIN}"
+            - "vpn.${CLUSTER_DOMAIN}"
           subject:
             - "group:users"
           policy: deny
@@ -70,13 +70,13 @@ data:
     session:
       name: authelia_session
       same_site: lax
-      secret: ${SESSION_SECRET}
+      secret: $${SESSION_SECRET}
       expiration: 8h
       inactivity: 8h
       cookies:
-        - domain: "efym.net"
-          authelia_url: "https://login.efym.net"
-          default_redirection_url: "https://efym.net"
+        - domain: "${CLUSTER_DOMAIN}"
+          authelia_url: "https://login.${CLUSTER_DOMAIN}"
+          default_redirection_url: "https://${CLUSTER_DOMAIN}"
 
     regulation:
       max_retries: 5
@@ -86,7 +86,7 @@ data:
     theme: dark
 
     storage:
-      encryption_key: ${ENCRYPTION_KEY}
+      encryption_key: $${ENCRYPTION_KEY}
       local:
         path: /config/db.sqlite3
 
@@ -104,19 +104,19 @@ data:
               - name
               - preferred_username
               - groups
-        hmac_secret: ${HMAC_SECRET}
+        hmac_secret: $${HMAC_SECRET}
         issuer_private_key: |
-          ${ISSUER_PRIVATE_KEY}
+          $${ISSUER_PRIVATE_KEY}
         clients:
           - client_id: jellyfin
             client_name: Jellyfin
-            client_secret: ${JELLYFIN_CLIENT_SECRET}
+            client_secret: $${JELLYFIN_CLIENT_SECRET}
             public: false
             authorization_policy: one_factor
             require_pkce: true
             pkce_challenge_method: S256
             redirect_uris:
-              - https://tv.efym.net/sso/OID/redirect/authelia
+              - https://tv.${CLUSTER_DOMAIN}/sso/OID/redirect/authelia
             scopes:
               - openid
               - profile
@@ -127,13 +127,13 @@ data:
 
           - client_id: karakeep
             client_name: Karakeep
-            client_secret: ${KARAKEEP_CLIENT_SECRET}
+            client_secret: $${KARAKEEP_CLIENT_SECRET}
             public: false
             authorization_policy: one_factor
             require_pkce: false
             pkce_challenge_method: ''
             redirect_uris:
-              - 'https://links.efym.net/api/auth/callback/custom'
+              - 'https://links.${CLUSTER_DOMAIN}/api/auth/callback/custom'
             scopes:
               - 'openid'
               - 'email'

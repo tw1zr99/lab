@@ -1,6 +1,6 @@
 # **/secret.yaml
 **/main.key
-**/.terraform*
+**/.terraform/
 **/terraform.tfstate*
 **/terraform.tfvars
 **/tfplan

@@ -7,7 +7,7 @@ metadata:
 spec:
   interval: 1h
   retryInterval: 1m
-  timeout: 5m
+  timeout: 20m
   decryption:
     provider: sops
     secretRef:
@@ -16,6 +16,10 @@ spec:
     kind: GitRepository
     name: flux-system
   path: ./kubernetes/infrastructure/controllers
+  postBuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster-vars
   prune: true
   wait: true
 ---
@@ -27,11 +31,16 @@ metadata:
 spec:
   interval: 1h
   retryInterval: 1m
-  timeout: 5m
+  timeout: 20m
   sourceRef:
     kind: GitRepository
     name: flux-system
   path: ./kubernetes/infrastructure/configs
+  postBuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster-vars
   prune: true
+  wait: true
   dependsOn:
     - name: infrastructure-controllers

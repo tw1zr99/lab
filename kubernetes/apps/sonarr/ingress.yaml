@@ -9,7 +9,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`sonarr.efym.net`)
+    - match: Host(`sonarr.${CLUSTER_DOMAIN}`)
       kind: Rule
       middlewares:
         - name: authelia

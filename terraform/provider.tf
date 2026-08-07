@@ -10,7 +10,7 @@ terraform {
 }
 
 provider "proxmox" {
-  endpoint = var.proxmox_endpoint
+  endpoint = local.cluster.PROXMOX_ENDPOINT
   insecure = var.proxmox_insecure
   min_tls  = "1.3"
 }

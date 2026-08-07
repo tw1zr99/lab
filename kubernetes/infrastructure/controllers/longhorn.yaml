@@ -30,4 +30,4 @@ spec:
       default-data-locality: "best-effort"
       default-stale-replica-reclaim-policy: "delete"
       auto-salvage: "true"
-    backupTarget: "nfs://scale.lan:/mnt/tank/backups/appdata"
+    backupTarget: "nfs://${STORAGE_HOST}:/mnt/tank/backups/appdata"
