@@ -44,10 +44,9 @@ resource "proxmox_virtual_environment_vm" "talos" {
   boot_order    = ["scsi0", "ide2"]
 
   cpu {
-    architecture = "x86_64"
-    cores        = var.vm_cpu_cores
-    sockets      = 1
-    type         = "host"
+    cores   = var.vm_cpu_cores
+    sockets = 1
+    type    = "host"
   }
 
   memory {
