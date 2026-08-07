@@ -27,8 +27,7 @@ truth; nothing is configured by hand on the nodes.
 - `talosctl` `v1.13.8`
 - `talhelper` `v3.1.16` or newer (Talos `v1.13.8` schema support)
 - `go-task`, `sops`, and `age`
-- The age private key at `~/.config/sops/age/keys.txt`, or set
-  `SOPS_AGE_KEY_FILE` to its location
+- The age private identity exported as `SOPS_AGE_KEY` from the ignored `.envrc`
 
 Talhelper does not expose a version command. For Go-built packages, inspect its
 embedded module version with:

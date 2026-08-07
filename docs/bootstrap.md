@@ -42,11 +42,16 @@ the static Talos machine configuration can be applied remotely.
 ## Prerequisites (workstation)
 
 `talosctl` `v1.13.8`, `talhelper` `v3.1.16` or newer, `sops`, `age`, `kubectl`,
-`flux`, and `go-task`. Talhelper `v3.1.16` is the first release in this workflow
-with explicit Talos `v1.13.8` schema support.
-Your age private key at `~/.config/sops/age/keys.txt` (override with
-`SOPS_AGE_KEY_FILE`). Recipient public key lives in `age.pub` /
-`.sops.yaml`.
+`flux`, `go-task`, and `direnv`. Talhelper `v3.1.16` is the first release in
+this workflow with explicit Talos `v1.13.8` schema support.
+Set the age private identity directly in the ignored `.envrc` as
+`SOPS_AGE_KEY`. The recipient public key lives in `age.pub` / `.sops.yaml`.
+
+Create the ignored `.envrc` from `.envrc.example`, set the Proxmox token and
+local key paths, then authorize it with `direnv allow`. Flux requires
+`FLUX_SSH_KEY_PATH` to reference an SSH private key with write access to the Git
+repository. `KUBECONFIG` points direct `kubectl` and `flux` commands at the
+repository-local kubeconfig generated during Talos bootstrap.
 
 ## Preflight
 
