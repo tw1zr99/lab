@@ -29,19 +29,32 @@ tasks:
       - task: flux:bootstrap
 
   # --- Talos -----------------------------------------------------------------
+  talos:validate:
+    desc: "Validate the declarative Talhelper configuration"
+    dir: "{{.TALOS_DIR}}"
+    cmds:
+      - talhelper validate talconfig
+
   talos:secret:
     desc: "Generate Talos secrets once, SOPS-encrypted (run before first genconfig)"
     dir: "{{.TALOS_DIR}}"
     cmds:
-      - talhelper gensecret > talsecret.sops.yaml
-      - sops -e -i talsecret.sops.yaml
+      - |
+        plaintext="$(mktemp --suffix=.yaml)"
+        encrypted="$(mktemp --suffix=.yaml)"
+        trap 'rm -f "$plaintext" "$encrypted"' EXIT
+        talhelper gensecret > "$plaintext"
+        sops --encrypt \
+          --filename-override talos/talsecret.sops.yaml \
+          "$plaintext" > "$encrypted"
+        mv "$encrypted" talsecret.sops.yaml
     status:
       - test -f {{.TALOS_DIR}}/talsecret.sops.yaml
 
   talos:genconfig:
     desc: "Render machine configs from talconfig.yaml into clusterconfig/"
     dir: "{{.TALOS_DIR}}"
-    deps: [talos:secret]
+    deps: [talos:secret, talos:validate]
     cmds:
       - talhelper genconfig
 
@@ -58,9 +71,20 @@ tasks:
     cmds:
       - task: talos:apply
         vars: { INSECURE: "--insecure" }
-      # etcd bootstrap runs against a single control-plane node.
-      - talhelper gencommand bootstrap | bash
+      # Installation reboots each node before etcd becomes bootstrap-ready.
+      - |
+        for attempt in $(seq 1 30); do
+          if talhelper gencommand bootstrap | bash; then
+            break
+          fi
+          if [ "$attempt" -eq 30 ]; then
+            echo "Talos did not become bootstrap-ready within 5 minutes" >&2
+            exit 1
+          fi
+          sleep 10
+        done
       - talhelper gencommand kubeconfig --extra-flags "{{.ROOT_DIR}} --force" | bash
+      - talhelper gencommand health | bash
 
   # --- Flux ------------------------------------------------------------------
   flux:secret:
