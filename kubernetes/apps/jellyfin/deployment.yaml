@@ -45,8 +45,6 @@ spec:
         #   value: "1000"
         # - name: PGID
         #   value: "0"
-        securityContext:
-          privileged: true
         volumeMounts:
         - name: jellyfin-data
           mountPath: /config
