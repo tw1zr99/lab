@@ -25,9 +25,12 @@ spec:
         name: longhorn
         namespace: flux-system
   values:
+    persistence:
+      defaultClassReplicaCount: 2
+      defaultDataLocality: best-effort
     defaultSettings:
-      default-replica-count: "2"
-      default-data-locality: "best-effort"
-      default-stale-replica-reclaim-policy: "delete"
-      auto-salvage: "true"
-    backupTarget: "nfs://${STORAGE_HOST}:/mnt/tank/backups/appdata"
+      defaultReplicaCount: "2"
+      defaultDataLocality: best-effort
+      autoSalvage: "true"
+    defaultBackupStore:
+      backupTarget: "nfs://${STORAGE_HOST}:/mnt/tank/backups/appdata"
