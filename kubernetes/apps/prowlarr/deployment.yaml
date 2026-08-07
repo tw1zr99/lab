@@ -20,6 +20,13 @@ spec:
       containers:
       - name: prowlarr
         image: linuxserver/prowlarr:develop
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
         ports:
         - containerPort: 9696
           name: http
