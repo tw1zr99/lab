@@ -1,4 +1,4 @@
-# Talos layer
+# Talos
 
 Declarative OS + Kubernetes for three VMs distributed across the Proxmox
 cluster, managed with
@@ -7,11 +7,11 @@ truth; nothing is configured by hand on the nodes.
 
 ## Files
 
-- `talconfig.yaml` — cluster + per-node definition matching the VM IPs, disks,
+- `talos/talconfig.yaml` — cluster + per-node definition matching the VM IPs, disks,
   MAC addresses, control-plane VIP, and Image Factory extensions.
-- `patches/longhorn.yaml` — `rshared` bind mount for `/var/lib/longhorn`.
-- `talsecret.sops.yaml` — cluster PKI/secrets, **committed only SOPS-encrypted**.
-- `clusterconfig/` — rendered machine configs + `talosconfig`. Git-ignored
+- `talos/patches/longhorn.yaml` — `rshared` bind mount for `/var/lib/longhorn`.
+- `talos/talsecret.sops.yaml` — cluster PKI/secrets, **committed only SOPS-encrypted**.
+- `talos/clusterconfig/` — rendered machine configs + `talosconfig`. Git-ignored
   (plaintext secrets); regenerate any time with `task talos:genconfig`.
 
 ## Before first apply
@@ -38,13 +38,12 @@ go version -m "$(command -v talhelper)"
 
 ## First bootstrap
 
-Run these commands from the repository root:
+The canonical start-to-finish procedure, including Terraform, networking, Flux,
+and verification, is in [bootstrap.md](bootstrap.md). Once the VMs are in Talos
+maintenance mode, run this from the repository root:
 
 ```sh
-task talos:validate
-task talos:secret
-task talos:genconfig
-task talos:bootstrap
+task bootstrap
 ```
 
 `talos:secret` runs only when `talos/talsecret.sops.yaml` does not exist. It
@@ -54,9 +53,11 @@ generated `clusterconfig/` directory.
 
 `talos:genconfig` decrypts the SOPS file in memory and renders one machine
 configuration per node plus `talosconfig` under the ignored `clusterconfig/`
-directory. `talos:bootstrap` applies those configurations with `--insecure`,
+directory. The Talos phase applies those configurations with `--insecure`,
 waits up to five minutes for the post-install reboot, bootstraps etcd once,
-writes `kubeconfig` at the repository root, and waits for cluster health.
+writes `kubeconfig` at the repository root, and waits for cluster health. The
+remaining bootstrap phases install Flux, wait for GitOps convergence, and
+verify the cluster.
 
 To inspect the generated Talos commands without executing them:
 

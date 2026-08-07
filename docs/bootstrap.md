@@ -1,82 +1,206 @@
-# Cluster bootstrap (from scratch)
+# Cluster bootstrap
 
-Rebuilds the cluster onto three Talos VMs distributed across the Proxmox hosts.
-After an approved Terraform apply has booted the VMs into maintenance mode:
+This is the canonical runbook for rebuilding the production cluster from empty
+Proxmox VMs. Commands run from the repository root unless stated otherwise.
 
-```sh
-task talos:secret     # once, ever — generates + SOPS-encrypts cluster secrets
-task bootstrap        # Talos cluster, then Flux takes over from git
-```
+Terraform provisions the VMs but is never applied by the Taskfile. After the
+VMs are running in Talos maintenance mode, `task bootstrap` configures Talos,
+bootstraps Kubernetes, installs Flux, and waits for GitOps convergence.
 
-`task bootstrap` runs two phases:
+## 1. External prerequisites
 
-1. **Talos** (`talos:bootstrap`) — renders machine configs, applies them to all
-   three nodes, bootstraps etcd, and writes `./kubeconfig`.
-2. **Flux** (`flux:bootstrap`) — creates the `sops-age` decryption secret, then
-   `flux bootstrap git` installs Flux and points it at
-   `kubernetes/clusters/production`. Flux reconciles everything else:
-   controllers (Longhorn, Traefik, cert-manager, Authelia, monitoring), configs,
-   and apps.
+The repository cannot configure these external dependencies:
 
-## Provision the VMs
+- Proxmox nodes `hades`, `atlas`, and `venus` are online, use the storage and
+  bridge names in `terraform/variables.tf`, and trust the Terraform API token.
+- DHCP reserves the MAC addresses in `terraform/variables.tf` as
+  `192.168.5.120`, `.121`, and `.122` for Talos maintenance mode.
+- `192.168.5.99` is unused and reserved for the Kubernetes API VIP.
+- `192.168.5.50` is unused and reserved for the MetalLB/Traefik service VIP.
+- The LAN gateway is `192.168.5.1` and permits node-to-node traffic, including
+  TCP and UDP port `7946` for MetalLB speaker membership.
+- `scale.lan` resolves to the TrueNAS server and the NFS exports referenced by
+  the Kubernetes manifests exist.
+- The Cloudflare token already encrypted in Git remains valid for DNS01
+  certificate issuance.
+- The workstation has the Age private identity matching `age.pub`. Without it,
+  neither Talos secrets nor Kubernetes Secrets in this repository can decrypt.
+- The Flux SSH key has write access to `ssh://git@github.com/tw1zr99/lab`.
 
-Terraform is intentionally separate from `task bootstrap` so VM changes cannot
-be applied implicitly:
+For LAN access to `efym.net` and its subdomains, use one of these network
+configurations:
 
-```sh
-cd terraform
-terraform init
-terraform validate
-terraform plan -out=tfplan
-terraform show tfplan
-```
+- Configure split DNS so `efym.net` and `*.efym.net` resolve to
+  `192.168.5.50` on the LAN.
+- Keep public DNS and configure router hairpin NAT plus TCP ports `80` and `443`
+  forwarding to `192.168.5.50`.
 
-Only run `terraform apply tfplan` after the plan has been reviewed and the
-change has been explicitly approved.
+External access always requires public DNS and router port forwarding to
+`192.168.5.50`.
 
-No physical console is needed for the Talos VMs. Terraform downloads and
-attaches the Talos ISO, configures a Proxmox serial console, and starts each VM.
-The maintenance environment must receive its reserved address from DHCP before
-the static Talos machine configuration can be applied remotely.
+## 2. Workstation setup
 
-## Prerequisites (workstation)
+Install these commands:
 
-`talosctl` `v1.13.8`, `talhelper` `v3.1.16` or newer, `sops`, `age`, `kubectl`,
-`flux`, `go-task`, and `direnv`. Talhelper `v3.1.16` is the first release in
-this workflow with explicit Talos `v1.13.8` schema support.
-Set the age private identity directly in the ignored `.envrc` as
-`SOPS_AGE_KEY`. The recipient public key lives in `age.pub` / `.sops.yaml`.
+- Terraform `>= 1.9.0`
+- `talosctl` `v1.13.8`
+- `talhelper` `v3.1.16` or newer
+- `sops`, `age`, `kubectl`, `flux`, `go-task`, `git`, `curl`, and `direnv`
 
-Create the ignored `.envrc` from `.envrc.example`, set the Proxmox token and
-local key paths, then authorize it with `direnv allow`. Flux requires
-`FLUX_SSH_KEY_PATH` to reference an SSH private key with write access to the Git
-repository. `KUBECONFIG` points direct `kubectl` and `flux` commands at the
-repository-local kubeconfig generated during Talos bootstrap.
-
-## Preflight
-
-- Configure Proxmox API token authentication as documented in
-  `terraform/README.md`.
-- Reserve the VM MAC addresses from `terraform/variables.tf` in DHCP.
-- Confirm that `.10` is free for the API VIP and `.120` through `.122` are free
-  for the nodes.
-- Confirm that Talos sees the Terraform `scsi0` disk as `/dev/sda`.
-
-## Validate without applying
+Create the ignored environment file and fill in the real values:
 
 ```sh
-task talos:validate
-task talos:genconfig                              # render machine configs
-kubectl kustomize kubernetes/clusters/production  # render Flux entrypoint
+cp .envrc.example .envrc
+direnv allow
+task preflight
 ```
 
-## Notes carried over from the migration
+`SOPS_AGE_KEY` must contain the Age private identity directly.
+`FLUX_SSH_KEY_PATH` must point to the SSH private key file. Never commit
+`.envrc`, `kubeconfig`, rendered Talos machine configs, Terraform state, or a
+saved Terraform plan.
 
-- **Storage:** media on NFS (`scale.lan`); config/state on Longhorn **replica 2**.
-- **Talos vs k3s gotchas already handled:** `iscsi-tools` + `util-linux-tools`
-  extensions for Longhorn, `rshared` mount for `/var/lib/longhorn`, and the
-  `pod-security.kubernetes.io/enforce: privileged` label on `longhorn-system`
-  (Talos enforces PodSecurity; k3s did not).
-- **Optional follow-up:** move disposable volumes (e.g. Prometheus TSDB) off
-  Longhorn onto a node-local provisioner. On Talos this needs a writable path
-  under `/var` — left out of the core scaffold until the chart/path are pinned.
+Create the Proxmox account and API token using [terraform.md](terraform.md). Install
+the Proxmox cluster CA on the workstation, or temporarily set
+`TF_VAR_proxmox_insecure=true` only during initial certificate setup.
+
+## 3. Validate the repository
+
+Run all static checks before provisioning:
+
+```sh
+task validate
+```
+
+This initializes and validates Terraform, validates the Talhelper
+configuration, and renders these actual Kustomize roots:
+
+- `kubernetes/infrastructure/controllers`
+- `kubernetes/infrastructure/configs`
+- `kubernetes/apps`
+
+`kubernetes/clusters/production` is a Flux manifest directory, not a Kustomize
+root, so do not run `kubectl kustomize` against that directory.
+
+## 4. Provision the Talos VMs
+
+Create and review a saved plan:
+
+```sh
+task terraform:plan
+```
+
+The Taskfile intentionally has no Terraform apply task. After reviewing
+`terraform/tfplan`, apply it explicitly:
+
+```sh
+terraform -chdir=terraform apply tfplan
+```
+
+Terraform downloads the pinned Talos ISO on each Proxmox node and creates VM
+IDs `200`, `201`, and `202`. Each VM boots its empty disk first, falls back to
+the ISO, receives its reserved DHCP address, and enters maintenance mode.
+
+Confirm all three nodes are reachable and inspect their disks:
+
+```sh
+task talos:disks
+```
+
+Do not continue if the intended system disk is not `/dev/sda`; update
+`talos/talconfig.yaml` first.
+
+## 5. Bootstrap Talos and Flux
+
+Run the complete software bootstrap:
+
+```sh
+task bootstrap
+```
+
+The task performs these operations in order:
+
+1. Checks tools, the Age identity, and the Flux SSH key.
+2. Reuses `talos/talsecret.sops.yaml`, or creates it once if absent.
+3. Renders ignored machine configs under `talos/clusterconfig`.
+4. Applies the machine configs with `--insecure` to maintenance-mode nodes.
+5. Waits for installation and reboot, then bootstraps etcd exactly once.
+6. Writes the repository-local `kubeconfig`.
+7. Waits for Talos and Kubernetes health.
+8. Creates Flux's in-cluster `sops-age` Secret.
+9. Bootstraps Flux against `master` at `kubernetes/clusters/production`.
+10. Reconciles Git and waits for every Flux Kustomization to become ready.
+11. Verifies controllers, storage, MetalLB advertisement, and HTTPS ingress.
+
+The default Flux and Kubernetes readiness timeout is 20 minutes. Override it
+for a slow first image pull:
+
+```sh
+task bootstrap BOOTSTRAP_TIMEOUT=30m
+```
+
+Do not run `task bootstrap` against an existing configured cluster because its
+Talos apply phase intentionally uses `--insecure` for first installation.
+
+## 6. Verify the result
+
+The bootstrap runs this automatically, but it can be repeated safely:
+
+```sh
+task cluster:verify
+```
+
+For additional inspection:
+
+```sh
+kubectl get nodes -o wide
+flux get kustomizations --all-namespaces
+flux get helmreleases --all-namespaces
+kubectl get pods --all-namespaces
+kubectl get pvc --all-namespaces
+kubectl get servicel2statuses.metallb.io --all-namespaces
+curl --resolve efym.net:443:192.168.5.50 --head https://efym.net
+```
+
+Expected results:
+
+- All three nodes are `Ready`.
+- Every Flux Kustomization and HelmRelease is `Ready`.
+- PersistentVolumeClaims are `Bound`.
+- A MetalLB `ServiceL2Status` assigns the Traefik service to one node.
+- The direct VIP HTTPS check returns `HTTP/2 200` with a valid certificate.
+
+The service VIP is not expected to answer ICMP ping. Test TCP/HTTPS instead.
+
+## 7. Day-two operations
+
+After changing Talos configuration, retain the existing encrypted secrets and
+apply the declarative update without `--insecure`:
+
+```sh
+task talos:genconfig
+task talos:apply
+task talos:kubeconfig  # required when the Kubernetes API endpoint changes
+task cluster:verify
+```
+
+After pushing Kubernetes changes:
+
+```sh
+task kubernetes:validate
+task flux:wait
+task cluster:verify
+```
+
+List all available automation with:
+
+```sh
+task --list
+```
+
+## Recovery boundary
+
+This process reproduces infrastructure and configuration. It does not restore
+application data. Longhorn volume or application-level backup restoration is a
+separate disaster-recovery operation; do not assume a fresh cluster bootstrap
+recovers prior PVC contents.

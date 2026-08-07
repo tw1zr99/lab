@@ -1,14 +1,16 @@
 ---
 # go-task (https://taskfile.dev) entrypoint for building the cluster from scratch.
-#   task bootstrap   -> Talos cluster + Flux GitOps, end to end
-# Prereqs on the workstation: talosctl, talhelper, sops, age, kubectl, flux.
+#   task terraform:plan -> validate and create a reviewed Proxmox plan
+#   task bootstrap      -> Talos cluster + Flux GitOps, end to end
 version: "3"
 
 vars:
+  TERRAFORM_DIR: "{{.ROOT_DIR}}/terraform"
   TALOS_DIR: "{{.ROOT_DIR}}/talos"
   FLUX_PATH: "kubernetes/clusters/production"
   GIT_URL: "ssh://git@github.com/tw1zr99/lab"
   GIT_BRANCH: "master"
+  BOOTSTRAP_TIMEOUT: '{{default "20m" .BOOTSTRAP_TIMEOUT}}'
 
 env:
   KUBECONFIG: "{{.ROOT_DIR}}/kubeconfig"
@@ -21,10 +23,68 @@ tasks:
     silent: true
 
   bootstrap:
-    desc: "Full cluster from scratch: Talos then Flux"
+    desc: "Configure provisioned Talos VMs and converge the cluster with Flux"
     cmds:
+      - task: preflight
       - task: talos:bootstrap
       - task: flux:bootstrap
+      - task: flux:wait
+      - task: cluster:verify
+
+  preflight:
+    desc: "Check workstation tools, credentials, and encrypted Talos secrets"
+    preconditions:
+      - sh: test -n "$SOPS_AGE_KEY"
+        msg: "SOPS_AGE_KEY must be set (configure it in .envrc)"
+      - sh: test -n "$FLUX_SSH_KEY_PATH"
+        msg: "FLUX_SSH_KEY_PATH must be set (configure it in .envrc)"
+      - sh: test -f "$FLUX_SSH_KEY_PATH"
+        msg: "FLUX_SSH_KEY_PATH does not reference a file"
+    cmds:
+      - |
+        for command in terraform talosctl talhelper sops age kubectl flux task git curl; do
+          command -v "$command" >/dev/null || {
+            echo "Missing required command: $command" >&2
+            exit 1
+          }
+        done
+      - |
+        if [ -f {{.TALOS_DIR}}/talsecret.sops.yaml ]; then
+          sops --decrypt {{.TALOS_DIR}}/talsecret.sops.yaml >/dev/null
+        fi
+
+  validate:
+    desc: "Validate Terraform, Talos, and Kubernetes configuration"
+    cmds:
+      - task: terraform:validate
+      - task: talos:validate
+      - task: kubernetes:validate
+
+  # --- Terraform -------------------------------------------------------------
+  terraform:init:
+    desc: "Initialize Terraform providers"
+    dir: "{{.TERRAFORM_DIR}}"
+    preconditions:
+      - sh: test -n "$PROXMOX_VE_API_TOKEN"
+        msg: "PROXMOX_VE_API_TOKEN must be set (configure it in .envrc)"
+    cmds:
+      - terraform init
+
+  terraform:validate:
+    desc: "Check Terraform formatting and validate the Proxmox configuration"
+    dir: "{{.TERRAFORM_DIR}}"
+    deps: [terraform:init]
+    cmds:
+      - terraform fmt -check -recursive
+      - terraform validate
+
+  terraform:plan:
+    desc: "Create a saved Proxmox plan at terraform/tfplan (never applies it)"
+    dir: "{{.TERRAFORM_DIR}}"
+    deps: [terraform:validate]
+    cmds:
+      - terraform plan -out=tfplan
+      - terraform show tfplan
 
   # --- Talos -----------------------------------------------------------------
   talos:validate:
@@ -36,6 +96,9 @@ tasks:
   talos:secret:
     desc: "Generate Talos secrets once, SOPS-encrypted (run before first genconfig)"
     dir: "{{.TALOS_DIR}}"
+    preconditions:
+      - sh: test -n "$SOPS_AGE_KEY"
+        msg: "SOPS_AGE_KEY must be set (configure it in .envrc)"
     cmds:
       - |
         plaintext="$(mktemp --suffix=.yaml)"
@@ -56,12 +119,26 @@ tasks:
     cmds:
       - talhelper genconfig
 
+  talos:disks:
+    desc: "List disks on every maintenance-mode Talos VM before installation"
+    cmds:
+      - talosctl --nodes 192.168.5.120 get disks --insecure
+      - talosctl --nodes 192.168.5.121 get disks --insecure
+      - talosctl --nodes 192.168.5.122 get disks --insecure
+
   talos:apply:
     desc: "Apply machine config to all nodes (INSECURE=--insecure on first boot)"
     dir: "{{.TALOS_DIR}}"
     deps: [talos:genconfig]
     cmds:
       - talhelper gencommand apply --extra-flags "{{.INSECURE}}" | bash
+
+  talos:kubeconfig:
+    desc: "Refresh the repository-local kubeconfig from Talos configuration"
+    dir: "{{.TALOS_DIR}}"
+    deps: [talos:genconfig]
+    cmds:
+      - talhelper gencommand kubeconfig --extra-flags "{{.ROOT_DIR}} --force" | bash
 
   talos:bootstrap:
     desc: "First-time bring-up: apply configs, bootstrap etcd, fetch kubeconfig"
@@ -81,7 +158,7 @@ tasks:
           fi
           sleep 10
         done
-      - talhelper gencommand kubeconfig --extra-flags "{{.ROOT_DIR}} --force" | bash
+      - task: talos:kubeconfig
       - talhelper gencommand health | bash
 
   # --- Flux ------------------------------------------------------------------
@@ -112,3 +189,56 @@ tasks:
           --branch={{.GIT_BRANCH}}
           --path={{.FLUX_PATH}}
           --private-key-file="$FLUX_SSH_KEY_PATH"
+
+  flux:wait:
+    desc: "Reconcile Git and wait for every Flux Kustomization to become ready"
+    cmds:
+      - flux reconcile source git flux-system
+      - kubectl wait kustomizations.kustomize.toolkit.fluxcd.io
+          --all --namespace=flux-system
+          --for=condition=ready --timeout={{.BOOTSTRAP_TIMEOUT}}
+
+  # --- Kubernetes ------------------------------------------------------------
+  kubernetes:validate:
+    desc: "Render every current Kubernetes Kustomize root"
+    cmds:
+      - kubectl kustomize kubernetes/infrastructure/controllers >/dev/null
+      - kubectl kustomize kubernetes/infrastructure/configs >/dev/null
+      - kubectl kustomize kubernetes/apps >/dev/null
+
+  cluster:verify:
+    desc: "Verify Talos, Kubernetes, Flux, storage, MetalLB, and HTTPS"
+    dir: "{{.TALOS_DIR}}"
+    cmds:
+      - talhelper gencommand health | bash
+      - |
+        for attempt in $(seq 1 60); do
+          if kubectl get --raw=/readyz >/dev/null 2>&1; then
+            break
+          fi
+          if [ "$attempt" -eq 60 ]; then
+            echo "Kubernetes API did not become ready within 5 minutes" >&2
+            exit 1
+          fi
+          sleep 5
+        done
+      - kubectl wait nodes --all --for=condition=ready --timeout={{.BOOTSTRAP_TIMEOUT}}
+      - kubectl wait kustomizations.kustomize.toolkit.fluxcd.io
+          --all --all-namespaces
+          --for=condition=ready --timeout={{.BOOTSTRAP_TIMEOUT}}
+      - kubectl wait helmreleases.helm.toolkit.fluxcd.io
+          --all --all-namespaces
+          --for=condition=ready --timeout={{.BOOTSTRAP_TIMEOUT}}
+      - flux get kustomizations --all-namespaces
+      - flux get helmreleases --all-namespaces
+      - kubectl wait pvc --all --all-namespaces
+          --for=jsonpath='{.status.phase}'=Bound --timeout={{.BOOTSTRAP_TIMEOUT}}
+      - kubectl get pvc --all-namespaces
+      - |
+        if [ -z "$(kubectl get servicel2statuses.metallb.io --all-namespaces -o name)" ]; then
+          echo "MetalLB has not assigned an L2 announcer" >&2
+          exit 1
+        fi
+        kubectl get servicel2statuses.metallb.io --all-namespaces
+      - curl --fail --silent --show-error --head
+          --resolve efym.net:443:192.168.5.50 https://efym.net

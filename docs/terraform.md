@@ -1,4 +1,4 @@
-# Proxmox Terraform
+# Terraform and Proxmox
 
 This root module creates three Talos VMs, one on each Proxmox node. Every VM is
 a Kubernetes control-plane, etcd, and workload node.
@@ -6,7 +6,7 @@ a Kubernetes control-plane, etcd, and workload node.
 ## Authentication
 
 The provider uses a Proxmox API token from the environment. Do not put the token
-in Terraform files or `terraform.tfvars`.
+in Terraform files or `terraform/terraform.tfvars`.
 
 Create a dedicated Proxmox account and role from a Proxmox root shell:
 
@@ -44,30 +44,26 @@ default; use `proxmox_insecure = true` only as a temporary bootstrap override.
 ## Workflow
 
 ```sh
-terraform init
-terraform fmt -check -recursive
-terraform validate
-terraform plan -out=tfplan
-terraform show tfplan
+task terraform:plan
 ```
 
 Never apply a saved plan without reviewing it. Applying is intentionally not
 part of any repository automation.
 
-## Existing state
+## State safety
 
-The local state predates this module and tracks nine VMs created with the
-Telmate provider. Those VMs use IDs 100 through 108. The new Talos VMs use IDs
-200 through 202 to avoid collisions.
+Terraform state is currently local and ignored by Git. The active state tracks
+the three Talos VMs with IDs 200 through 202 and their downloaded ISO resources.
+Keep that state backed up securely; a fresh clone does not contain it.
 
-Do not run an apply against the old state as part of the provider migration.
-Before the first approved deployment, either delete the old VMs and start a new
-state for this replacement cluster, or explicitly migrate the state in a
-separate reviewed operation.
+For a complete rebuild where those VMs and ISO resources no longer exist, a
+new state can create them from scratch. If any managed resources still exist,
+restore the matching state or import them before applying. Never apply a plan
+that proposes duplicate or replacement infrastructure without understanding
+why the state and Proxmox inventory differ.
 
-The ignored `terraform.tfvars` also contains the obsolete `ciuser` and
-`cipassword` values. Remove that file after preserving anything still needed;
-the Talos module does not use guest credentials or cloud-init.
+Do not store guest credentials in `terraform/terraform.tfvars`; Talos does not use
+cloud-init or guest passwords.
 
 ## Talos bootstrap
 
