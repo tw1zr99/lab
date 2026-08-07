@@ -68,7 +68,6 @@ resource "proxmox_virtual_environment_vm" "talos" {
     cache        = "none"
     discard      = "on"
     file_format  = "raw"
-    iothread     = true
     ssd          = true
   }
 

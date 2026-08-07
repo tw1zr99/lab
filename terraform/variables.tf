@@ -77,19 +77,19 @@ variable "talos_nodes" {
     talos-control-01 = {
       proxmox_node = "hades"
       vm_id        = 200
-      ip_address   = "192.168.5.21/24"
+      ip_address   = "192.168.5.120/24"
       mac_address  = "02:00:00:05:00:21"
     }
     talos-control-02 = {
       proxmox_node = "atlas"
       vm_id        = 201
-      ip_address   = "192.168.5.22/24"
+      ip_address   = "192.168.5.121/24"
       mac_address  = "02:00:00:05:00:22"
     }
     talos-control-03 = {
       proxmox_node = "venus"
       vm_id        = 202
-      ip_address   = "192.168.5.23/24"
+      ip_address   = "192.168.5.122/24"
       mac_address  = "02:00:00:05:00:23"
     }
   }
