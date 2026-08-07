@@ -1,0 +1,4 @@
+# talhelper renders plaintext machine configs (contain secrets) here.
+clusterconfig/
+# talsecret is committed ONLY in its SOPS-encrypted form; ignore any plaintext.
+talsecret.yaml

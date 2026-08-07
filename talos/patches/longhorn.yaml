@@ -1,0 +1,13 @@
+---
+# Longhorn needs a bind-mounted, rshared data dir because the Talos root
+# filesystem is read-only and mounts must propagate to the host.
+machine:
+  kubelet:
+    extraMounts:
+      - destination: /var/lib/longhorn
+        type: bind
+        source: /var/lib/longhorn
+        options:
+          - bind
+          - rshared
+          - rw
