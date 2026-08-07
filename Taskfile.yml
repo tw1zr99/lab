@@ -1,6 +1,6 @@
 ---
 # go-task (https://taskfile.dev) entrypoint for building the cluster from scratch.
-#   task terraform:plan -> validate and create a reviewed Proxmox plan
+#   task terraform:plan -> validate and create a saved Proxmox plan
 #   task bootstrap      -> Talos cluster + Flux GitOps, end to end
 version: "3"
 
@@ -79,7 +79,7 @@ tasks:
       - terraform validate
 
   terraform:plan:
-    desc: "Create a saved Proxmox plan at terraform/tfplan (never applies it)"
+    desc: "Create and display a saved Proxmox plan at terraform/tfplan"
     dir: "{{.TERRAFORM_DIR}}"
     deps: [terraform:validate]
     cmds:

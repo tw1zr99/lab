@@ -8,9 +8,18 @@
 
 ## Platform Layers
 
-- [Terraform and Proxmox](terraform.md) - API authentication, VM provisioning,
-  planning, and state safety.
+- [Proxmox](proxmox.md) - hosts, API authentication, TLS, and networking.
+- [Terraform](terraform.md) - VM provisioning, commands, variables, and state.
 - [Talos](talos.md) - machine configuration, encrypted cluster secrets, and
   lifecycle operations.
-- [GitOps structure](gitops-structure.md) - Flux ownership, dependencies,
+- [Kubernetes](kubernetes.md) - Flux ownership, dependencies,
   pruning safety, and the component migration plan.
+
+## Cluster Services
+
+- [MetalLB](architecture.md#metallb) - Layer 2 service address advertisement.
+- [Traefik](architecture.md#traefik) - ingress and HTTPS routing.
+- [cert-manager](architecture.md#cert-manager) - certificate issuance.
+- [Authelia](architecture.md#authelia) - forward authentication and OIDC.
+- [Longhorn](architecture.md#longhorn) - replicated persistent storage.
+- [SOPS](architecture.md#sops) - encrypted secrets for Talos and Flux.

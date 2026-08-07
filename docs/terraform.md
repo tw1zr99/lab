@@ -1,74 +1,66 @@
-# Terraform and Proxmox
+# Terraform
 
-This root module creates three Talos VMs, one on each Proxmox node. Every VM is
-a Kubernetes control-plane, etcd, and workload node.
+Terraform provisions three Talos VMs, one on each Proxmox node. Every VM is a
+Kubernetes control-plane, etcd, and workload node.
 
-## Authentication
+## Module
 
-The provider uses a Proxmox API token from the environment. Do not put the token
-in Terraform files or `terraform/terraform.tfvars`.
+The root module is under `terraform/` and uses `bpg/proxmox` `0.111.1`.
 
-Create a dedicated Proxmox account and role from a Proxmox root shell:
+It manages:
 
-```sh
-pveum user add terraform@pve
-pveum role add Terraform -privs "Datastore.AllocateSpace Datastore.AllocateTemplate Datastore.Audit SDN.Use Sys.Audit Sys.Modify VM.Allocate VM.Audit VM.Config.CDROM VM.Config.CPU VM.Config.Disk VM.Config.HWType VM.Config.Memory VM.Config.Network VM.Config.Options VM.Monitor VM.PowerMgmt"
-pveum aclmod / -user terraform@pve -role Terraform
-pveum user token add terraform@pve provider --privsep 0
-```
+- The pinned Talos ISO on each Proxmox node.
+- VM IDs `200`, `201`, and `202`.
+- Stable VM names and MAC addresses.
+- UEFI, Q35, VirtIO SCSI, fixed memory, and serial consoles.
+- VM startup and boot order.
 
-Verify that the user and token exist in the same realm before using Terraform:
+Provider authentication and Proxmox account setup are documented in
+[proxmox.md](proxmox.md).
 
-```sh
-pveum user list
-pveum user token list terraform@pve
-pveum acl list
-```
-
-`terraform@pve` is a Proxmox VE realm account, not a Linux PAM account. The
-user ID, realm, and token ID must exactly match the `full-tokenid` returned by
-`pveum`.
-
-Export the complete token returned by the final command:
+## Taskfile Workflow
 
 ```sh
-export PROXMOX_VE_API_TOKEN='terraform@pve!provider=TOKEN_SECRET'
-```
-
-The current Proxmox API uses its private cluster CA. Copy
-`/etc/pve/pve-root-ca.pem` from a Proxmox node to the workstation and install it
-in the workstation's system trust store. The endpoint certificate must include
-`hades.lan` as a subject alternative name. TLS verification is enabled by
-default; use `proxmox_insecure = true` only as a temporary bootstrap override.
-
-## Workflow
-
-```sh
+task terraform:init
+task terraform:validate
 task terraform:plan
+terraform -chdir=terraform apply tfplan
 ```
 
-Never apply a saved plan without reviewing it. Applying is intentionally not
-part of any repository automation.
+The equivalent direct Terraform commands are:
 
-## State safety
+```sh
+terraform -chdir=terraform init
+terraform -chdir=terraform fmt -check -recursive
+terraform -chdir=terraform validate
+terraform -chdir=terraform plan
+terraform -chdir=terraform apply
+```
+
+## Variables
+
+Defaults are defined in `terraform/variables.tf`, including:
+
+- Proxmox endpoint, storage, and network bridge.
+- Talos version and ISO checksum.
+- VM CPU, memory, and disk sizing.
+- Proxmox node placement, VM IDs, IP addresses, and MAC addresses.
+
+Environment variables used by the provider are shown in `.envrc.example`.
+
+## State
 
 Terraform state is currently local and ignored by Git. The active state tracks
-the three Talos VMs with IDs 200 through 202 and their downloaded ISO resources.
-Keep that state backed up securely; a fresh clone does not contain it.
+the three Talos VMs and downloaded ISO resources. A fresh clone does not contain
+that state.
 
-For a complete rebuild where those VMs and ISO resources no longer exist, a
-new state can create them from scratch. If any managed resources still exist,
-restore the matching state or import them before applying. Never apply a plan
-that proposes duplicate or replacement infrastructure without understanding
-why the state and Proxmox inventory differ.
+For a complete rebuild where the managed resources no longer exist, a new state
+can create them. If the resources still exist, restore the matching state or
+import them before applying.
 
-Do not store guest credentials in `terraform/terraform.tfvars`; Talos does not use
-cloud-init or guest passwords.
+## Talos Handoff
 
-## Talos bootstrap
-
-The Talos ISO is downloaded directly to the `local` datastore on each Proxmox
-node. Each VM boots its empty `scsi0` disk first and falls back to the ISO,
-entering Talos maintenance mode. DHCP reservations should map the MAC addresses
-in `talos_nodes` to the documented node IPs. Machine configuration and etcd
-bootstrap are handled from the repository root with `talhelper` and `task`.
+The VMs boot from their empty `scsi0` disk first and fall back to the Talos ISO.
+DHCP reservations map their MAC addresses to `192.168.5.120` through `.122` in
+maintenance mode. `task bootstrap` handles machine configuration, installation,
+etcd bootstrap, Kubernetes, and Flux.

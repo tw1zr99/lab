@@ -11,8 +11,8 @@ bootstraps Kubernetes, installs Flux, and waits for GitOps convergence.
 
 The repository cannot configure these external dependencies:
 
-- Proxmox nodes `hades`, `atlas`, and `venus` are online, use the storage and
-  bridge names in `terraform/variables.tf`, and trust the Terraform API token.
+- Proxmox nodes `hades`, `atlas`, and `venus` are online and use the storage and
+  bridge names in `terraform/variables.tf`.
 - DHCP reserves the MAC addresses in `terraform/variables.tf` as
   `192.168.5.120`, `.121`, and `.122` for Talos maintenance mode.
 - `192.168.5.99` is unused and reserved for the Kubernetes API VIP.
@@ -60,9 +60,9 @@ task preflight
 `.envrc`, `kubeconfig`, rendered Talos machine configs, Terraform state, or a
 saved Terraform plan.
 
-Create the Proxmox account and API token using [terraform.md](terraform.md). Install
-the Proxmox cluster CA on the workstation, or temporarily set
-`TF_VAR_proxmox_insecure=true` only during initial certificate setup.
+Create the Proxmox account and API token using [proxmox.md](proxmox.md).
+Terraform configuration and state are documented in
+[terraform.md](terraform.md).
 
 ## 3. Validate the repository
 
@@ -84,14 +84,13 @@ root, so do not run `kubectl kustomize` against that directory.
 
 ## 4. Provision the Talos VMs
 
-Create and review a saved plan:
+Create a saved plan:
 
 ```sh
 task terraform:plan
 ```
 
-The Taskfile intentionally has no Terraform apply task. After reviewing
-`terraform/tfplan`, apply it explicitly:
+Apply the saved plan with Terraform:
 
 ```sh
 terraform -chdir=terraform apply tfplan

@@ -16,7 +16,7 @@ truth; nothing is configured by hand on the nodes.
 
 ## Before first apply
 
-1. Create the three VMs with Terraform after reviewing the saved plan.
+1. Create the three VMs with Terraform.
 2. Reserve the configured MAC addresses as `.120`, `.121`, and `.122` in DHCP
    so the maintenance ISO is reachable before static machine config is applied.
 3. Confirm `/dev/sda` with `talosctl -n <ip> get disks --insecure`.

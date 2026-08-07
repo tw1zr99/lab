@@ -5,11 +5,16 @@
 
 | Layer | Stack |
 | --- | --- |
-| Virtualization | Proxmox VE and Terraform |
+| Virtualization | Proxmox VE |
+| Provisioning | Terraform |
 | Operating system | Talos Linux |
 | Orchestration | Kubernetes and FluxCD |
-| Networking | MetalLB and Traefik |
-| Platform | cert-manager, Authelia, Longhorn, SOPS |
+| Load balancing | MetalLB |
+| Ingress | Traefik |
+| Certificates | cert-manager |
+| Authentication | Authelia |
+| Storage | Longhorn and NFS |
+| Secrets | SOPS and Age |
 
 ## Quick Start
 
@@ -21,12 +26,9 @@ terraform -chdir=terraform apply tfplan
 task bootstrap
 ```
 
-Terraform apply is intentionally manual and must only run after reviewing the
-saved plan.
-
 ## Documentation
 
-[Documentation index](docs/README.md) | [Bootstrap guide](docs/bootstrap.md) |
-[Architecture](docs/architecture.md) | [GitOps structure](docs/gitops-structure.md)
+[Documentation index](docs/index.md) | [Bootstrap guide](docs/bootstrap.md) |
+[Architecture](docs/architecture.md) | [Kubernetes](docs/kubernetes.md)
 
 Run `task --list` to see all provisioning, validation, and verification tasks.

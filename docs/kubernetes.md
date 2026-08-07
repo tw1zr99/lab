@@ -1,4 +1,4 @@
-# GitOps structure
+# Kubernetes
 
 This repository uses a single-cluster monorepo. Flux bootstraps from
 `kubernetes/clusters/production`, while reusable manifests live under
