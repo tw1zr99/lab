@@ -51,7 +51,8 @@ Your age private key at `~/.config/sops/age/keys.txt` (override with
 Create the ignored `.envrc` from `.envrc.example`, set the Proxmox token and
 local key paths, then authorize it with `direnv allow`. Flux requires
 `FLUX_SSH_KEY_PATH` to reference an SSH private key with write access to the Git
-repository.
+repository. `KUBECONFIG` points direct `kubectl` and `flux` commands at the
+repository-local kubeconfig generated during Talos bootstrap.
 
 ## Preflight
 
