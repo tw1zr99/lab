@@ -1,0 +1,25 @@
+# Documentation
+
+## Start Here
+
+- [Cluster bootstrap](bootstrap.md) - build the platform from empty Proxmox VMs.
+- [Architecture](architecture.md) - understand the cluster, networking, storage,
+  ingress, authentication, and repository layout.
+
+## Platform Layers
+
+- [Proxmox](proxmox.md) - hosts, API authentication, TLS, and networking.
+- [Terraform](terraform.md) - VM provisioning, commands, variables, and state.
+- [Talos](talos.md) - machine configuration, encrypted cluster secrets, and
+  lifecycle operations.
+- [Kubernetes](kubernetes.md) - Flux ownership, dependencies,
+  pruning safety, and the component migration plan.
+
+## Cluster Services
+
+- [MetalLB](architecture.md#metallb) - Layer 2 service address advertisement.
+- [Traefik](architecture.md#traefik) - ingress and HTTPS routing.
+- [cert-manager](architecture.md#cert-manager) - certificate issuance.
+- [Authelia](architecture.md#authelia) - forward authentication and OIDC.
+- [Longhorn](architecture.md#longhorn) - replicated persistent storage.
+- [SOPS](architecture.md#sops) - encrypted secrets for Talos and Flux.

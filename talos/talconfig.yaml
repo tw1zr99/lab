@@ -7,15 +7,15 @@ talosVersion: v1.13.8
 kubernetesVersion: v1.36.2
 
 # Shared control-plane VIP that floats across the three VMs.
-endpoint: https://192.168.5.10:6443
+endpoint: https://192.168.5.99:6443
 
 # Every node is control-plane, etcd, and runs workloads.
 allowSchedulingOnMasters: true
 
 additionalApiServerCertSans:
-  - 192.168.5.10
+  - 192.168.5.99
 additionalMachineCertSans:
-  - 192.168.5.10
+  - 192.168.5.99
 
 nodes:
   - hostname: talos-control-01
@@ -35,7 +35,7 @@ nodes:
           - network: 0.0.0.0/0
             gateway: 192.168.5.1
         vip:
-          ip: 192.168.5.10
+          ip: 192.168.5.99
     # Image Factory schematic. Longhorn needs iscsi-tools; util-linux-tools
     # provides fsck/nsenter used by the CSI mount path.
     schematic: &schematic
@@ -62,7 +62,7 @@ nodes:
           - network: 0.0.0.0/0
             gateway: 192.168.5.1
         vip:
-          ip: 192.168.5.10
+          ip: 192.168.5.99
     schematic: *schematic
   - hostname: talos-control-03
     ipAddress: 192.168.5.122
@@ -81,7 +81,7 @@ nodes:
           - network: 0.0.0.0/0
             gateway: 192.168.5.1
         vip:
-          ip: 192.168.5.10
+          ip: 192.168.5.99
     schematic: *schematic
 
 # Applied to every node.
