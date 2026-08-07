@@ -19,7 +19,7 @@ additionalMachineCertSans:
 
 nodes:
   - hostname: talos-control-01
-    ipAddress: 192.168.5.21
+    ipAddress: 192.168.5.120
     controlPlane: true
     installDisk: /dev/sda
     nameservers:
@@ -30,7 +30,7 @@ nodes:
           hardwareAddr: "02:00:00:05:00:21"
         dhcp: false
         addresses:
-          - 192.168.5.21/24
+          - 192.168.5.120/24
         routes:
           - network: 0.0.0.0/0
             gateway: 192.168.5.1
@@ -46,7 +46,7 @@ nodes:
             - siderolabs/qemu-guest-agent
             - siderolabs/util-linux-tools
   - hostname: talos-control-02
-    ipAddress: 192.168.5.22
+    ipAddress: 192.168.5.121
     controlPlane: true
     installDisk: /dev/sda
     nameservers:
@@ -57,7 +57,7 @@ nodes:
           hardwareAddr: "02:00:00:05:00:22"
         dhcp: false
         addresses:
-          - 192.168.5.22/24
+          - 192.168.5.121/24
         routes:
           - network: 0.0.0.0/0
             gateway: 192.168.5.1
@@ -65,7 +65,7 @@ nodes:
           ip: 192.168.5.10
     schematic: *schematic
   - hostname: talos-control-03
-    ipAddress: 192.168.5.23
+    ipAddress: 192.168.5.122
     controlPlane: true
     installDisk: /dev/sda
     nameservers:
@@ -76,7 +76,7 @@ nodes:
           hardwareAddr: "02:00:00:05:00:23"
         dhcp: false
         addresses:
-          - 192.168.5.23/24
+          - 192.168.5.122/24
         routes:
           - network: 0.0.0.0/0
             gateway: 192.168.5.1
