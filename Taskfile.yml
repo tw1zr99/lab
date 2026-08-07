@@ -13,8 +13,6 @@ vars:
 env:
   KUBECONFIG: "{{.ROOT_DIR}}/kubeconfig"
   TALOSCONFIG: "{{.TALOS_DIR}}/clusterconfig/talosconfig"
-  # Workstation age key used by SOPS to decrypt talsecret + flux secrets.
-  SOPS_AGE_KEY_FILE: '{{.SOPS_AGE_KEY_FILE | default "~/.config/sops/age/keys.txt"}}'
 
 tasks:
   default:
@@ -89,10 +87,13 @@ tasks:
   # --- Flux ------------------------------------------------------------------
   flux:secret:
     desc: "Create the sops-age secret Flux uses to decrypt manifests"
+    preconditions:
+      - sh: test -n "$SOPS_AGE_KEY"
+        msg: "SOPS_AGE_KEY must be set (configure it in .envrc)"
     cmds:
       - |
         kubectl create namespace flux-system --dry-run=client -o yaml | kubectl apply -f -
-        cat $SOPS_AGE_KEY_FILE |
+        printf '%s\n' "$SOPS_AGE_KEY" |
           kubectl create secret generic sops-age \
             --namespace=flux-system --from-file=age.agekey=/dev/stdin \
             --dry-run=client -o yaml | kubectl apply -f -

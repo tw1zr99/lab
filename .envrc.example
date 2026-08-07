@@ -1,5 +1,5 @@
 export PROXMOX_VE_API_TOKEN='terraform@pve!provider=TOKEN_SECRET'
 export TF_VAR_proxmox_insecure=false
-export SOPS_AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
+export SOPS_AGE_KEY='AGE-SECRET-KEY-REPLACE-ME'
 export FLUX_SSH_KEY_PATH="$HOME/.ssh/id_ed25519"
 export KUBECONFIG="$PWD/kubeconfig"
