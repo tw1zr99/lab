@@ -26,7 +26,7 @@ spec:
         namespace: flux-system
   values:
     defaultSettings:
-      default-replica-count: "3"
+      default-replica-count: "2"
       default-data-locality: "best-effort"
       default-stale-replica-reclaim-policy: "delete"
       auto-salvage: "true"
