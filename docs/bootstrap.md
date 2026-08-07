@@ -41,7 +41,9 @@ the static Talos machine configuration can be applied remotely.
 
 ## Prerequisites (workstation)
 
-`talosctl`, `talhelper`, `sops`, `age`, `kubectl`, `flux`, and `go-task`.
+`talosctl` `v1.13.8`, `talhelper` `v3.1.16` or newer, `sops`, `age`, `kubectl`,
+`flux`, and `go-task`. Talhelper `v3.1.16` is the first release in this workflow
+with explicit Talos `v1.13.8` schema support.
 Your age private key at `~/.config/sops/age/keys.txt` (override with
 `SOPS_AGE_KEY_FILE`). Recipient public key lives in `age.pub` /
 `.sops.yaml`.
@@ -51,13 +53,14 @@ Your age private key at `~/.config/sops/age/keys.txt` (override with
 - Configure Proxmox API token authentication as documented in
   `terraform/README.md`.
 - Reserve the VM MAC addresses from `terraform/variables.tf` in DHCP.
-- Confirm that `.10` is free for the API VIP and `.21` through `.23` are free
+- Confirm that `.10` is free for the API VIP and `.120` through `.122` are free
   for the nodes.
 - Confirm that Talos sees the Terraform `scsi0` disk as `/dev/sda`.
 
 ## Validate without applying
 
 ```sh
+task talos:validate
 task talos:genconfig                              # render machine configs
 kubectl kustomize kubernetes/clusters/production  # render Flux entrypoint
 ```

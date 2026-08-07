@@ -90,9 +90,9 @@ Terraform uses the maintained `bpg/proxmox` provider to:
 - venus
 
 ### VM placement
-- hades: `talos-control-01` (192.168.5.21, VM 200)
-- atlas: `talos-control-02` (192.168.5.22, VM 201)
-- venus: `talos-control-03` (192.168.5.23, VM 202)
+- hades: `talos-control-01` (192.168.5.120, VM 200)
+- atlas: `talos-control-02` (192.168.5.121, VM 201)
+- venus: `talos-control-03` (192.168.5.122, VM 202)
 
 > Notes:
 > - The provider is configured against `https://hades.lan:8006`.
