@@ -7,8 +7,8 @@ truth; nothing is configured by hand on the nodes.
 
 ## Files
 
-- `talos/talconfig.yaml` — cluster + per-node definition matching the VM IPs, disks,
-  MAC addresses, control-plane VIP, and Image Factory extensions.
+- `config/cluster.yaml` — source of truth for topology and versions.
+- `talos/talconfig.yaml` — Talhelper template populated from the cluster config.
 - `talos/patches/longhorn.yaml` — `rshared` bind mount for `/var/lib/longhorn`.
 - `talos/talsecret.sops.yaml` — cluster PKI/secrets, **committed only SOPS-encrypted**.
 - `talos/clusterconfig/` — rendered machine configs + `talosconfig`. Git-ignored
@@ -24,8 +24,8 @@ truth; nothing is configured by hand on the nodes.
 
 ## Requirements
 
-- `talosctl` `v1.13.8`
-- `talhelper` `v3.1.16` or newer (Talos `v1.13.8` schema support)
+- `talosctl` matching `TALOS_VERSION` in `config/cluster.yaml`
+- `talhelper` `v3.1.16` or newer
 - `go-task`, `sops`, and `age`
 - The age private identity exported as `SOPS_AGE_KEY` from the ignored `.envrc`
 
@@ -63,9 +63,9 @@ To inspect the generated Talos commands without executing them:
 
 ```sh
 cd talos
-talhelper gencommand apply --extra-flags "--insecure"
-talhelper gencommand bootstrap
-talhelper gencommand kubeconfig --extra-flags "../ --force"
+talhelper gencommand apply --env-file ../config/cluster.yaml --extra-flags "--insecure"
+talhelper gencommand bootstrap --env-file ../config/cluster.yaml
+talhelper gencommand kubeconfig --env-file ../config/cluster.yaml --extra-flags "../ --force"
 ```
 
 For later declarative machine-configuration changes, keep the existing
@@ -81,8 +81,8 @@ a separate, planned procedure.
 
 ## Storage decision (why this shape)
 
-- Media stays on the NAS (`scale.lan`) over NFS — never on local block.
+- Media stays on the configured NAS over NFS — never on local block.
 - Application config/state lives on **Longhorn at replica 2**, so a
   single node loss fails over automatically (3 nodes = no spare rebuild target
   until the dead node returns, which is the accepted trade-off at this size).
-- restic → `nfs://scale.lan/.../backups` remains the disaster safety net.
+- The configured NFS backup target remains the disaster safety net.

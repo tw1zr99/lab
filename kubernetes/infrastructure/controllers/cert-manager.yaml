@@ -27,10 +27,10 @@ spec:
     installCRDs: true
     replicaCount: 3
     extraArgs:
-      - --dns01-recursive-nameservers=1.1.1.1:53,9.9.9.9:53
+      - --dns01-recursive-nameservers=${ACME_DNS_PRIMARY}:53,${ACME_DNS_SECONDARY}:53
       - --dns01-recursive-nameservers-only
     podDnsPolicy: None
     podDnsConfig:
       nameservers:
-        - 1.1.1.1
-        - 9.9.9.9
+        - "${ACME_DNS_PRIMARY}"
+        - "${ACME_DNS_SECONDARY}"

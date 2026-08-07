@@ -39,7 +39,8 @@ terraform -chdir=terraform apply
 
 ## Variables
 
-Defaults are defined in `terraform/variables.tf`, including:
+Topology and infrastructure defaults are defined in `config/cluster.yaml`,
+including:
 
 - Proxmox endpoint, storage, and network bridge.
 - Talos version and ISO checksum.
@@ -61,6 +62,6 @@ import them before applying.
 ## Talos Handoff
 
 The VMs boot from their empty `scsi0` disk first and fall back to the Talos ISO.
-DHCP reservations map their MAC addresses to `192.168.5.120` through `.122` in
-maintenance mode. `task bootstrap` handles machine configuration, installation,
-etcd bootstrap, Kubernetes, and Flux.
+DHCP reservations map their configured MAC addresses to their configured node
+addresses in maintenance mode. `task bootstrap` handles machine configuration,
+installation, etcd bootstrap, Kubernetes, and Flux.

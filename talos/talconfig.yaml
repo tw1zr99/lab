@@ -1,43 +1,32 @@
 ---
-# talhelper config — https://budimanjojo.github.io/talhelper/
-# Render machine configs with: task talos:genconfig
-# Network identities match the Terraform-managed Proxmox VMs.
-clusterName: production
-talosVersion: v1.13.8
-kubernetesVersion: v1.36.2
-
-# Shared control-plane VIP that floats across the three VMs.
-endpoint: https://192.168.5.99:6443
-
-# Every node is control-plane, etcd, and runs workloads.
+clusterName: ${CLUSTER_NAME}
+talosVersion: ${TALOS_VERSION}
+kubernetesVersion: ${KUBERNETES_VERSION}
+endpoint: https://${TALOS_API_ADDRESS}:6443
 allowSchedulingOnMasters: true
-
 additionalApiServerCertSans:
-  - 192.168.5.99
+  - ${TALOS_API_ADDRESS}
 additionalMachineCertSans:
-  - 192.168.5.99
-
+  - ${TALOS_API_ADDRESS}
 nodes:
-  - hostname: talos-control-01
-    ipAddress: 192.168.5.120
+  - hostname: ${NODE_1_NAME}
+    ipAddress: ${NODE_1_ADDRESS}
     controlPlane: true
-    installDisk: /dev/sda
+    installDisk: ${TALOS_INSTALL_DISK}
     nameservers:
-      - 192.168.5.1
-      - 1.1.1.1
+      - ${NETWORK_NAMESERVER_PRIMARY}
+      - ${NETWORK_NAMESERVER_SECONDARY}
     networkInterfaces:
       - deviceSelector:
-          hardwareAddr: "02:00:00:05:00:21"
+          hardwareAddr: "${NODE_1_MAC_ADDRESS}"
         dhcp: false
         addresses:
-          - 192.168.5.120/24
+          - ${NODE_1_ADDRESS}/${NETWORK_PREFIX_LENGTH}
         routes:
           - network: 0.0.0.0/0
-            gateway: 192.168.5.1
+            gateway: ${NETWORK_GATEWAY}
         vip:
-          ip: 192.168.5.99
-    # Image Factory schematic. Longhorn needs iscsi-tools; util-linux-tools
-    # provides fsck/nsenter used by the CSI mount path.
+          ip: ${TALOS_API_ADDRESS}
     schematic: &schematic
       customization:
         systemExtensions:
@@ -45,45 +34,43 @@ nodes:
             - siderolabs/iscsi-tools
             - siderolabs/qemu-guest-agent
             - siderolabs/util-linux-tools
-  - hostname: talos-control-02
-    ipAddress: 192.168.5.121
+  - hostname: ${NODE_2_NAME}
+    ipAddress: ${NODE_2_ADDRESS}
     controlPlane: true
-    installDisk: /dev/sda
+    installDisk: ${TALOS_INSTALL_DISK}
     nameservers:
-      - 192.168.5.1
-      - 1.1.1.1
+      - ${NETWORK_NAMESERVER_PRIMARY}
+      - ${NETWORK_NAMESERVER_SECONDARY}
     networkInterfaces:
       - deviceSelector:
-          hardwareAddr: "02:00:00:05:00:22"
+          hardwareAddr: "${NODE_2_MAC_ADDRESS}"
         dhcp: false
         addresses:
-          - 192.168.5.121/24
+          - ${NODE_2_ADDRESS}/${NETWORK_PREFIX_LENGTH}
         routes:
           - network: 0.0.0.0/0
-            gateway: 192.168.5.1
+            gateway: ${NETWORK_GATEWAY}
         vip:
-          ip: 192.168.5.99
+          ip: ${TALOS_API_ADDRESS}
     schematic: *schematic
-  - hostname: talos-control-03
-    ipAddress: 192.168.5.122
+  - hostname: ${NODE_3_NAME}
+    ipAddress: ${NODE_3_ADDRESS}
     controlPlane: true
-    installDisk: /dev/sda
+    installDisk: ${TALOS_INSTALL_DISK}
     nameservers:
-      - 192.168.5.1
-      - 1.1.1.1
+      - ${NETWORK_NAMESERVER_PRIMARY}
+      - ${NETWORK_NAMESERVER_SECONDARY}
     networkInterfaces:
       - deviceSelector:
-          hardwareAddr: "02:00:00:05:00:23"
+          hardwareAddr: "${NODE_3_MAC_ADDRESS}"
         dhcp: false
         addresses:
-          - 192.168.5.122/24
+          - ${NODE_3_ADDRESS}/${NETWORK_PREFIX_LENGTH}
         routes:
           - network: 0.0.0.0/0
-            gateway: 192.168.5.1
+            gateway: ${NETWORK_GATEWAY}
         vip:
-          ip: 192.168.5.99
+          ip: ${TALOS_API_ADDRESS}
     schematic: *schematic
-
-# Applied to every node.
 patches:
   - "@./patches/longhorn.yaml"

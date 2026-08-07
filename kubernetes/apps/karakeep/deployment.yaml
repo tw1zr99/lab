@@ -88,7 +88,7 @@ spec:
         - name: DISABLE_PASSWORD_AUTH
           value: "true"
         - name: NEXTAUTH_URL
-          value: "https://links.efym.net"
+          value: "https://links.${CLUSTER_DOMAIN}"
         - name: NEXTAUTH_URL_INTERNAL
           value: "http://localhost:3000"
         - name: MEILI_ADDR
@@ -110,7 +110,7 @@ spec:
               key: OPENAI_API_KEY
         # oidc
         - name: OAUTH_WELLKNOWN_URL
-          value: "https://login.efym.net/.well-known/openid-configuration"
+          value: "https://login.${CLUSTER_DOMAIN}/.well-known/openid-configuration"
         - name: OAUTH_CLIENT_ID
           value: "karakeep"
         - name: OAUTH_CLIENT_SECRET

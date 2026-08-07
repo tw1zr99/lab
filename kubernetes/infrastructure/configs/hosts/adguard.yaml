@@ -6,7 +6,7 @@ metadata:
   namespace: traefik
 spec:
   type: ExternalName
-  externalName: psi.lan
+  externalName: "${ADGUARD_PRIMARY_HOST}"
   ports:
     - port: 8083
       targetPort: 8083
@@ -24,7 +24,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`adguard.efym.net`)
+    - match: Host(`adguard.${CLUSTER_DOMAIN}`)
       kind: Rule
       middlewares:
         - name: authelia
@@ -42,7 +42,7 @@ metadata:
   namespace: traefik
 spec:
   type: ExternalName
-  externalName: isp.lan
+  externalName: "${ADGUARD_SECONDARY_HOST}"
   ports:
     - port: 8083
       targetPort: 8083
@@ -60,7 +60,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`adguard2.efym.net`)
+    - match: Host(`adguard2.${CLUSTER_DOMAIN}`)
       kind: Rule
       middlewares:
         - name: authelia

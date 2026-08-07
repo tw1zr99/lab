@@ -3,49 +3,50 @@
 This is the canonical runbook for rebuilding the production cluster from empty
 Proxmox VMs. Commands run from the repository root unless stated otherwise.
 
-Terraform provisions the VMs but is never applied by the Taskfile. After the
-VMs are running in Talos maintenance mode, `task bootstrap` configures Talos,
+Terraform provisions the VMs. After the VMs are running in Talos maintenance
+mode, `task bootstrap` configures Talos,
 bootstraps Kubernetes, installs Flux, and waits for GitOps convergence.
 
 ## 1. External prerequisites
 
 The repository cannot configure these external dependencies:
 
-- Proxmox nodes `hades`, `atlas`, and `venus` are online and use the storage and
-  bridge names in `terraform/variables.tf`.
-- DHCP reserves the MAC addresses in `terraform/variables.tf` as
-  `192.168.5.120`, `.121`, and `.122` for Talos maintenance mode.
-- `192.168.5.99` is unused and reserved for the Kubernetes API VIP.
-- `192.168.5.50` is unused and reserved for the MetalLB/Traefik service VIP.
-- The LAN gateway is `192.168.5.1` and permits node-to-node traffic, including
+- The Proxmox nodes from `config/cluster.yaml` are online and use the configured
+  storage and network bridge.
+- DHCP reserves the node MAC addresses and addresses from `config/cluster.yaml`
+  for Talos maintenance mode.
+- The configured Kubernetes API VIP is reserved.
+- The configured MetalLB and Traefik service VIP is reserved.
+- The configured LAN gateway permits node-to-node traffic, including
   TCP and UDP port `7946` for MetalLB speaker membership.
-- `scale.lan` resolves to the TrueNAS server and the NFS exports referenced by
-  the Kubernetes manifests exist.
+- The configured storage host resolves to the TrueNAS server and the NFS exports
+  referenced by the Kubernetes manifests exist.
 - The Cloudflare token already encrypted in Git remains valid for DNS01
   certificate issuance.
 - The workstation has the Age private identity matching `age.pub`. Without it,
   neither Talos secrets nor Kubernetes Secrets in this repository can decrypt.
-- The Flux SSH key has write access to `ssh://git@github.com/tw1zr99/lab`.
+- The Flux SSH key has write access to the configured Git repository.
 
-For LAN access to `efym.net` and its subdomains, use one of these network
-configurations:
+For LAN access to the configured cluster domain and its subdomains, use one of
+these network configurations:
 
-- Configure split DNS so `efym.net` and `*.efym.net` resolve to
-  `192.168.5.50` on the LAN.
+- Configure split DNS so the apex and wildcard domains resolve to the configured
+  ingress address on the LAN.
 - Keep public DNS and configure router hairpin NAT plus TCP ports `80` and `443`
-  forwarding to `192.168.5.50`.
+  forwarding to the configured ingress address.
 
 External access always requires public DNS and router port forwarding to
-`192.168.5.50`.
+the configured ingress address.
 
 ## 2. Workstation setup
 
 Install these commands:
 
 - Terraform `>= 1.9.0`
-- `talosctl` `v1.13.8`
+- `talosctl` matching `TALOS_VERSION` in `config/cluster.yaml`
 - `talhelper` `v3.1.16` or newer
-- `sops`, `age`, `kubectl`, `flux`, `go-task`, `git`, `curl`, and `direnv`
+- `mikefarah/yq` `v4`, `sops`, `age`, `kubectl`, `flux`, `go-task`, `git`, `curl`, and
+  `direnv`
 
 Create the ignored environment file and fill in the real values:
 
@@ -96,9 +97,9 @@ Apply the saved plan with Terraform:
 terraform -chdir=terraform apply tfplan
 ```
 
-Terraform downloads the pinned Talos ISO on each Proxmox node and creates VM
-IDs `200`, `201`, and `202`. Each VM boots its empty disk first, falls back to
-the ISO, receives its reserved DHCP address, and enters maintenance mode.
+Terraform downloads the pinned Talos ISO on each Proxmox node and creates the
+configured VMs. Each VM boots its empty disk first, falls back to the ISO,
+receives its reserved DHCP address, and enters maintenance mode.
 
 Confirm all three nodes are reachable and inspect their disks:
 
@@ -106,8 +107,8 @@ Confirm all three nodes are reachable and inspect their disks:
 task talos:disks
 ```
 
-Do not continue if the intended system disk is not `/dev/sda`; update
-`talos/talconfig.yaml` first.
+The reported system disk must match `talos.installDisk` in
+`config/cluster.yaml`.
 
 ## 5. Bootstrap Talos and Flux
 
@@ -127,7 +128,7 @@ The task performs these operations in order:
 6. Writes the repository-local `kubeconfig`.
 7. Waits for Talos and Kubernetes health.
 8. Creates Flux's in-cluster `sops-age` Secret.
-9. Bootstraps Flux against `master` at `kubernetes/clusters/production`.
+9. Bootstraps Flux against the configured Git branch and path.
 10. Reconciles Git and waits for every Flux Kustomization to become ready.
 11. Verifies controllers, storage, MetalLB advertisement, and HTTPS ingress.
 
@@ -158,7 +159,6 @@ flux get helmreleases --all-namespaces
 kubectl get pods --all-namespaces
 kubectl get pvc --all-namespaces
 kubectl get servicel2statuses.metallb.io --all-namespaces
-curl --resolve efym.net:443:192.168.5.50 --head https://efym.net
 ```
 
 Expected results:
@@ -177,6 +177,7 @@ After changing Talos configuration, retain the existing encrypted secrets and
 apply the declarative update without `--insecure`:
 
 ```sh
+task config:render
 task talos:genconfig
 task talos:apply
 task talos:kubeconfig  # required when the Kubernetes API endpoint changes

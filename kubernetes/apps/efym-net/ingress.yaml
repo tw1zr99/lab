@@ -9,13 +9,13 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`efym.net`)
+    - match: Host(`${CLUSTER_DOMAIN}`)
       kind: Rule
       priority: 1
       services:
         - name: efym-net
           port: 80
-    - match: Host(`efym.net`) && PathPrefix(`/services`)
+    - match: Host(`${CLUSTER_DOMAIN}`) && PathPrefix(`/services`)
       kind: Rule
       priority: 10
       middlewares:

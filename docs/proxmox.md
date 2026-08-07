@@ -1,15 +1,8 @@
 # Proxmox
 
-The cluster runs one Talos VM on each Proxmox host:
-
-| Host | VM | Address | VM ID |
-| --- | --- | --- | --- |
-| `hades` | `talos-control-01` | `192.168.5.120` | `200` |
-| `atlas` | `talos-control-02` | `192.168.5.121` | `201` |
-| `venus` | `talos-control-03` | `192.168.5.122` | `202` |
-
-Terraform connects to `https://hades.lan:8006/` and uses the `local` datastore
-for ISO images, `local-lvm` for VM disks, and `vmbr0` for networking.
+The cluster runs one Talos VM on each Proxmox host. Host placement, VM names,
+addresses, IDs, storage, API endpoint, and network bridge are defined in
+`config/cluster.yaml`.
 
 ## API Account
 
@@ -43,16 +36,16 @@ export PROXMOX_VE_API_TOKEN='terraform@pve!provider=TOKEN_SECRET'
 
 The Proxmox API uses the cluster CA. Copy `/etc/pve/pve-root-ca.pem` from a
 Proxmox node to the workstation trust store. The API certificate must include
-`hades.lan` as a subject alternative name.
+the hostname from `proxmox.endpoint` as a subject alternative name.
 
 `TF_VAR_proxmox_insecure=true` disables provider certificate verification when
 needed.
 
 ## Network Prerequisites
 
-- Reserve the three VM MAC addresses from `terraform/variables.tf` in DHCP.
-- Reserve `192.168.5.99` for the Talos Kubernetes API VIP.
-- Reserve `192.168.5.50` for the MetalLB and Traefik service VIP.
+- Reserve the VM MAC addresses from `config/cluster.yaml` in DHCP.
+- Reserve the configured Talos Kubernetes API VIP.
+- Reserve the configured MetalLB and Traefik service VIP.
 - Permit node-to-node traffic on the LAN.
 
 Terraform details and commands are documented in [terraform.md](terraform.md).

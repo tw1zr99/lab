@@ -9,7 +9,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`radarr.efym.net`)
+    - match: Host(`radarr.${CLUSTER_DOMAIN}`)
       kind: Rule
       middlewares:
         - name: authelia

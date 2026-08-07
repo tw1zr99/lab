@@ -6,7 +6,7 @@ metadata:
   namespace: traefik
 spec:
   type: ExternalName
-  externalName: hades.lan
+  externalName: "${PROXMOX_PRIMARY_HOST}"
   ports:
     - port: 8006
       targetPort: 8006
@@ -24,7 +24,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`pve.efym.net`)
+    - match: Host(`pve.${CLUSTER_DOMAIN}`)
       kind: Rule
       middlewares:
         - name: authelia
@@ -42,7 +42,7 @@ metadata:
   namespace: traefik
 spec:
   type: ExternalName
-  externalName: atlas.lan
+  externalName: "${PROXMOX_SECONDARY_HOST}"
   ports:
     - port: 8006
       targetPort: 8006
@@ -60,7 +60,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`pve2.efym.net`)
+    - match: Host(`pve2.${CLUSTER_DOMAIN}`)
       kind: Rule
       middlewares:
         - name: authelia
