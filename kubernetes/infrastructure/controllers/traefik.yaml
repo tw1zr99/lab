@@ -35,6 +35,12 @@ spec:
     deployment:
       replicas: 3
     ports:
+      web:
+        redirections:
+          entryPoint:
+            to: websecure
+            scheme: https
+            permanent: true
       websecure:
         http3:
           enabled: true
