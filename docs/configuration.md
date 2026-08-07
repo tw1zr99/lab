@@ -5,7 +5,8 @@ shared settings.
 
 It defines:
 
-- Cluster name, domain, versions, API address, and Git source.
+- Cluster name, domain, platform versions, Helm chart versions, application
+  image tags, API address, and Git source.
 - Gateway, DNS, ingress address, trusted LAN, and network bridge.
 - Proxmox endpoint, datastores, VM sizing, and Talos ISO checksum.
 - External storage, router, DNS, and Proxmox host endpoints.
@@ -26,6 +27,14 @@ maintenance commands, and HTTPS verification.
 
 Flux Kustomizations use `cluster-vars` for post-build substitution across
 controllers, infrastructure configuration, and applications.
+
+Flux's generated bootstrap manifest contains the controller image versions
+selected by `FLUX_VERSION`; it is generated output rather than a separately
+maintained version source.
+
+Change deployed versions only in `config/cluster.yaml`. HelmRelease and
+workload manifests reference the generated substitution variables and must not
+hardcode chart versions or image tags.
 
 ## Commands
 

@@ -18,7 +18,7 @@ spec:
   chart:
     spec:
       chart: longhorn
-      version: v1.9.0
+      version: "${LONGHORN_CHART_VERSION}"
       reconcileStrategy: ChartVersion
       sourceRef:
         kind: HelmRepository

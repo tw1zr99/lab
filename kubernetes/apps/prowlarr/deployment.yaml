@@ -19,7 +19,8 @@ spec:
       securityContext:
       containers:
       - name: prowlarr
-        image: linuxserver/prowlarr:develop
+        image: linuxserver/prowlarr:${PROWLARR_IMAGE_TAG}
+        imagePullPolicy: Always
         resources:
           requests:
             cpu: 50m

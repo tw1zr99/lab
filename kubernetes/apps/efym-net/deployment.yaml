@@ -28,7 +28,7 @@ spec:
               topologyKey: kubernetes.io/hostname
       containers:
       - name: efym-net
-        image: ghcr.io/tw1zr99/efym.net:sha-de0c99fdd21cbf6016f6bb3901c1a621f9cc8791
+        image: ghcr.io/tw1zr99/efym.net:${EFYM_NET_IMAGE_TAG}
         # securityContext:
         #   runAsNonRoot: false
         #   # runAsUser: 1000

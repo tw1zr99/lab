@@ -19,7 +19,8 @@ spec:
       securityContext:
       containers:
       - name: sonarr
-        image: linuxserver/sonarr:latest
+        image: linuxserver/sonarr:${SONARR_IMAGE_TAG}
+        imagePullPolicy: Always
         resources:
           requests:
             cpu: 50m

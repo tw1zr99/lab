@@ -16,6 +16,8 @@ vars:
     sh: yq -r '.GIT_URL' {{.CONFIG_FILE}}
   GIT_BRANCH:
     sh: yq -r '.GIT_BRANCH' {{.CONFIG_FILE}}
+  FLUX_VERSION:
+    sh: yq -r '.FLUX_VERSION' {{.CONFIG_FILE}}
   CLUSTER_DOMAIN:
     sh: yq -r '.CLUSTER_DOMAIN' {{.CONFIG_FILE}}
   INGRESS_ADDRESS:
@@ -230,6 +232,7 @@ tasks:
         msg: "FLUX_SSH_KEY_PATH does not reference a file"
     cmds:
       - flux bootstrap git
+          --version={{.FLUX_VERSION}}
           --url={{.GIT_URL}}
           --branch={{.GIT_BRANCH}}
           --path={{.FLUX_PATH}}

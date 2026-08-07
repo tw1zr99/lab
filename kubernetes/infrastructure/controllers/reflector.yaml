@@ -18,7 +18,7 @@ spec:
   chart:
     spec:
       chart: reflector
-      version: 9.1.17
+      version: "${REFLECTOR_CHART_VERSION}"
       sourceRef:
         kind: HelmRepository
         name: emberstack

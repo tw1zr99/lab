@@ -23,7 +23,8 @@ spec:
           - 105
       containers:
       - name: jellyfin
-        image: linuxserver/jellyfin:latest
+        image: linuxserver/jellyfin:${JELLYFIN_IMAGE_TAG}
+        imagePullPolicy: Always
         resources:
           requests:
             cpu: 100m
