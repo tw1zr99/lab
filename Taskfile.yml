@@ -100,9 +100,14 @@ tasks:
   flux:bootstrap:
     desc: "Install Flux and point it at this repo"
     deps: [flux:secret]
+    preconditions:
+      - sh: test -n "$FLUX_SSH_KEY_PATH"
+        msg: "FLUX_SSH_KEY_PATH must be set (configure it in .envrc)"
+      - sh: test -f "$FLUX_SSH_KEY_PATH"
+        msg: "FLUX_SSH_KEY_PATH does not reference a file"
     cmds:
       - flux bootstrap git
           --url={{.GIT_URL}}
           --branch={{.GIT_BRANCH}}
           --path={{.FLUX_PATH}}
-          --private-key-file={{.SSH_KEY | default "~/.ssh/id_ed25519"}}
+          --private-key-file="$FLUX_SSH_KEY_PATH"
