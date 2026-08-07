@@ -20,7 +20,7 @@ spec:
       enableServiceLinks: true
       initContainers:
       - name: fix-config-permissions
-        image: busybox:1.36
+        image: busybox:${BUSYBOX_IMAGE_TAG}
         command:
           - sh
           - -c
@@ -30,7 +30,8 @@ spec:
           mountPath: /home/filebrowser/data
       containers:
       - name: filebrowser-quantum
-        image: gtstef/filebrowser:latest
+        image: gtstef/filebrowser:${FILEBROWSER_IMAGE_TAG}
+        imagePullPolicy: Always
         resources:
           requests:
             cpu: 25m

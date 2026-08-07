@@ -18,7 +18,8 @@ spec:
       enableServiceLinks: true
       containers:
       - name: backrest
-        image: garethgeorge/backrest:latest
+        image: garethgeorge/backrest:${BACKREST_IMAGE_TAG}
+        imagePullPolicy: Always
         resources:
           requests:
             cpu: 50m

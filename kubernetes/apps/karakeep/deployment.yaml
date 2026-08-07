@@ -18,7 +18,7 @@ spec:
       enableServiceLinks: true
       containers:
       - name: meilisearch
-        image: getmeili/meilisearch:v1.13.3
+        image: getmeili/meilisearch:${MEILISEARCH_IMAGE_TAG}
         # securityContext:
         #   runAsNonRoot: false
         #   # runAsUser: 1000
@@ -63,7 +63,8 @@ spec:
       enableServiceLinks: true
       containers:
       - name: karakeep
-        image: ghcr.io/karakeep-app/karakeep:latest
+        image: ghcr.io/karakeep-app/karakeep:${KARAKEEP_IMAGE_TAG}
+        imagePullPolicy: Always
         # securityContext:
         #   runAsNonRoot: false
         #   # runAsUser: 1000

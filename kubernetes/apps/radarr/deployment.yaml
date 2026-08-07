@@ -19,7 +19,8 @@ spec:
       securityContext:
       containers:
       - name: radarr
-        image: linuxserver/radarr:latest
+        image: linuxserver/radarr:${RADARR_IMAGE_TAG}
+        imagePullPolicy: Always
         resources:
           requests:
             cpu: 50m

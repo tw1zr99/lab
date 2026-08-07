@@ -168,7 +168,8 @@ spec:
       enableServiceLinks: false
       containers:
       - name: authelia
-        image: authelia/authelia:latest
+        image: authelia/authelia:${AUTHELIA_IMAGE_TAG}
+        imagePullPolicy: Always
         # securityContext:
         #   runAsNonRoot: false
         #   # runAsUser: 1000
@@ -193,7 +194,8 @@ spec:
             value: "Europe/London"
       initContainers:
       - name: init-config
-        image: debian:latest
+        image: debian:${DEBIAN_IMAGE_TAG}
+        imagePullPolicy: Always
         securityContext:
           runAsNonRoot: false
           # runAsUser: 1000

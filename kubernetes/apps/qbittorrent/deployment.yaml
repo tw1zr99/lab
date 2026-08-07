@@ -26,7 +26,8 @@ spec:
       enableServiceLinks: true
       initContainers:
       - name: init-config
-        image: alpine:latest
+        image: alpine:${ALPINE_IMAGE_TAG}
+        imagePullPolicy: Always
         resources:
           requests:
             cpu: 10m
@@ -48,7 +49,8 @@ spec:
             readOnly: true
       containers:
       - name: qbittorrent
-        image: ghcr.io/hotio/qbittorrent:latest
+        image: ghcr.io/hotio/qbittorrent:${QBITTORRENT_IMAGE_TAG}
+        imagePullPolicy: Always
         resources:
           requests:
             cpu: 100m
