@@ -8,7 +8,6 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  volumeName: pvc-06b43570-f515-44ed-a724-f222c01c9f78
   storageClassName: longhorn
   resources:
     requests:
@@ -23,7 +22,6 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  volumeName: pvc-826dbb49-6671-41db-b53b-1d632707b7ec
   storageClassName: longhorn
   resources:
     requests:
