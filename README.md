@@ -3,7 +3,8 @@
 This repo describes my homelab Kubernetes platform:
 
 - A **Proxmox** cluster runs multiple VMs.
-- Those VMs form a **k3s** Kubernetes cluster.
+- Three VMs, one per Proxmox host, form a **Talos Linux** Kubernetes cluster.
+- Every VM is a control-plane, etcd, and workload node.
 - The cluster is managed using **FluxCD** (GitOps): the cluster continuously reconciles itself to match this Git repository.
 - Ingress, TLS, auth, and persistence are provided by:
   - **Traefik** (ingress + routing)
@@ -76,33 +77,29 @@ This repo describes my homelab Kubernetes platform:
 ## VM Provisioning (Terraform → Proxmox)
 
 ### What Terraform does
-Terraform uses the `telmate/proxmox` provider to:
+Terraform uses the maintained `bpg/proxmox` provider to:
 
-- Clone Ubuntu templates on each Proxmox node
-- Set static IP config via cloud-init
-- Create:
-  - k3s control-plane nodes
-  - k3s worker nodes
+- Download the pinned Talos ISO to each Proxmox node
+- Create one Talos VM per Proxmox host
+- Configure stable VM IDs and MAC addresses
+- Configure UEFI, Q35, VirtIO SCSI, fixed memory, and serial consoles
 
 ### Proxmox nodes
 - hades
 - atlas
 - venus
 
-### VM roles (current)
-Control-plane VMs:
-- hades: `k3s-master-01` (192.168.5.20), `k3s-master-02` (192.168.5.21)
-- atlas: `k3s-master-03` (192.168.5.22)
-- venus: `k3s-master-04` (192.168.5.23)
-
-Worker VMs:
-- hades: `k3s-worker-01` (192.168.5.30)
-- atlas: `k3s-worker-02` (192.168.5.31), `k3s-worker-03` (192.168.5.32)
-- venus: `k3s-worker-04` (192.168.5.33), `k3s-worker-05` (192.168.5.34)
+### VM placement
+- hades: `talos-control-01` (192.168.5.120, VM 200)
+- atlas: `talos-control-02` (192.168.5.121, VM 201)
+- venus: `talos-control-03` (192.168.5.122, VM 202)
 
 > Notes:
 > - The provider is configured against `https://hades.lan:8006`.
-> - Cloud-init user/password and SSH keys are injected via variables.
+> - Terraform authenticates with a dedicated Proxmox API token supplied via
+>   `PROXMOX_VE_API_TOKEN`.
+> - Talos machine configuration is generated with talhelper after the VMs enter
+>   maintenance mode.
 
 ---
 

@@ -1,0 +1,6 @@
+---
+# SOPS creation rules. Scoped to talos/ so existing kubernetes secret
+# encryption behaviour is left untouched.
+creation_rules:
+  - path_regex: talos/.*\.sops\.ya?ml$
+    age: age166emlwc4zzzdzfjeurrxtk05wnz6dqxdnujr2u6h63c800dutsxstyl7n9

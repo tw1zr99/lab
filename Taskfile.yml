@@ -1,0 +1,108 @@
+---
+# go-task (https://taskfile.dev) entrypoint for building the cluster from scratch.
+#   task bootstrap   -> Talos cluster + Flux GitOps, end to end
+# Prereqs on the workstation: talosctl, talhelper, sops, age, kubectl, flux.
+version: "3"
+
+vars:
+  TALOS_DIR: "{{.ROOT_DIR}}/talos"
+  FLUX_PATH: "kubernetes/clusters/production"
+  GIT_URL: "ssh://git@github.com/tw1zr99/lab"
+  GIT_BRANCH: "master"
+
+env:
+  KUBECONFIG: "{{.ROOT_DIR}}/kubeconfig"
+  TALOSCONFIG: "{{.TALOS_DIR}}/clusterconfig/talosconfig"
+  # Workstation age key used by SOPS to decrypt talsecret + flux secrets.
+  SOPS_AGE_KEY_FILE: '{{.SOPS_AGE_KEY_FILE | default "~/.config/sops/age/keys.txt"}}'
+
+tasks:
+  default:
+    cmds:
+      - task --list
+    silent: true
+
+  bootstrap:
+    desc: "Full cluster from scratch: Talos then Flux"
+    cmds:
+      - task: talos:bootstrap
+      - task: flux:bootstrap
+
+  # --- Talos -----------------------------------------------------------------
+  talos:validate:
+    desc: "Validate the declarative Talhelper configuration"
+    dir: "{{.TALOS_DIR}}"
+    cmds:
+      - talhelper validate talconfig
+
+  talos:secret:
+    desc: "Generate Talos secrets once, SOPS-encrypted (run before first genconfig)"
+    dir: "{{.TALOS_DIR}}"
+    cmds:
+      - |
+        plaintext="$(mktemp --suffix=.yaml)"
+        encrypted="$(mktemp --suffix=.yaml)"
+        trap 'rm -f "$plaintext" "$encrypted"' EXIT
+        talhelper gensecret > "$plaintext"
+        sops --encrypt \
+          --filename-override talos/talsecret.sops.yaml \
+          "$plaintext" > "$encrypted"
+        mv "$encrypted" talsecret.sops.yaml
+    status:
+      - test -f {{.TALOS_DIR}}/talsecret.sops.yaml
+
+  talos:genconfig:
+    desc: "Render machine configs from talconfig.yaml into clusterconfig/"
+    dir: "{{.TALOS_DIR}}"
+    deps: [talos:secret, talos:validate]
+    cmds:
+      - talhelper genconfig
+
+  talos:apply:
+    desc: "Apply machine config to all nodes (INSECURE=--insecure on first boot)"
+    dir: "{{.TALOS_DIR}}"
+    deps: [talos:genconfig]
+    cmds:
+      - talhelper gencommand apply --extra-flags "{{.INSECURE}}" | bash
+
+  talos:bootstrap:
+    desc: "First-time bring-up: apply configs, bootstrap etcd, fetch kubeconfig"
+    dir: "{{.TALOS_DIR}}"
+    cmds:
+      - task: talos:apply
+        vars: { INSECURE: "--insecure" }
+      # Installation reboots each node before etcd becomes bootstrap-ready.
+      - |
+        for attempt in $(seq 1 30); do
+          if talhelper gencommand bootstrap | bash; then
+            break
+          fi
+          if [ "$attempt" -eq 30 ]; then
+            echo "Talos did not become bootstrap-ready within 5 minutes" >&2
+            exit 1
+          fi
+          sleep 10
+        done
+      - talhelper gencommand kubeconfig --extra-flags "{{.ROOT_DIR}} --force" | bash
+      - talhelper gencommand health | bash
+
+  # --- Flux ------------------------------------------------------------------
+  flux:secret:
+    desc: "Create the sops-age secret Flux uses to decrypt manifests"
+    cmds:
+      - |
+        kubectl create namespace flux-system --dry-run=client -o yaml | kubectl apply -f -
+        cat $SOPS_AGE_KEY_FILE |
+          kubectl create secret generic sops-age \
+            --namespace=flux-system --from-file=age.agekey=/dev/stdin \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+  flux:bootstrap:
+    desc: "Install Flux and point it at this repo"
+    deps: [flux:secret]
+    cmds:
+      - flux bootstrap git
+          --url={{.GIT_URL}}
+          --branch={{.GIT_BRANCH}}
+          --path={{.FLUX_PATH}}
+          --private-key-file={{.SSH_KEY | default "~/.ssh/id_ed25519"}}

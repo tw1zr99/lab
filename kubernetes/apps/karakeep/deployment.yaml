@@ -23,13 +23,13 @@ spec:
         #   runAsNonRoot: false
         #   # runAsUser: 1000
         #   readOnlyRootFilesystem: false
-        # resources:
-        #   requests:
-        #     cpu:    "1m"
-        #     memory: "128Mi"
-        #   limits:
-        #     cpu:    "5m"
-        #     memory: "256Mi"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: "1"
+            memory: 1Gi
         ports:
           - containerPort: 7700
             name: http
@@ -68,13 +68,13 @@ spec:
         #   runAsNonRoot: false
         #   # runAsUser: 1000
         #   readOnlyRootFilesystem: false
-        # resources:
-        #   requests:
-        #     cpu:    "5m"
-        #     memory: "512Mi"
-        #   limits:
-        #     cpu:    "100m"
-        #     memory: "1024Mi"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 512Mi
+          limits:
+            cpu: "1"
+            memory: 1536Mi
         ports:
         - containerPort: 3000
           name: http

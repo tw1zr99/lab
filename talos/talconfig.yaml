@@ -1,0 +1,89 @@
+---
+# talhelper config — https://budimanjojo.github.io/talhelper/
+# Render machine configs with: task talos:genconfig
+# Network identities match the Terraform-managed Proxmox VMs.
+clusterName: production
+talosVersion: v1.13.8
+kubernetesVersion: v1.36.2
+
+# Shared control-plane VIP that floats across the three VMs.
+endpoint: https://192.168.5.10:6443
+
+# Every node is control-plane, etcd, and runs workloads.
+allowSchedulingOnMasters: true
+
+additionalApiServerCertSans:
+  - 192.168.5.10
+additionalMachineCertSans:
+  - 192.168.5.10
+
+nodes:
+  - hostname: talos-control-01
+    ipAddress: 192.168.5.120
+    controlPlane: true
+    installDisk: /dev/sda
+    nameservers:
+      - 192.168.5.1
+      - 1.1.1.1
+    networkInterfaces:
+      - deviceSelector:
+          hardwareAddr: "02:00:00:05:00:21"
+        dhcp: false
+        addresses:
+          - 192.168.5.120/24
+        routes:
+          - network: 0.0.0.0/0
+            gateway: 192.168.5.1
+        vip:
+          ip: 192.168.5.10
+    # Image Factory schematic. Longhorn needs iscsi-tools; util-linux-tools
+    # provides fsck/nsenter used by the CSI mount path.
+    schematic: &schematic
+      customization:
+        systemExtensions:
+          officialExtensions:
+            - siderolabs/iscsi-tools
+            - siderolabs/qemu-guest-agent
+            - siderolabs/util-linux-tools
+  - hostname: talos-control-02
+    ipAddress: 192.168.5.121
+    controlPlane: true
+    installDisk: /dev/sda
+    nameservers:
+      - 192.168.5.1
+      - 1.1.1.1
+    networkInterfaces:
+      - deviceSelector:
+          hardwareAddr: "02:00:00:05:00:22"
+        dhcp: false
+        addresses:
+          - 192.168.5.121/24
+        routes:
+          - network: 0.0.0.0/0
+            gateway: 192.168.5.1
+        vip:
+          ip: 192.168.5.10
+    schematic: *schematic
+  - hostname: talos-control-03
+    ipAddress: 192.168.5.122
+    controlPlane: true
+    installDisk: /dev/sda
+    nameservers:
+      - 192.168.5.1
+      - 1.1.1.1
+    networkInterfaces:
+      - deviceSelector:
+          hardwareAddr: "02:00:00:05:00:23"
+        dhcp: false
+        addresses:
+          - 192.168.5.122/24
+        routes:
+          - network: 0.0.0.0/0
+            gateway: 192.168.5.1
+        vip:
+          ip: 192.168.5.10
+    schematic: *schematic
+
+# Applied to every node.
+patches:
+  - "@./patches/longhorn.yaml"

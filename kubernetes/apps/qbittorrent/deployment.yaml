@@ -27,6 +27,13 @@ spec:
       initContainers:
       - name: init-config
         image: alpine:latest
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            cpu: 100m
+            memory: 128Mi
         command:
           - sh
           - -c
@@ -42,6 +49,13 @@ spec:
       containers:
       - name: qbittorrent
         image: ghcr.io/hotio/qbittorrent:latest
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: "1"
+            memory: 1Gi
         securityContext:
           privileged: false
           capabilities:

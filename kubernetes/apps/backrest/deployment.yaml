@@ -19,6 +19,13 @@ spec:
       containers:
       - name: backrest
         image: garethgeorge/backrest:latest
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
         ports:
         - containerPort: 9898
           name: http

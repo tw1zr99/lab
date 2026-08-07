@@ -1,13 +1,16 @@
 terraform {
+  required_version = ">= 1.9.0"
+
   required_providers {
     proxmox = {
-      source  = "telmate/proxmox"
-      version = "3.0.1-rc6"
+      source  = "bpg/proxmox"
+      version = "0.111.1"
     }
   }
 }
 
 provider "proxmox" {
-  pm_api_url      = "https://hades.lan:8006/api2/json"
-  pm_tls_insecure = true
+  endpoint = var.proxmox_endpoint
+  insecure = var.proxmox_insecure
+  min_tls  = "1.3"
 }
