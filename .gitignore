@@ -3,4 +3,11 @@
 **/.terraform*
 **/terraform.tfstate*
 **/terraform.tfvars
+**/tfplan
+**/*.tfplan
+.envrc
 AGENTS.md
+
+# Talos: rendered machine configs (plaintext secrets) + fetched cluster creds
+talos/clusterconfig/
+kubeconfig
