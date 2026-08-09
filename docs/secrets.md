@@ -35,7 +35,7 @@ Parse an embedded YAML value without displaying it:
 sops --decrypt \
   --extract '["stringData"]["users.yml"]' \
   kubernetes/infrastructure/controllers/secret.yaml \
-  | yq eval '.' - >/dev/null
+  | yq '.' - >/dev/null
 ```
 
 ## Edit an encrypted file
