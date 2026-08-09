@@ -18,6 +18,12 @@ vars:
     sh: yq -r '.GIT_BRANCH' {{.CONFIG_FILE}}
   FLUX_VERSION:
     sh: yq -r '.FLUX_VERSION' {{.CONFIG_FILE}}
+  TALOS_VERSION:
+    sh: yq -r '.TALOS_VERSION' {{.CONFIG_FILE}}
+  KUBERNETES_VERSION:
+    sh: yq -r '.KUBERNETES_VERSION' {{.CONFIG_FILE}}
+  KUBERNETES_UPGRADE_NODE:
+    sh: yq -r '.NODE_1_ADDRESS' {{.CONFIG_FILE}}
   CLUSTER_DOMAIN:
     sh: yq -r '.CLUSTER_DOMAIN' {{.CONFIG_FILE}}
   INGRESS_ADDRESS:
@@ -254,6 +260,88 @@ tasks:
       - kubectl kustomize kubernetes/infrastructure/controllers >/dev/null
       - kubectl kustomize kubernetes/infrastructure/configs >/dev/null
       - kubectl kustomize kubernetes/apps >/dev/null
+
+  kubernetes:upgrade:preflight:
+    desc: "Check cluster health before upgrading Kubernetes"
+    preconditions:
+      - sh: command -v talosctl >/dev/null && command -v kubectl >/dev/null && command -v yq >/dev/null
+        msg: "talosctl, kubectl, and mikefarah/yq v4 must be installed"
+      - sh: case "$(yq --version 2>/dev/null)" in *mikefarah*yq*version*v4.*) exit 0 ;; *) exit 1 ;; esac
+        msg: "mikefarah/yq v4 must be installed"
+      - sh: test -f {{.TALOS_DIR}}/clusterconfig/talosconfig
+        msg: "Talos config is missing; run task talos:genconfig"
+      - sh: test -f {{.ROOT_DIR}}/kubeconfig
+        msg: "Kubeconfig is missing; run task talos:kubeconfig"
+      - sh: case "{{.KUBERNETES_VERSION}}" in v[0-9]*.[0-9]*.[0-9]*) exit 0 ;; *) exit 1 ;; esac
+        msg: "KUBERNETES_VERSION in config/cluster.yaml must use the form vX.Y.Z"
+    cmds:
+      - task: config:check
+      - |
+        client_version="$(talosctl version --client --short | awk '/Talos/{print $2}')"
+        if [ "$client_version" != "{{.TALOS_VERSION}}" ]; then
+          echo "Expected talosctl {{.TALOS_VERSION}}, found $client_version" >&2
+          exit 1
+        fi
+      - kubectl get --raw=/readyz >/dev/null
+      - kubectl wait nodes --all --for=condition=ready --timeout={{.BOOTSTRAP_TIMEOUT}}
+      - |
+        cd {{.TALOS_DIR}}
+        talhelper gencommand health --env-file {{.TALHELPER_ENV_FILE}} | bash
+      - kubectl get nodes -o custom-columns='NAME:.metadata.name,CURRENT:.status.nodeInfo.kubeletVersion'
+
+  kubernetes:upgrade:plan:
+    desc: "Show the Kubernetes upgrade plan without changing the cluster"
+    cmds:
+      - task: kubernetes:upgrade:preflight
+      - |
+        target={{.KUBERNETES_VERSION}}
+        talosctl upgrade-k8s --nodes={{.KUBERNETES_UPGRADE_NODE}} --to="${target#v}" --dry-run
+
+  kubernetes:upgrade:
+    desc: "Upgrade Kubernetes serially to KUBERNETES_VERSION"
+    cmds:
+      - task: kubernetes:upgrade:preflight
+      - |
+        target={{.KUBERNETES_VERSION}}
+        talosctl upgrade-k8s --nodes={{.KUBERNETES_UPGRADE_NODE}} --to="${target#v}"
+      - task: kubernetes:upgrade:verify
+
+  kubernetes:upgrade:verify:
+    desc: "Verify Kubernetes versions and cluster services after an upgrade"
+    cmds:
+      - |
+        target={{.KUBERNETES_VERSION}}
+        versions="$(kubectl get nodes -o jsonpath='{range .items[*]}{.status.nodeInfo.kubeletVersion}{"\n"}{end}')"
+        for version in $versions; do
+          if [ "$version" != "$target" ]; then
+            echo "Expected every kubelet to run $target, found $version" >&2
+            exit 1
+          fi
+        done
+        kubectl get nodes -o custom-columns='NAME:.metadata.name,VERSION:.status.nodeInfo.kubeletVersion'
+      - |
+        target={{.KUBERNETES_VERSION}}
+        for component in kube-apiserver kube-controller-manager kube-scheduler; do
+          images="$(kubectl get pods --namespace kube-system --selector="component=$component" -o jsonpath='{range .items[*]}{.spec.containers[0].image}{"\n"}{end}')"
+          count=0
+          for image in $images; do
+            count=$((count + 1))
+            case "$image" in
+              *:"$target") ;;
+              *) echo "$component uses unexpected image $image" >&2; exit 1 ;;
+            esac
+          done
+          if [ "$count" -ne 3 ]; then
+            echo "Expected 3 $component pods, found $count" >&2
+            exit 1
+          fi
+        done
+        proxy_image="$(kubectl get daemonset kube-proxy --namespace kube-system -o jsonpath='{.spec.template.spec.containers[0].image}')"
+        case "$proxy_image" in
+          *:"$target") ;;
+          *) echo "kube-proxy uses unexpected image $proxy_image" >&2; exit 1 ;;
+        esac
+      - task: cluster:verify
 
   cluster:verify:
     desc: "Verify Talos, Kubernetes, Flux, storage, MetalLB, and HTTPS"

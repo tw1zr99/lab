@@ -7,6 +7,8 @@
   ingress, authentication, and repository layout.
 - [Cluster configuration](configuration.md) - manage shared topology, generated
   files, and local credentials.
+- [Kubernetes upgrade](upgrade.md) - plan, execute, recover, and verify a
+  Talos-managed Kubernetes upgrade.
 
 ## Platform Layers
 
