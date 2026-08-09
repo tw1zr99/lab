@@ -16,6 +16,8 @@
   lifecycle operations.
 - [Kubernetes](kubernetes.md) - Flux ownership, dependencies,
   pruning safety, and the component migration plan.
+- [Secret operations](secrets.md) - inspect, edit, validate, and reconcile
+  SOPS-encrypted Kubernetes Secrets.
 
 ## Cluster Services
 
