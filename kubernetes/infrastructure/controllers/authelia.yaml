@@ -105,8 +105,11 @@ data:
               - preferred_username
               - groups
         hmac_secret: $${HMAC_SECRET}
-        issuer_private_key: |
-          $${ISSUER_PRIVATE_KEY}
+        jwks:
+          - algorithm: RS256
+            use: sig
+            key: |
+              $${ISSUER_PRIVATE_KEY}
         clients:
           - client_id: jellyfin
             client_name: Jellyfin
