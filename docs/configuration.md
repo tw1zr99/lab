@@ -54,3 +54,6 @@ Credentials and workstation-specific paths remain in the ignored `.envrc`.
 `.envrc.example` documents the required variable names. Kubernetes and Talos
 secret data remains SOPS-encrypted in Git, while `.envrc` supplies the Age
 identity used to decrypt it.
+
+See [Secret operations](secrets.md) for safe inspection, interactive editing,
+validation, and reconciliation commands.
