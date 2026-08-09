@@ -30,6 +30,6 @@ task bootstrap
 
 [Documentation index](docs/index.md) | [Bootstrap guide](docs/bootstrap.md) |
 [Architecture](docs/architecture.md) | [Configuration](docs/configuration.md) |
-[Kubernetes](docs/kubernetes.md)
+[Kubernetes](docs/kubernetes.md) | [Upgrades](docs/upgrade.md)
 
 Run `task --list` to see all provisioning, validation, and verification tasks.
