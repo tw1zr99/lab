@@ -15,6 +15,8 @@ metadata:
   namespace: traefik
 spec:
   interval: 1h
+  upgrade:
+    crds: CreateReplace
   chart:
     spec:
       chart: traefik
@@ -26,27 +28,26 @@ spec:
   values:
     global:
       checkNewVersion: false
-    globalArguments:
-      - "--global.sendanonymoususage=false"
-      - "--global.checknewversion=false"
+      sendAnonymousUsage: false
     additionalArguments:
       - "--serversTransport.insecureSkipVerify=true"
-      - "--log.level=INFO"
     deployment:
       replicas: 3
     ports:
       web:
-        redirections:
-          entryPoint:
-            to: websecure
-            scheme: https
-            permanent: true
+        http:
+          redirections:
+            entryPoint:
+              to: websecure
+              scheme: https
+              permanent: true
       websecure:
+        http:
+          tls:
+            enabled: true
         http3:
           enabled: true
-        advertisedPort: 4443
-        tls:
-          enabled: true
+          advertisedPort: 4443
     providers:
       kubernetesCRD:
         enabled: true
