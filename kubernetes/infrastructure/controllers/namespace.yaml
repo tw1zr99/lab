@@ -57,6 +57,13 @@ metadata:
 apiVersion: v1
 kind: Namespace
 metadata:
+  name: snapshot-controller
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+---
+apiVersion: v1
+kind: Namespace
+metadata:
   name: volsync-system
   annotations:
     kustomize.toolkit.fluxcd.io/prune: disabled

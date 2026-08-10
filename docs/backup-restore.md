@@ -8,6 +8,9 @@ volume identities from the original cluster.
 ## Components
 
 - VolSync is installed by the `volsync` HelmRelease in `volsync-system`.
+- The CSI snapshot controller and snapshot CRDs are installed by the
+  `snapshot-controller` HelmRelease, using the upstream version bundled with
+  Longhorn.
 - `karakeep-data` is the initial backup pilot.
 - The `karakeep-data` repository is stored below the bucket prefix
   `volsync/karakeep-data` through the EU S3-compatible endpoint.
