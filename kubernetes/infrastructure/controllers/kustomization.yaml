@@ -10,4 +10,5 @@ resources:
   - metallb.yaml
   - longhorn.yaml
   - kube-prometheus-stack.yaml
+  - volsync.yaml
   - authelia.yaml

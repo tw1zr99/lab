@@ -260,6 +260,7 @@ tasks:
       - kubectl kustomize kubernetes/infrastructure/controllers >/dev/null
       - kubectl kustomize kubernetes/infrastructure/configs >/dev/null
       - kubectl kustomize kubernetes/apps >/dev/null
+      - kubectl kustomize kubernetes/backups >/dev/null
 
   kubernetes:upgrade:preflight:
     desc: "Check cluster health before upgrading Kubernetes"

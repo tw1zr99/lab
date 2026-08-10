@@ -1,0 +1,27 @@
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: karakeep-data
+spec:
+  sourcePVC: karakeep-data
+  trigger:
+    schedule: "0 3 * * *"
+  restic:
+    repository: volsync-karakeep-data
+    copyMethod: Clone
+    storageClassName: longhorn
+    cacheStorageClassName: longhorn
+    pruneIntervalDays: 14
+    retain:
+      daily: 7
+      weekly: 4
+      monthly: 6
+      yearly: 1
+    moverResources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
