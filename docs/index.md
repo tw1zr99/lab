@@ -9,6 +9,8 @@
   files, and local credentials.
 - [Kubernetes upgrade](upgrade.md) - plan, execute, recover, and verify a
   Talos-managed Kubernetes upgrade.
+- [Backup and restore](backup-restore.md) - VolSync backups, isolated restore
+  testing, and fresh-cluster recovery.
 
 ## Platform Layers
 

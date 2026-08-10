@@ -24,6 +24,8 @@ kubernetes/
 │   ├── certificates/
 │   ├── authelia/
 │   └── routes/
+├── backups/
+│   └── <application>/
 └── apps/
     └── <application>/
 ```
