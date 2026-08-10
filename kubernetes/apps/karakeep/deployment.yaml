@@ -7,6 +7,8 @@ metadata:
     app: meilisearch
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: meilisearch
@@ -35,6 +37,8 @@ spec:
             name: http
         env:
           - name: MEILI_NO_ANALYTICS
+            value: "true"
+          - name: MEILI_EXPERIMENTAL_DUMPLESS_UPGRADE
             value: "true"
         volumeMounts:
           - name: meilisearch-data
