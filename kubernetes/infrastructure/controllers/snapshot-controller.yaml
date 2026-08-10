@@ -1,0 +1,42 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: piraeus
+  namespace: flux-system
+spec:
+  url: https://piraeus.io/helm-charts/
+  interval: 24h
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: snapshot-controller
+  namespace: snapshot-controller
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: snapshot-controller
+      version: "${SNAPSHOT_CONTROLLER_CHART_VERSION}"
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: piraeus
+        namespace: flux-system
+  values:
+    installCRDs: true
+    controller:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 32Mi
+        limits:
+          cpu: 100m
+          memory: 128Mi
+    volumeSnapshotClasses:
+      - name: longhorn
+        annotations:
+          snapshot.storage.kubernetes.io/is-default-class: "true"
+        driver: driver.longhorn.io
+        deletionPolicy: Delete

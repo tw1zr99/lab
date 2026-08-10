@@ -9,6 +9,7 @@ resources:
   - traefik.yaml
   - metallb.yaml
   - longhorn.yaml
+  - snapshot-controller.yaml
   - kube-prometheus-stack.yaml
   - volsync.yaml
   - authelia.yaml
