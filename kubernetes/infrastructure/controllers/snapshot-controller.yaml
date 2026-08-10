@@ -34,9 +34,3 @@ spec:
         limits:
           cpu: 100m
           memory: 128Mi
-    volumeSnapshotClasses:
-      - name: longhorn
-        annotations:
-          snapshot.storage.kubernetes.io/is-default-class: "true"
-        driver: driver.longhorn.io
-        deletionPolicy: Delete

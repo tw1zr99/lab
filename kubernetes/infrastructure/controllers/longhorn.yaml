@@ -34,5 +34,3 @@ spec:
       autoSalvage: "true"
       engineReplicaTimeout: "30"
       replicaFileSyncHttpClientTimeout: "120"
-    defaultBackupStore:
-      backupTarget: "nfs://${STORAGE_HOST}:/mnt/tank/backups/appdata"
