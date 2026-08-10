@@ -5,6 +5,7 @@ resources:
   - certificate.yaml
   - metallb.yaml
   - service.yaml
+  - snapshot-class.yaml
   - middleware.yaml
   - ingress.yaml
   - hosts/adguard.yaml

@@ -85,4 +85,4 @@ a separate, planned procedure.
 - Application config/state lives on **Longhorn at replica 2**, so a
   single node loss fails over automatically (3 nodes = no spare rebuild target
   until the dead node returns, which is the accepted trade-off at this size).
-- The configured NFS backup target remains the disaster safety net.
+- VolSync sends encrypted Restic backups to Backblaze B2 for disaster recovery.
