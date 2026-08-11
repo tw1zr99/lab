@@ -1,0 +1,192 @@
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationDestination
+metadata:
+  name: meilisearch-data
+  namespace: default
+spec:
+  trigger:
+    manual: "${RESTORE_TRIGGER}"
+  restic:
+    repository: volsync-meilisearch-data
+    restoreAsOf: "${RESTORE_AS_OF}"
+    destinationPVC: meilisearch-data
+    copyMethod: Direct
+    cacheStorageClassName: longhorn
+    cleanupCachePVC: true
+    enableFileDeletion: true
+    moverResources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationDestination
+metadata:
+  name: karakeep-data
+  namespace: default
+spec:
+  trigger:
+    manual: "${RESTORE_TRIGGER}"
+  restic:
+    repository: volsync-karakeep-data
+    restoreAsOf: "${RESTORE_AS_OF}"
+    destinationPVC: karakeep-data
+    copyMethod: Direct
+    cacheStorageClassName: longhorn
+    cleanupCachePVC: true
+    enableFileDeletion: true
+    moverResources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationDestination
+metadata:
+  name: filebrowser-quantum-config
+  namespace: default
+spec:
+  trigger:
+    manual: "${RESTORE_TRIGGER}"
+  restic:
+    repository: volsync-filebrowser-quantum-config
+    restoreAsOf: "${RESTORE_AS_OF}"
+    destinationPVC: filebrowser-quantum-config
+    copyMethod: Direct
+    cacheStorageClassName: longhorn
+    cleanupCachePVC: true
+    enableFileDeletion: true
+    moverResources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationDestination
+metadata:
+  name: qbittorrent-data
+  namespace: default
+spec:
+  trigger:
+    manual: "${RESTORE_TRIGGER}"
+  restic:
+    repository: volsync-qbittorrent-data
+    restoreAsOf: "${RESTORE_AS_OF}"
+    destinationPVC: qbittorrent-data
+    copyMethod: Direct
+    cacheStorageClassName: longhorn
+    cleanupCachePVC: true
+    enableFileDeletion: true
+    moverResources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationDestination
+metadata:
+  name: jellyfin-data
+  namespace: default
+spec:
+  trigger:
+    manual: "${RESTORE_TRIGGER}"
+  restic:
+    repository: volsync-jellyfin-data
+    restoreAsOf: "${RESTORE_AS_OF}"
+    destinationPVC: jellyfin-data
+    copyMethod: Direct
+    cacheStorageClassName: longhorn
+    cleanupCachePVC: true
+    enableFileDeletion: true
+    moverResources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationDestination
+metadata:
+  name: prowlarr-data
+  namespace: default
+spec:
+  trigger:
+    manual: "${RESTORE_TRIGGER}"
+  restic:
+    repository: volsync-prowlarr-data
+    restoreAsOf: "${RESTORE_AS_OF}"
+    destinationPVC: prowlarr-data
+    copyMethod: Direct
+    cacheStorageClassName: longhorn
+    cleanupCachePVC: true
+    enableFileDeletion: true
+    moverResources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationDestination
+metadata:
+  name: sonarr-data
+  namespace: default
+spec:
+  trigger:
+    manual: "${RESTORE_TRIGGER}"
+  restic:
+    repository: volsync-sonarr-data
+    restoreAsOf: "${RESTORE_AS_OF}"
+    destinationPVC: sonarr-data
+    copyMethod: Direct
+    cacheStorageClassName: longhorn
+    cleanupCachePVC: true
+    enableFileDeletion: true
+    moverResources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationDestination
+metadata:
+  name: radarr-data
+  namespace: default
+spec:
+  trigger:
+    manual: "${RESTORE_TRIGGER}"
+  restic:
+    repository: volsync-radarr-data
+    restoreAsOf: "${RESTORE_AS_OF}"
+    destinationPVC: radarr-data
+    copyMethod: Direct
+    cacheStorageClassName: longhorn
+    cleanupCachePVC: true
+    enableFileDeletion: true
+    moverResources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi

@@ -21,6 +21,9 @@ The repository cannot configure these external dependencies:
   TCP and UDP port `7946` for MetalLB speaker membership.
 - The configured storage host resolves to the TrueNAS server and the NFS exports
   referenced by the Kubernetes manifests exist.
+- The private `tw1zr-lab-volsync` B2 bucket exists in `eu-central-003`, and the
+  bucket-scoped application key encrypted below `kubernetes/backups` remains
+  valid.
 - The Cloudflare token already encrypted in Git remains valid for DNS01
   certificate issuance.
 - The workstation has the Age private identity matching `age.pub`. Without it,
@@ -79,6 +82,9 @@ configuration, and renders these actual Kustomize roots:
 - `kubernetes/infrastructure/controllers`
 - `kubernetes/infrastructure/configs`
 - `kubernetes/apps`
+- `kubernetes/backup-credentials`
+- `kubernetes/backups`
+- `kubernetes/recovery`
 
 `kubernetes/clusters/production` is a Flux manifest directory, not a Kustomize
 root, so do not run `kubectl kustomize` against that directory.
@@ -200,7 +206,8 @@ task --list
 
 ## Recovery boundary
 
-This process reproduces infrastructure and configuration. It does not restore
-application data. Longhorn volume or application-level backup restoration is a
-separate disaster-recovery operation; do not assume a fresh cluster bootstrap
-recovers prior PVC contents.
+`task bootstrap` reproduces infrastructure and configuration but does not
+restore application data. After VM or Longhorn data loss, use the guarded
+`CONFIRM_RESTORE=restore-production RESTORE_AS_OF=<cutoff> task
+bootstrap:restore` workflow from [backup-restore.md](backup-restore.md). A normal
+bootstrap creates empty Longhorn PVCs.
