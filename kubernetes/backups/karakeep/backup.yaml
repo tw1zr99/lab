@@ -6,7 +6,7 @@ metadata:
 spec:
   sourcePVC: karakeep-data
   trigger:
-    schedule: "0 3 * * *"
+    schedule: "20 0 * * *"
   restic:
     repository: volsync-karakeep-data
     copyMethod: Clone

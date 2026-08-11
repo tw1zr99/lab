@@ -17,10 +17,20 @@ spec:
     name: flux-system
   path: ./kubernetes/backups
   postBuild:
+    substitute:
+      CATALOG_VERSION: "8"
     substituteFrom:
       - kind: ConfigMap
         name: cluster-vars
+      - kind: Secret
+        name: volsync-credentials
   prune: true
   wait: true
   dependsOn:
+    - name: backup-credentials
+      readyExpr: >-
+        dep.spec.postBuild.substitute['CATALOG_VERSION'] ==
+        self.spec.postBuild.substitute['CATALOG_VERSION'] &&
+        dep.status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'True') &&
+        dep.metadata.generation == dep.status.observedGeneration
     - name: apps

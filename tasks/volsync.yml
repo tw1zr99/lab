@@ -1,0 +1,355 @@
+---
+version: "3"
+
+vars:
+  NAMESPACE: default
+
+tasks:
+  validate-catalog:
+    internal: true
+    cmds:
+      - |
+        set -eu
+        catalog_passwords="$(yq -r '.stringData | keys | .[] | select(test("^RESTIC_PASSWORD_"))' \
+          kubernetes/backup-credentials/secret.yaml | sort)"
+        template_passwords="$(yq eval-all -N -r '.stringData.RESTIC_PASSWORD | sub("^[\\$][{]"; "") | sub("}$"; "")' \
+          kubernetes/backups/repositories.yaml | sort)"
+        credentials_version="$(yq -r '.spec.postBuild.substitute.CATALOG_VERSION' \
+          kubernetes/clusters/production/backup-credentials.yaml)"
+        backups_version="$(yq -r '.spec.postBuild.substitute.CATALOG_VERSION' \
+          kubernetes/clusters/production/backups.yaml)"
+        repository_count="$(printf '%s\n' "$template_passwords" | wc -l)"
+        if [ "$catalog_passwords" != "$template_passwords" ] || \
+          [ "$credentials_version" != "$backups_version" ] || \
+          [ "$credentials_version" -ne "$repository_count" ]; then
+          printf 'VolSync credential catalog, repository templates, or catalog versions do not match.\n' >&2
+          exit 1
+        fi
+        for key in B2_ACCESS_KEY_ID B2_SECRET_ACCESS_KEY B2_REGION; do
+          if ! yq -e ".stringData.$key" kubernetes/backup-credentials/secret.yaml >/dev/null; then
+            printf 'Missing VolSync credential catalog key: %s\n' "$key" >&2
+            exit 1
+          fi
+        done
+
+  check-runtime-inventory:
+    internal: true
+    cmds:
+      - |
+        set -eu
+        namespace={{.NAMESPACE}}
+        expected="$(kubectl kustomize kubernetes/apps |
+          yq eval-all -N 'select(.kind == "PersistentVolumeClaim" and .spec.storageClassName == "longhorn") | .metadata.name' - |
+          sort)"
+        repositories="$(kubectl get secret --namespace "$namespace" \
+          --selector=backup.efym.net/type=repository -o json |
+          yq -r '.items[].metadata.name | sub("^volsync-"; "")' |
+          sort)"
+        sources="$(kubectl get replicationsource --namespace "$namespace" \
+          --selector=backup.efym.net/managed=true -o json |
+          yq -r '.items[].metadata.name' |
+          sort)"
+        if [ -z "$expected" ] || [ "$expected" != "$repositories" ] || [ "$expected" != "$sources" ]; then
+          printf 'Managed Longhorn PVCs, repository Secrets, and ReplicationSources do not match.\n' >&2
+          exit 1
+        fi
+
+  check-recovery-inventory:
+    internal: true
+    cmds:
+      - |
+        set -eu
+        namespace={{.NAMESPACE}}
+        expected="$(kubectl kustomize kubernetes/apps |
+          yq eval-all -N 'select(.kind == "PersistentVolumeClaim" and .spec.storageClassName == "longhorn") | .metadata.name' - |
+          sort)"
+        repositories="$(kubectl get secret --namespace "$namespace" \
+          --selector=backup.efym.net/type=repository -o json |
+          yq -r '.items[].metadata.name | sub("^volsync-"; "")' |
+          sort)"
+        destinations="$(kubectl kustomize kubernetes/recovery |
+          yq eval-all -N 'select(.kind == "ReplicationDestination") | .metadata.name' - |
+          sort)"
+        if [ -z "$expected" ] || [ "$expected" != "$repositories" ] || [ "$expected" != "$destinations" ]; then
+          printf 'Managed Longhorn PVCs, repository Secrets, and recovery destinations do not match.\n' >&2
+          exit 1
+        fi
+
+  backup:
+    desc: "Run and confirm a successful B2 mover for every managed Longhorn PVC"
+    cmds:
+      - task: check-runtime-inventory
+      - |
+        set -eu
+        namespace={{.NAMESPACE}}
+        timeout="${BACKUP_TIMEOUT:-60m}"
+        trigger="backup-all-$(date -u +%Y%m%d%H%M%S)"
+        sources="$(kubectl get secret --namespace "$namespace" \
+          --selector=backup.efym.net/type=repository -o json |
+          yq -r '.items[].metadata.name | sub("^volsync-"; "")')"
+        if [ -z "$sources" ]; then
+          printf 'No managed VolSync repository Secrets were found.\n' >&2
+          exit 1
+        fi
+        if [ "$(kubectl get kustomization backups --namespace flux-system \
+          -o jsonpath='{.spec.suspend}')" = true ]; then
+          printf 'The backups Kustomization is already suspended; refusing to change its state.\n' >&2
+          exit 1
+        fi
+        restore_schedules() {
+          status=$?
+          trap - 0
+          set +e
+          flux resume kustomization backups >/dev/null ||
+            printf 'Unable to resume the backups Kustomization; resume it manually.\n' >&2
+          flux reconcile kustomization backups >/dev/null ||
+            printf 'Unable to restore backup schedules; reconcile backups manually.\n' >&2
+          exit "$status"
+        }
+        trap restore_schedules 0
+        flux suspend kustomization backups >/dev/null
+        for source in $sources; do
+          kubectl patch replicationsource "$source" --namespace "$namespace" \
+            --type=merge \
+            --patch="{\"spec\":{\"trigger\":{\"schedule\":null,\"manual\":\"$trigger\"}}}" >/dev/null
+          kubectl wait replicationsource "$source" --namespace "$namespace" \
+            --for=jsonpath='{.status.lastManualSync}'="$trigger" --timeout="$timeout" >/dev/null
+          result="$(kubectl get replicationsource "$source" --namespace "$namespace" \
+            -o jsonpath='{.status.latestMoverStatus.result}')"
+          if [ "$result" != Successful ]; then
+            printf 'Backup failed for %s: %s\n' "$source" "$result" >&2
+            exit 1
+          fi
+          printf 'Backed up %s\n' "$source"
+        done
+        printf 'Recovery cutoff: RESTORE_AS_OF=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+
+  prepare-recovery:
+    internal: true
+    cmds:
+      - |
+        set -eu
+        namespace={{.NAMESPACE}}
+        timeout="{{default "20m" .BOOTSTRAP_TIMEOUT}}"
+        attempt=1
+        until kubectl get kustomization backups --namespace flux-system >/dev/null 2>&1; do
+          if [ "$attempt" -eq 60 ]; then
+            printf 'Flux did not create the backups Kustomization within two minutes.\n' >&2
+            exit 1
+          fi
+          attempt=$((attempt + 1))
+          sleep 2
+        done
+        flux suspend kustomization backups >/dev/null
+        attempt=1
+        until kubectl get kustomization apps --namespace flux-system >/dev/null 2>&1; do
+          if [ "$attempt" -eq 60 ]; then
+            printf 'Flux did not create the apps Kustomization within two minutes.\n' >&2
+            exit 1
+          fi
+          attempt=$((attempt + 1))
+          sleep 2
+        done
+        flux suspend kustomization apps >/dev/null
+        kubectl wait kustomization infrastructure-controllers --namespace flux-system \
+          --for=condition=ready --timeout="$timeout" >/dev/null
+        kubectl wait kustomization infrastructure-configs --namespace flux-system \
+          --for=condition=ready --timeout="$timeout" >/dev/null
+        kubectl wait kustomization backup-credentials --namespace flux-system \
+          --for=condition=ready --timeout="$timeout" >/dev/null
+        kubectl wait helmrelease longhorn --namespace longhorn-system \
+          --for=condition=ready --timeout="$timeout" >/dev/null
+        kubectl wait helmrelease snapshot-controller --namespace snapshot-controller \
+          --for=condition=ready --timeout="$timeout" >/dev/null
+        kubectl wait helmrelease volsync --namespace volsync-system \
+          --for=condition=ready --timeout="$timeout" >/dev/null
+        STORAGE_HOST="$(yq -r .STORAGE_HOST config/cluster.yaml)"
+        export STORAGE_HOST
+        rendered="$(mktemp)"
+        storage="$(mktemp)"
+        trap 'rm -f "$rendered" "$storage"' 0
+        kubectl kustomize kubernetes/apps > "$rendered"
+        yq eval-all 'select(.kind == "PersistentVolume" or .kind == "PersistentVolumeClaim")' \
+          "$rendered" > "$storage"
+        yq '(.. | select(tag == "!!str")) |= envsubst' "$storage" | kubectl apply -f - >/dev/null
+        credentials="$(sops --decrypt kubernetes/backup-credentials/secret.yaml)"
+        keys="$(printf '%s\n' "$credentials" | yq -r '.stringData | keys | .[]')"
+        for key in $keys; do
+          value="$(printf '%s\n' "$credentials" | yq -r ".stringData.$key")"
+          export "$key=$value"
+        done
+        repository_secrets="$(yq '(.. | select(tag == "!!str")) |= envsubst' \
+          kubernetes/backups/repositories.yaml)"
+        printf '%s\n' "$repository_secrets" | kubectl apply -f - >/dev/null
+        unset credentials repository_secrets value
+        kubectl wait pvc --all --namespace "$namespace" \
+          --for=jsonpath='{.status.phase}'=Bound --timeout="$timeout" >/dev/null
+
+  restore:
+    desc: "Stop applications and restore every managed Longhorn PVC from B2"
+    cmds:
+      - task: check-recovery-inventory
+      - |
+        set -eu
+        if [ "${CONFIRM_RESTORE:-}" != restore-production ]; then
+          printf 'Set CONFIRM_RESTORE=restore-production to overwrite every managed Longhorn PVC.\n' >&2
+          exit 1
+        fi
+        normalized="$(date -u -d "${RESTORE_AS_OF:-invalid}" +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || true)"
+        if [ -z "$normalized" ] || [ "$normalized" != "${RESTORE_AS_OF:-}" ]; then
+          printf 'Set RESTORE_AS_OF to the UTC recovery cutoff in YYYY-MM-DDTHH:MM:SSZ form.\n' >&2
+          exit 1
+        fi
+        namespace={{.NAMESPACE}}
+        timeout="${RESTORE_TIMEOUT:-60m}"
+        trigger="restore-all-$(date -u +%Y%m%d%H%M%S)"
+        repository_secrets="$(kubectl get secret --namespace "$namespace" \
+          --selector=backup.efym.net/type=repository -o json)"
+        sources="$(printf '%s\n' "$repository_secrets" |
+          yq -r '.items[].metadata.name | sub("^volsync-"; "")')"
+        deployments="$(printf '%s\n' "$repository_secrets" |
+          yq -r '.items[].metadata.annotations."backup.efym.net/deployment"')"
+        if [ -z "$sources" ] || [ -z "$deployments" ]; then
+          printf 'No managed VolSync repository Secrets or workload mappings were found.\n' >&2
+          exit 1
+        fi
+        recovery_failed() {
+          trap - 0 HUP INT TERM
+          printf 'Recovery stopped. Inspect Flux suspension and workload state before proceeding; no automatic resume was attempted.\n' >&2
+          exit 1
+        }
+        trap recovery_failed 0 HUP INT TERM
+        for destination in $sources; do
+          kubectl get pvc "$destination" --namespace "$namespace" >/dev/null
+          kubectl get secret "volsync-$destination" --namespace "$namespace" >/dev/null
+        done
+        flux suspend kustomization apps >/dev/null
+        flux suspend kustomization backups >/dev/null
+        scaled_deployments=""
+        for deployment in $deployments; do
+          if kubectl get deployment "$deployment" --namespace "$namespace" >/dev/null 2>&1; then
+            kubectl scale deployment "$deployment" --namespace "$namespace" --replicas=0 >/dev/null
+            scaled_deployments="$scaled_deployments $deployment"
+          fi
+        done
+        for deployment in $scaled_deployments; do
+          kubectl rollout status deployment "$deployment" --namespace "$namespace" --timeout=5m >/dev/null
+        done
+        for destination in $sources; do
+          kubectl delete replicationsource "$destination" --namespace "$namespace" \
+            --ignore-not-found >/dev/null
+        done
+        export RESTORE_TRIGGER="$trigger"
+        export RESTORE_AS_OF
+        for destination in $sources; do
+          export RESTORE_DESTINATION="$destination"
+          rendered="$(mktemp)"
+          selected="$(mktemp)"
+          kubectl kustomize kubernetes/recovery > "$rendered"
+          yq 'select(.metadata.name == strenv(RESTORE_DESTINATION)) | (.. | select(tag == "!!str")) |= envsubst' \
+            "$rendered" > "$selected"
+          kubectl apply -f "$selected" >/dev/null
+          rm -f "$rendered" "$selected"
+          kubectl wait replicationdestination "$destination" --namespace "$namespace" \
+            --for=jsonpath='{.status.lastManualSync}'="$trigger" --timeout="$timeout" >/dev/null
+          result="$(kubectl get replicationdestination "$destination" --namespace "$namespace" \
+            -o jsonpath='{.status.latestMoverStatus.result}')"
+          if [ "$result" != Successful ]; then
+            printf 'Restore failed for %s: %s\n' "$destination" "$result" >&2
+            exit 1
+          fi
+          printf 'Restored %s\n' "$destination"
+        done
+        for destination in $sources; do
+          kubectl delete replicationdestination "$destination" --namespace "$namespace" \
+            --ignore-not-found >/dev/null
+        done
+        trap - 0 HUP INT TERM
+        flux resume kustomization apps >/dev/null
+        flux reconcile kustomization apps >/dev/null
+        flux resume kustomization backups >/dev/null
+        flux reconcile kustomization backups >/dev/null
+        printf 'Recovery completed and application reconciliation resumed.\n'
+
+  verify:
+    desc: "Restore every B2 repository into an isolated temporary PVC"
+    cmds:
+      - task: check-runtime-inventory
+      - |
+        set -eu
+        namespace={{.NAMESPACE}}
+        timeout="${VERIFY_TIMEOUT:-60m}"
+        trigger="verify-all-$(date -u +%Y%m%d%H%M%S)"
+        sources="$(kubectl get secret --namespace "$namespace" \
+          --selector=backup.efym.net/type=repository -o json |
+          yq -r '.items[].metadata.name | sub("^volsync-"; "")')"
+        if [ -z "$sources" ]; then
+          printf 'No managed VolSync repository Secrets were found.\n' >&2
+          exit 1
+        fi
+        restore_as_of=""
+        if [ -n "${VERIFY_AS_OF:-}" ]; then
+          normalized="$(date -u -d "$VERIFY_AS_OF" +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || true)"
+          if [ -z "$normalized" ] || [ "$normalized" != "$VERIFY_AS_OF" ]; then
+            printf 'VERIFY_AS_OF must use YYYY-MM-DDTHH:MM:SSZ form.\n' >&2
+            exit 1
+          fi
+          restore_as_of="    restoreAsOf: $VERIFY_AS_OF"
+        fi
+        for source in $sources; do
+          destination="verify-$source"
+          destination_pvc="volsync-verify-$source"
+          capacity="$(kubectl get pvc "$source" --namespace "$namespace" \
+            -o jsonpath='{.spec.resources.requests.storage}')"
+          access_mode="$(kubectl get pvc "$source" --namespace "$namespace" \
+            -o jsonpath='{.spec.accessModes[0]}')"
+          kubectl apply -f - >/dev/null <<EOF
+        apiVersion: v1
+        kind: PersistentVolumeClaim
+        metadata:
+          name: $destination_pvc
+          namespace: $namespace
+        spec:
+          accessModes:
+            - $access_mode
+          storageClassName: longhorn
+          resources:
+            requests:
+              storage: $capacity
+        ---
+        apiVersion: volsync.backube/v1alpha1
+        kind: ReplicationDestination
+        metadata:
+          name: $destination
+          namespace: $namespace
+        spec:
+          trigger:
+            manual: $trigger
+          restic:
+            repository: volsync-$source
+        $restore_as_of
+            destinationPVC: $destination_pvc
+            copyMethod: Direct
+            cacheStorageClassName: longhorn
+            cleanupCachePVC: true
+            enableFileDeletion: true
+            moverResources:
+              requests:
+                cpu: 50m
+                memory: 128Mi
+              limits:
+                cpu: 500m
+                memory: 512Mi
+        EOF
+          kubectl wait replicationdestination "$destination" --namespace "$namespace" \
+            --for=jsonpath='{.status.lastManualSync}'="$trigger" --timeout="$timeout" >/dev/null
+          result="$(kubectl get replicationdestination "$destination" --namespace "$namespace" \
+            -o jsonpath='{.status.latestMoverStatus.result}')"
+          if [ "$result" != Successful ]; then
+            printf 'Restore verification failed for %s: %s\n' "$source" "$result" >&2
+            exit 1
+          fi
+          kubectl delete replicationdestination "$destination" --namespace "$namespace" >/dev/null
+          kubectl delete pvc "$destination_pvc" --namespace "$namespace" >/dev/null
+          printf 'Verified %s\n' "$source"
+        done

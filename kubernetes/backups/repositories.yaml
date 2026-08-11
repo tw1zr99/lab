@@ -1,0 +1,136 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: volsync-meilisearch-data
+  namespace: default
+  labels:
+    backup.efym.net/type: repository
+  annotations:
+    backup.efym.net/deployment: meilisearch
+type: Opaque
+stringData:
+  RESTIC_REPOSITORY: s3:https://s3.eu-central-003.backblazeb2.com/tw1zr-lab-volsync/volsync/meilisearch-data
+  RESTIC_PASSWORD: "${RESTIC_PASSWORD_MEILISEARCH_DATA}"
+  AWS_ACCESS_KEY_ID: "${B2_ACCESS_KEY_ID}"
+  AWS_SECRET_ACCESS_KEY: "${B2_SECRET_ACCESS_KEY}"
+  AWS_DEFAULT_REGION: "${B2_REGION}"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: volsync-karakeep-data
+  namespace: default
+  labels:
+    backup.efym.net/type: repository
+  annotations:
+    backup.efym.net/deployment: karakeep
+type: Opaque
+stringData:
+  RESTIC_REPOSITORY: s3:https://s3.eu-central-003.backblazeb2.com/tw1zr-lab-volsync/volsync/karakeep-data
+  RESTIC_PASSWORD: "${RESTIC_PASSWORD_KARAKEEP_DATA}"
+  AWS_ACCESS_KEY_ID: "${B2_ACCESS_KEY_ID}"
+  AWS_SECRET_ACCESS_KEY: "${B2_SECRET_ACCESS_KEY}"
+  AWS_DEFAULT_REGION: "${B2_REGION}"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: volsync-filebrowser-quantum-config
+  namespace: default
+  labels:
+    backup.efym.net/type: repository
+  annotations:
+    backup.efym.net/deployment: filebrowser-quantum
+type: Opaque
+stringData:
+  RESTIC_REPOSITORY: s3:https://s3.eu-central-003.backblazeb2.com/tw1zr-lab-volsync/volsync/filebrowser-quantum-config
+  RESTIC_PASSWORD: "${RESTIC_PASSWORD_FILEBROWSER_QUANTUM_CONFIG}"
+  AWS_ACCESS_KEY_ID: "${B2_ACCESS_KEY_ID}"
+  AWS_SECRET_ACCESS_KEY: "${B2_SECRET_ACCESS_KEY}"
+  AWS_DEFAULT_REGION: "${B2_REGION}"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: volsync-qbittorrent-data
+  namespace: default
+  labels:
+    backup.efym.net/type: repository
+  annotations:
+    backup.efym.net/deployment: qbittorrent
+type: Opaque
+stringData:
+  RESTIC_REPOSITORY: s3:https://s3.eu-central-003.backblazeb2.com/tw1zr-lab-volsync/volsync/qbittorrent-data
+  RESTIC_PASSWORD: "${RESTIC_PASSWORD_QBITTORRENT_DATA}"
+  AWS_ACCESS_KEY_ID: "${B2_ACCESS_KEY_ID}"
+  AWS_SECRET_ACCESS_KEY: "${B2_SECRET_ACCESS_KEY}"
+  AWS_DEFAULT_REGION: "${B2_REGION}"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: volsync-jellyfin-data
+  namespace: default
+  labels:
+    backup.efym.net/type: repository
+  annotations:
+    backup.efym.net/deployment: jellyfin
+type: Opaque
+stringData:
+  RESTIC_REPOSITORY: s3:https://s3.eu-central-003.backblazeb2.com/tw1zr-lab-volsync/volsync/jellyfin-data
+  RESTIC_PASSWORD: "${RESTIC_PASSWORD_JELLYFIN_DATA}"
+  AWS_ACCESS_KEY_ID: "${B2_ACCESS_KEY_ID}"
+  AWS_SECRET_ACCESS_KEY: "${B2_SECRET_ACCESS_KEY}"
+  AWS_DEFAULT_REGION: "${B2_REGION}"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: volsync-prowlarr-data
+  namespace: default
+  labels:
+    backup.efym.net/type: repository
+  annotations:
+    backup.efym.net/deployment: prowlarr
+type: Opaque
+stringData:
+  RESTIC_REPOSITORY: s3:https://s3.eu-central-003.backblazeb2.com/tw1zr-lab-volsync/volsync/prowlarr-data
+  RESTIC_PASSWORD: "${RESTIC_PASSWORD_PROWLARR_DATA}"
+  AWS_ACCESS_KEY_ID: "${B2_ACCESS_KEY_ID}"
+  AWS_SECRET_ACCESS_KEY: "${B2_SECRET_ACCESS_KEY}"
+  AWS_DEFAULT_REGION: "${B2_REGION}"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: volsync-sonarr-data
+  namespace: default
+  labels:
+    backup.efym.net/type: repository
+  annotations:
+    backup.efym.net/deployment: sonarr
+type: Opaque
+stringData:
+  RESTIC_REPOSITORY: s3:https://s3.eu-central-003.backblazeb2.com/tw1zr-lab-volsync/volsync/sonarr-data
+  RESTIC_PASSWORD: "${RESTIC_PASSWORD_SONARR_DATA}"
+  AWS_ACCESS_KEY_ID: "${B2_ACCESS_KEY_ID}"
+  AWS_SECRET_ACCESS_KEY: "${B2_SECRET_ACCESS_KEY}"
+  AWS_DEFAULT_REGION: "${B2_REGION}"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: volsync-radarr-data
+  namespace: default
+  labels:
+    backup.efym.net/type: repository
+  annotations:
+    backup.efym.net/deployment: radarr
+type: Opaque
+stringData:
+  RESTIC_REPOSITORY: s3:https://s3.eu-central-003.backblazeb2.com/tw1zr-lab-volsync/volsync/radarr-data
+  RESTIC_PASSWORD: "${RESTIC_PASSWORD_RADARR_DATA}"
+  AWS_ACCESS_KEY_ID: "${B2_ACCESS_KEY_ID}"
+  AWS_SECRET_ACCESS_KEY: "${B2_SECRET_ACCESS_KEY}"
+  AWS_DEFAULT_REGION: "${B2_REGION}"

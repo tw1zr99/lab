@@ -1,0 +1,196 @@
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: meilisearch-data
+  namespace: default
+spec:
+  sourcePVC: meilisearch-data
+  trigger:
+    schedule: "0 0 * * *"
+  restic:
+    repository: volsync-meilisearch-data
+    copyMethod: Clone
+    storageClassName: longhorn
+    cacheStorageClassName: longhorn
+    pruneIntervalDays: 14
+    retain:
+      daily: 7
+      weekly: 4
+      monthly: 6
+      yearly: 1
+    moverResources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: filebrowser-quantum-config
+  namespace: default
+spec:
+  sourcePVC: filebrowser-quantum-config
+  trigger:
+    schedule: "40 0 * * *"
+  restic:
+    repository: volsync-filebrowser-quantum-config
+    copyMethod: Clone
+    storageClassName: longhorn
+    cacheStorageClassName: longhorn
+    pruneIntervalDays: 14
+    retain:
+      daily: 7
+      weekly: 4
+      monthly: 6
+      yearly: 1
+    moverResources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: qbittorrent-data
+  namespace: default
+spec:
+  sourcePVC: qbittorrent-data
+  trigger:
+    schedule: "0 1 * * *"
+  restic:
+    repository: volsync-qbittorrent-data
+    copyMethod: Clone
+    storageClassName: longhorn
+    cacheStorageClassName: longhorn
+    pruneIntervalDays: 14
+    retain:
+      daily: 7
+      weekly: 4
+      monthly: 6
+      yearly: 1
+    moverResources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: jellyfin-data
+  namespace: default
+spec:
+  sourcePVC: jellyfin-data
+  trigger:
+    schedule: "20 1 * * *"
+  restic:
+    repository: volsync-jellyfin-data
+    copyMethod: Clone
+    storageClassName: longhorn
+    cacheStorageClassName: longhorn
+    pruneIntervalDays: 14
+    retain:
+      daily: 7
+      weekly: 4
+      monthly: 6
+      yearly: 1
+    moverResources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: prowlarr-data
+  namespace: default
+spec:
+  sourcePVC: prowlarr-data
+  trigger:
+    schedule: "40 1 * * *"
+  restic:
+    repository: volsync-prowlarr-data
+    copyMethod: Clone
+    storageClassName: longhorn
+    cacheStorageClassName: longhorn
+    pruneIntervalDays: 14
+    retain:
+      daily: 7
+      weekly: 4
+      monthly: 6
+      yearly: 1
+    moverResources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: sonarr-data
+  namespace: default
+spec:
+  sourcePVC: sonarr-data
+  trigger:
+    schedule: "0 2 * * *"
+  restic:
+    repository: volsync-sonarr-data
+    copyMethod: Clone
+    storageClassName: longhorn
+    cacheStorageClassName: longhorn
+    pruneIntervalDays: 14
+    retain:
+      daily: 7
+      weekly: 4
+      monthly: 6
+      yearly: 1
+    moverResources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: radarr-data
+  namespace: default
+spec:
+  sourcePVC: radarr-data
+  trigger:
+    schedule: "20 2 * * *"
+  restic:
+    repository: volsync-radarr-data
+    copyMethod: Clone
+    storageClassName: longhorn
+    cacheStorageClassName: longhorn
+    pruneIntervalDays: 14
+    retain:
+      daily: 7
+      weekly: 4
+      monthly: 6
+      yearly: 1
+    moverResources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi

@@ -4,6 +4,9 @@
 #   task bootstrap      -> Talos cluster + Flux GitOps, end to end
 version: "3"
 
+includes:
+  volsync: ./tasks/volsync.yml
+
 vars:
   CONFIG_FILE: "{{.ROOT_DIR}}/config/cluster.yaml"
   CLUSTER_VARS_FILE: "{{.ROOT_DIR}}/kubernetes/clusters/production/cluster-vars.yaml"
@@ -47,6 +50,23 @@ tasks:
       - task: talos:bootstrap
       - task: flux:bootstrap
       - task: flux:wait
+      - task: cluster:verify
+
+  bootstrap:restore:
+    desc: "Rebuild the cluster and restore every managed Longhorn PVC from B2"
+    preconditions:
+      - sh: test "$CONFIRM_RESTORE" = restore-production
+        msg: "Set CONFIRM_RESTORE=restore-production to authorize the destructive restore"
+      - sh: test -n "$RESTORE_AS_OF"
+        msg: "Set RESTORE_AS_OF to the UTC recovery cutoff printed by task volsync:backup"
+      - sh: test "$(date -u -d "$RESTORE_AS_OF" +%Y-%m-%dT%H:%M:%SZ 2>/dev/null)" = "$RESTORE_AS_OF"
+        msg: "RESTORE_AS_OF must be a valid UTC timestamp in YYYY-MM-DDTHH:MM:SSZ form"
+    cmds:
+      - task: preflight
+      - task: talos:bootstrap
+      - task: flux:bootstrap
+      - task: volsync:prepare-recovery
+      - task: volsync:restore
       - task: cluster:verify
 
   preflight:
@@ -257,10 +277,13 @@ tasks:
     desc: "Render every current Kubernetes Kustomize root"
     cmds:
       - task: config:check
+      - task: volsync:validate-catalog
       - kubectl kustomize kubernetes/infrastructure/controllers >/dev/null
       - kubectl kustomize kubernetes/infrastructure/configs >/dev/null
       - kubectl kustomize kubernetes/apps >/dev/null
+      - kubectl kustomize kubernetes/backup-credentials >/dev/null
       - kubectl kustomize kubernetes/backups >/dev/null
+      - kubectl kustomize kubernetes/recovery >/dev/null
 
   kubernetes:upgrade:preflight:
     desc: "Check cluster health before upgrading Kubernetes"
