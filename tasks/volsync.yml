@@ -97,16 +97,16 @@ tasks:
           exit 1
         fi
         restore_schedules() {
-          status=$?
-          trap - 0
+          exit_code=$?
+          trap - EXIT
           set +e
           flux resume kustomization backups >/dev/null ||
             printf 'Unable to resume the backups Kustomization; resume it manually.\n' >&2
           flux reconcile kustomization backups >/dev/null ||
             printf 'Unable to restore backup schedules; reconcile backups manually.\n' >&2
-          exit "$status"
+          exit "$exit_code"
         }
-        trap restore_schedules 0
+        trap restore_schedules EXIT
         flux suspend kustomization backups >/dev/null
         for source in $sources; do
           kubectl patch replicationsource "$source" --namespace "$namespace" \
@@ -167,7 +167,7 @@ tasks:
         export STORAGE_HOST
         rendered="$(mktemp)"
         storage="$(mktemp)"
-        trap 'rm -f "$rendered" "$storage"' 0
+        trap 'rm -f "$rendered" "$storage"' EXIT
         kubectl kustomize kubernetes/apps > "$rendered"
         yq eval-all 'select(.kind == "PersistentVolume" or .kind == "PersistentVolumeClaim")' \
           "$rendered" > "$storage"
@@ -214,11 +214,11 @@ tasks:
           exit 1
         fi
         recovery_failed() {
-          trap - 0 HUP INT TERM
+          trap - EXIT HUP INT TERM
           printf 'Recovery stopped. Inspect Flux suspension and workload state before proceeding; no automatic resume was attempted.\n' >&2
           exit 1
         }
-        trap recovery_failed 0 HUP INT TERM
+        trap recovery_failed EXIT HUP INT TERM
         for destination in $sources; do
           kubectl get pvc "$destination" --namespace "$namespace" >/dev/null
           kubectl get secret "volsync-$destination" --namespace "$namespace" >/dev/null
@@ -264,7 +264,7 @@ tasks:
           kubectl delete replicationdestination "$destination" --namespace "$namespace" \
             --ignore-not-found >/dev/null
         done
-        trap - 0 HUP INT TERM
+        trap - EXIT HUP INT TERM
         flux resume kustomization apps >/dev/null
         flux reconcile kustomization apps >/dev/null
         flux resume kustomization backups >/dev/null

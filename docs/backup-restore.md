@@ -8,6 +8,9 @@ volume identities from the original cluster.
 ## Components
 
 - VolSync is installed by the `volsync` HelmRelease in `volsync-system`.
+- The `default` namespace permits privileged VolSync movers so Restic can read
+  application files with mixed ownership and mode `0600`, then preserve their
+  ownership and permissions during restore.
 - The CSI snapshot controller and snapshot CRDs are installed by the
   `snapshot-controller` HelmRelease, using the upstream version bundled with
   Longhorn.
