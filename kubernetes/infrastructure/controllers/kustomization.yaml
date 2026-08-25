@@ -10,6 +10,7 @@ resources:
   - metallb.yaml
   - longhorn.yaml
   - snapshot-controller.yaml
-  - kube-prometheus-stack.yaml
+  # Disable the monitoring stack
+  # - kube-prometheus-stack.yaml
   - volsync.yaml
   - authelia.yaml
