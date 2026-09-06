@@ -46,7 +46,7 @@ spec:
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-  name: grafana
+  name: headlamp
   namespace: monitoring
   annotations:
     kubernetes.io/ingress.class: traefik-external
@@ -54,58 +54,14 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`grafana.${CLUSTER_DOMAIN}`)
+    - match: Host(`headlamp.${CLUSTER_DOMAIN}`)
       kind: Rule
       middlewares:
         - name: authelia
           namespace: authelia
       services:
-        - name: kube-prometheus-stack-grafana
+        - name: headlamp
           port: 80
-  tls:
-    secretName: efym-net-tls
----
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
-metadata:
-  name: prometheus
-  namespace: monitoring
-  annotations:
-    kubernetes.io/ingress.class: traefik-external
-spec:
-  entryPoints:
-    - websecure
-  routes:
-    - match: Host(`prometheus.${CLUSTER_DOMAIN}`)
-      kind: Rule
-      middlewares:
-        - name: authelia
-          namespace: authelia
-      services:
-        - name: kube-prometheus-stack-prometheus
-          port: 9090
-  tls:
-    secretName: efym-net-tls
----
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
-metadata:
-  name: alertmanager
-  namespace: monitoring
-  annotations:
-    kubernetes.io/ingress.class: traefik-external
-spec:
-  entryPoints:
-    - websecure
-  routes:
-    - match: Host(`alertmanager.${CLUSTER_DOMAIN}`)
-      kind: Rule
-      middlewares:
-        - name: authelia
-          namespace: authelia
-      services:
-        - name: kube-prometheus-stack-alertmanager
-          port: 9093
   tls:
     secretName: efym-net-tls
 ---

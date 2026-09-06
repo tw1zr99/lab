@@ -12,5 +12,7 @@ resources:
   - snapshot-controller.yaml
   # Disable the monitoring stack
   # - kube-prometheus-stack.yaml
+  - victoria-metrics.yaml
+  - headlamp.yaml
   - volsync.yaml
   - authelia.yaml

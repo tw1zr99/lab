@@ -1,0 +1,88 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: headlamp
+  namespace: flux-system
+spec:
+  url: https://kubernetes-sigs.github.io/headlamp/
+  interval: 24h
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: headlamp
+  namespace: monitoring
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: headlamp
+      version: "${HEADLAMP_CHART_VERSION}"
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: headlamp
+        namespace: flux-system
+  values:
+    config:
+      unsafeUseServiceAccountToken: true
+      staticPlugins:
+        enabled: true
+      oidc:
+        secret:
+          create: false
+    serviceAccount:
+      name: headlamp
+    clusterRoleBinding:
+      clusterRoleName: view
+    podSecurityContext:
+      seccompProfile:
+        type: RuntimeDefault
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      privileged: false
+      readOnlyRootFilesystem: true
+      runAsGroup: 101
+      runAsNonRoot: true
+      runAsUser: 100
+    resources:
+      requests:
+        cpu: 25m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: headlamp-victoria-metrics-proxy
+  namespace: monitoring
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - services/proxy
+    resourceNames:
+      - victoria-metrics-server
+      - victoria-metrics-server:8428
+    verbs:
+      - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: headlamp-victoria-metrics-proxy
+  namespace: monitoring
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: headlamp-victoria-metrics-proxy
+subjects:
+  - kind: ServiceAccount
+    name: headlamp
+    namespace: monitoring
