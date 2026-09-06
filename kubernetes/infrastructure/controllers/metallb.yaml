@@ -29,5 +29,20 @@ spec:
       enabled: true
     frrk8s:
       enabled: false
+    controller:
+      resources:
+        requests:
+          cpu: 25m
+          memory: 64Mi
+        limits:
+          cpu: 100m
+          memory: 128Mi
     speaker:
       ignoreExcludeLB: true
+      resources:
+        requests:
+          cpu: 25m
+          memory: 64Mi
+        limits:
+          cpu: 100m
+          memory: 128Mi
