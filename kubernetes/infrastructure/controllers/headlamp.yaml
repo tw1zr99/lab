@@ -92,6 +92,7 @@ kind: ClusterRole
 metadata:
   name: headlamp-cluster-readonly
 rules:
+  # Core cluster-scoped resources not covered by the default view role.
   - apiGroups:
       - ""
     resources:
@@ -101,10 +102,106 @@ rules:
       - get
       - list
       - watch
+  # Cluster-scoped types backing Headlamp's Network, Configuration, and
+  # Security pages that the default view role excludes.
+  - apiGroups:
+      - admissionregistration.k8s.io
+    resources:
+      - mutatingwebhookconfigurations
+      - validatingwebhookconfigurations
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - apiextensions.k8s.io
+    resources:
+      - customresourcedefinitions
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - apiregistration.k8s.io
+    resources:
+      - apiservices
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - ingressclasses
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - node.k8s.io
+    resources:
+      - runtimeclasses
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - rbac.authorization.k8s.io
+    resources:
+      - clusterrolebindings
+      - clusterroles
+      - rolebindings
+      - roles
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - scheduling.k8s.io
+    resources:
+      - priorityclasses
+    verbs:
+      - get
+      - list
+      - watch
   - apiGroups:
       - storage.k8s.io
     resources:
       - storageclasses
+      - volumeattachments
+      - volumeattributesclasses
+    verbs:
+      - get
+      - list
+      - watch
+  # Custom resource instances for the CRD groups installed in this cluster,
+  # backing Headlamp's Custom Resources and Gateway pages.
+  - apiGroups:
+      - gateway.networking.k8s.io
+      - groupsnapshot.storage.k8s.io
+      - helm.toolkit.fluxcd.io
+      - hub.traefik.io
+      - image.toolkit.fluxcd.io
+      - kustomize.toolkit.fluxcd.io
+      - longhorn.io
+      - metallb.io
+      - monitoring.coreos.com
+      - notification.toolkit.fluxcd.io
+      - snapshot.storage.k8s.io
+      - source.extensions.fluxcd.io
+      - source.toolkit.fluxcd.io
+      - traefik.io
+      - volsync.backube
+    resources:
+      - "*"
     verbs:
       - get
       - list
