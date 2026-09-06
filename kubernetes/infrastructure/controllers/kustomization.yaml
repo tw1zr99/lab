@@ -14,5 +14,6 @@ resources:
   # - kube-prometheus-stack.yaml
   - victoria-metrics.yaml
   - headlamp.yaml
+  - metrics-server.yaml
   - volsync.yaml
   - authelia.yaml
