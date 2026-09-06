@@ -26,6 +26,29 @@ spec:
   values:
     installCRDs: true
     replicaCount: 3
+    resources:
+      requests:
+        cpu: 25m
+        memory: 64Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
+    webhook:
+      resources:
+        requests:
+          cpu: 25m
+          memory: 64Mi
+        limits:
+          cpu: 100m
+          memory: 128Mi
+    cainjector:
+      resources:
+        requests:
+          cpu: 25m
+          memory: 64Mi
+        limits:
+          cpu: 100m
+          memory: 128Mi
     extraArgs:
       - --dns01-recursive-nameservers=${ACME_DNS_PRIMARY}:53,${ACME_DNS_SECONDARY}:53
       - --dns01-recursive-nameservers-only

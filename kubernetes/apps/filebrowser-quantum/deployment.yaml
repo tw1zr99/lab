@@ -21,6 +21,13 @@ spec:
       initContainers:
       - name: fix-config-permissions
         image: busybox:${BUSYBOX_IMAGE_TAG}
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            cpu: 50m
+            memory: 128Mi
         command:
           - sh
           - -c
